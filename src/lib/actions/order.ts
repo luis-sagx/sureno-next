@@ -118,7 +118,7 @@ export async function createOrder(formData: FormData) {
         success: true,
         orderId: order.id,
         orderNumber: order.orderNumber,
-        redirectUrl: `/checkout/success?order=${order.orderNumber}`,
+        redirectUrl: `/checkout/success?order=${order.orderNumber}&metodo=${validated.paymentMethod}`,
       };
     }
 
@@ -143,7 +143,7 @@ export async function createOrder(formData: FormData) {
       metadata: {
         orderId: order.id,
       },
-      success_url: `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/checkout/success?order=${order.orderNumber}`,
+      success_url: `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/checkout/success?order=${order.orderNumber}&metodo=${validated.paymentMethod}`,
       cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/checkout`,
     });
 
