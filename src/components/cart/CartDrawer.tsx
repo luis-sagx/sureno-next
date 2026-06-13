@@ -73,7 +73,7 @@ export function CartDrawer() {
             <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
               {items.map((item) => (
                 <div
-                  key={item.variantId}
+                  key={`${item.variantId}-${item.type}`}
                   className="flex gap-3 py-3 border-b border-outline-variant/50 last:border-0"
                 >
                   {/* Image placeholder */}
@@ -103,7 +103,7 @@ export function CartDrawer() {
                     <div className="flex items-center justify-between mt-2">
                       <QuantitySelector
                         value={item.quantity}
-                        onChange={(qty) => updateQuantity(item.variantId, qty)}
+                        onChange={(qty) => updateQuantity(item.variantId, item.type, qty)}
                         min={0}
                         max={99}
                       />
@@ -124,7 +124,7 @@ export function CartDrawer() {
                         {item.type === "RETAIL" ? "Retail" : "Mayoreo"}
                       </span>
                       <button
-                        onClick={() => removeItem(item.variantId)}
+                        onClick={() => removeItem(item.variantId, item.type)}
                         className="text-xs text-on-surface-variant hover:text-error transition-colors"
                         aria-label={`Eliminar ${item.productName}`}
                       >

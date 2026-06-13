@@ -19,8 +19,8 @@ interface CartStore {
   items: CartItem[];
   isOpen: boolean;
   addItem: (item: Omit<CartItem, "quantity"> & { quantity?: number }) => void;
-  removeItem: (variantId: string) => void;
-  updateQuantity: (variantId: string, quantity: number) => void;
+  removeItem: (variantId: string, type: CartItem["type"]) => void;
+  updateQuantity: (variantId: string, type: CartItem["type"], quantity: number) => void;
   clearCart: () => void;
   totalItems: () => number;
   retailSubtotal: () => number;
@@ -37,13 +37,13 @@ export const useCartStore = create<CartStore>()(
       isOpen: false,
 
       addItem: (item) => {
-        const existing = get().items.find(
-          (i) => i.variantId === item.variantId
-        );
+        const matches = (i: CartItem) =>
+          i.variantId === item.variantId && i.type === item.type;
+        const existing = get().items.find(matches);
         if (existing) {
           set({
             items: get().items.map((i) =>
-              i.variantId === item.variantId
+              matches(i)
                 ? { ...i, quantity: i.quantity + (item.quantity || 1) }
                 : i
             ),
@@ -58,17 +58,21 @@ export const useCartStore = create<CartStore>()(
         }
       },
 
-      removeItem: (variantId) =>
-        set({ items: get().items.filter((i) => i.variantId !== variantId) }),
+      removeItem: (variantId, type) =>
+        set({
+          items: get().items.filter(
+            (i) => !(i.variantId === variantId && i.type === type)
+          ),
+        }),
 
-      updateQuantity: (variantId, quantity) => {
+      updateQuantity: (variantId, type, quantity) => {
         if (quantity <= 0) {
-          get().removeItem(variantId);
+          get().removeItem(variantId, type);
           return;
         }
         set({
           items: get().items.map((i) =>
-            i.variantId === variantId ? { ...i, quantity } : i
+            i.variantId === variantId && i.type === type ? { ...i, quantity } : i
           ),
         });
       },

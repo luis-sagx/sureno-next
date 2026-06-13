@@ -59,11 +59,11 @@ describe("useCartStore", () => {
   });
 
   describe("removeItem", () => {
-    it("removes an item by variantId", () => {
+    it("removes an item by variantId and type", () => {
       useCartStore.getState().addItem(sampleItem);
       useCartStore.getState().addItem({ ...sampleItem, variantId: "v2" });
 
-      useCartStore.getState().removeItem("v1");
+      useCartStore.getState().removeItem("v1", "RETAIL");
 
       const items = useCartStore.getState().items;
       expect(items).toHaveLength(1);
@@ -73,7 +73,7 @@ describe("useCartStore", () => {
     it("does nothing when removing a non-existent item", () => {
       useCartStore.getState().addItem(sampleItem);
 
-      useCartStore.getState().removeItem("nonexistent");
+      useCartStore.getState().removeItem("nonexistent", "RETAIL");
 
       expect(useCartStore.getState().items).toHaveLength(1);
     });
@@ -83,7 +83,7 @@ describe("useCartStore", () => {
     it("updates the quantity of an existing item", () => {
       useCartStore.getState().addItem(sampleItem);
 
-      useCartStore.getState().updateQuantity("v1", 3);
+      useCartStore.getState().updateQuantity("v1", "RETAIL", 3);
 
       expect(useCartStore.getState().items[0].quantity).toBe(3);
     });
@@ -91,7 +91,7 @@ describe("useCartStore", () => {
     it("removes the item when quantity is set to 0", () => {
       useCartStore.getState().addItem(sampleItem);
 
-      useCartStore.getState().updateQuantity("v1", 0);
+      useCartStore.getState().updateQuantity("v1", "RETAIL", 0);
 
       expect(useCartStore.getState().items).toHaveLength(0);
     });
@@ -99,7 +99,7 @@ describe("useCartStore", () => {
     it("removes the item when quantity is negative", () => {
       useCartStore.getState().addItem(sampleItem);
 
-      useCartStore.getState().updateQuantity("v1", -1);
+      useCartStore.getState().updateQuantity("v1", "RETAIL", -1);
 
       expect(useCartStore.getState().items).toHaveLength(0);
     });
@@ -204,6 +204,65 @@ describe("useCartStore", () => {
       expect(useCartStore.getState().isOpen).toBe(true);
       useCartStore.getState().toggleCart();
       expect(useCartStore.getState().isOpen).toBe(false);
+    });
+  });
+
+  describe("line identity by variantId + type", () => {
+    beforeEach(() => {
+      useCartStore.setState({ items: [] });
+    });
+
+    const base = {
+      variantId: "v1",
+      productId: "p1",
+      productName: "Ron Sureño",
+      productSlug: "ron-sureno",
+      variantLabel: "750ml",
+      imageUrl: null,
+    };
+
+    it("keeps RETAIL and WHOLESALE lines of the same variant separate", () => {
+      useCartStore.getState().addItem({ ...base, unitPrice: 100, type: "RETAIL", quantity: 2 });
+      useCartStore.getState().addItem({ ...base, unitPrice: 80, type: "WHOLESALE", quantity: 12 });
+
+      const items = useCartStore.getState().items;
+      expect(items).toHaveLength(2);
+      expect(items.find((i) => i.type === "RETAIL")?.quantity).toBe(2);
+      expect(items.find((i) => i.type === "WHOLESALE")?.quantity).toBe(12);
+    });
+
+    it("merges quantities only for the same variant AND type", () => {
+      useCartStore.getState().addItem({ ...base, unitPrice: 80, type: "WHOLESALE", quantity: 12 });
+      useCartStore.getState().addItem({ ...base, unitPrice: 80, type: "WHOLESALE", quantity: 12 });
+
+      const items = useCartStore.getState().items;
+      expect(items).toHaveLength(1);
+      expect(items[0].quantity).toBe(24);
+    });
+
+    it("removes only the line matching variantId + type", () => {
+      useCartStore.getState().addItem({ ...base, unitPrice: 100, type: "RETAIL", quantity: 1 });
+      useCartStore.getState().addItem({ ...base, unitPrice: 80, type: "WHOLESALE", quantity: 12 });
+
+      useCartStore.getState().removeItem("v1", "RETAIL");
+
+      const items = useCartStore.getState().items;
+      expect(items).toHaveLength(1);
+      expect(items[0].type).toBe("WHOLESALE");
+    });
+
+    it("updates quantity only on the matching line", () => {
+      useCartStore.getState().addItem({ ...base, unitPrice: 100, type: "RETAIL", quantity: 1 });
+      useCartStore.getState().addItem({ ...base, unitPrice: 80, type: "WHOLESALE", quantity: 12 });
+
+      useCartStore.getState().updateQuantity("v1", "WHOLESALE", 24);
+
+      expect(
+        useCartStore.getState().items.find((i) => i.type === "WHOLESALE")?.quantity
+      ).toBe(24);
+      expect(
+        useCartStore.getState().items.find((i) => i.type === "RETAIL")?.quantity
+      ).toBe(1);
     });
   });
 
