@@ -1,6 +1,22 @@
 import type { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
+import { EB_Garamond, Hanken_Grotesk } from "next/font/google";
 import "./globals.css";
+
+const garamond = EB_Garamond({
+  subsets: ["latin"],
+  style: ["normal", "italic"],
+  weight: ["400", "500", "600"],
+  variable: "--font-garamond",
+  display: "swap",
+});
+
+const hanken = Hanken_Grotesk({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-hanken",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: {
@@ -24,19 +40,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" suppressHydrationWarning className="h-full">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Hanken+Grotesk:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
-      </head>
+    <html lang="es" suppressHydrationWarning className={`h-full ${garamond.variable} ${hanken.variable}`}>
       <body className="min-h-full flex flex-col bg-background text-on-surface font-body antialiased">
         <ThemeProvider
           attribute="class"
