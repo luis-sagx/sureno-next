@@ -56,6 +56,17 @@ async function getOrderDetail(orderId: string) {
   };
 }
 
+const paymentMethodLabels: Record<string, string> = {
+  STRIPE: "Tarjeta (Stripe)",
+  CONTRAENTREGA: "Pago contra entrega",
+};
+
+const paymentStatusLabels: Record<string, string> = {
+  PENDING: "Pago pendiente",
+  PAID: "Pagado",
+  FAILED: "Pago fallido",
+};
+
 export default async function OrderDetailPage({ params }: OrderDetailPageProps) {
   const { id } = await params;
   const order = await getOrderDetail(id);
@@ -192,11 +203,24 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
               <div>
                 <span className="text-on-surface-variant">Método:</span>
                 <p className="text-on-surface font-medium">
-                  {order.paymentMethod === "DIRECT_PAYMENT"
-                    ? "Pago Directo"
-                    : "Cotización Mayorista"}
+                  {paymentMethodLabels[order.paymentMethod] ?? order.paymentMethod}
                 </p>
               </div>
+              {order.paymentStatus && (
+                <div>
+                  <span className="text-on-surface-variant">Estado del pago:</span>
+                  <p
+                    className={cn(
+                      "font-medium mt-0.5",
+                      order.paymentStatus === "PAID" && "text-green-600 dark:text-green-400",
+                      order.paymentStatus === "PENDING" && "text-amber-600 dark:text-amber-400",
+                      order.paymentStatus === "FAILED" && "text-red-600 dark:text-red-400"
+                    )}
+                  >
+                    {paymentStatusLabels[order.paymentStatus] ?? order.paymentStatus}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -357,7 +357,7 @@ describe("order actions", () => {
     it("rejects unknown payment methods", async () => {
       const { createOrder } = await import("./order");
       const result = await createOrder(
-        buildFormData("DIRECT_PAYMENT", [retailItem])
+        buildFormData("UNKNOWN_METHOD", [retailItem])
       );
       expect(result.success).toBe(false);
     });
