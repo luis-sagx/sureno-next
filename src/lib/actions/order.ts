@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 
 const CartItemSchema = z.object({
@@ -153,5 +154,26 @@ export async function getOrder(orderId: string) {
       ...item,
       unitPrice: Number(item.unitPrice),
     })),
+  };
+}
+
+export interface SubmitOrderState {
+  error: string | null;
+}
+
+export async function submitOrder(
+  _prev: SubmitOrderState,
+  formData: FormData
+): Promise<SubmitOrderState> {
+  const result = await createOrder(formData);
+
+  if (result.success && result.orderNumber) {
+    redirect(`/checkout/success?order=${result.orderNumber}`);
+  }
+
+  return {
+    error:
+      ("error" in result && result.error) ||
+      "No se pudo procesar el pedido. Intenta de nuevo.",
   };
 }

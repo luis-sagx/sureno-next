@@ -1,3 +1,4 @@
+import { ClearCartOnSuccess } from "@/components/checkout/ClearCartOnSuccess";
 import { Button } from "@/components/ui/Button";
 import { CheckCircle } from "lucide-react";
 import Link from "next/link";
@@ -12,6 +13,7 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
 
   return (
     <div className="mx-auto max-w-[1280px] px-4 py-20">
+      <ClearCartOnSuccess />
       <div className="max-w-md mx-auto text-center space-y-6">
         {/* Icon */}
         <div className="flex justify-center">
