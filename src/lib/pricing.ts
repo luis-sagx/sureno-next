@@ -1,6 +1,6 @@
 import type { Variant, WholesaleTier } from "@prisma/client";
 
-type VariantWithTiers = Variant & { wholesaleTiers: WholesaleTier[] };
+export type VariantWithTiers = Variant & { wholesaleTiers: WholesaleTier[] };
 
 export function getBestWholesalePrice(
   variant: VariantWithTiers,

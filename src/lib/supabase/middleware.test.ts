@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import type { NextRequest } from "next/server";
 
 // Mock next/server
 const mockNextResponse = {
@@ -25,7 +26,14 @@ vi.mock("@supabase/ssr", () => ({
 }));
 
 describe("middleware.ts — updateSession", () => {
-  let mockRequest: any;
+  let mockRequest: {
+    cookies: {
+      getAll: ReturnType<typeof vi.fn>;
+      set: ReturnType<typeof vi.fn>;
+    };
+    nextUrl: URL;
+    url: string;
+  };
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -50,7 +58,7 @@ describe("middleware.ts — updateSession", () => {
     mockGetUser.mockResolvedValue({ data: { user: null } });
 
     const { updateSession } = await import("./middleware");
-    const result = await updateSession(mockRequest);
+    const result = await updateSession(mockRequest as unknown as NextRequest);
 
     expect(result).toBeDefined();
     expect(mockCreateServerClient).toHaveBeenCalled();
@@ -62,7 +70,7 @@ describe("middleware.ts — updateSession", () => {
     mockRequest.nextUrl = new URL("http://localhost:3000/admin/orders");
 
     const { updateSession } = await import("./middleware");
-    const result = await updateSession(mockRequest);
+    await updateSession(mockRequest as unknown as NextRequest);
 
     expect(mockNextResponse.redirect).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -78,7 +86,7 @@ describe("middleware.ts — updateSession", () => {
     mockRequest.nextUrl = new URL("http://localhost:3000/admin/orders");
 
     const { updateSession } = await import("./middleware");
-    const result = await updateSession(mockRequest);
+    const result = await updateSession(mockRequest as unknown as NextRequest);
 
     expect(result).toBeDefined();
     expect(mockNextResponse.redirect).not.toHaveBeenCalled();
@@ -87,10 +95,8 @@ describe("middleware.ts — updateSession", () => {
   it("sets cookies from supabase response", async () => {
     mockGetUser.mockResolvedValue({ data: { user: null } });
 
-    let capturedCookies: any[] = [];
     mockCreateServerClient.mockImplementation(
-      // @ts-ignore
-      (_url: string, _key: string, opts: any) => {
+      (opts: { cookies: { setAll: (cookies: Array<{ name: string; value: string; options: { path: string } }>) => void } }) => {
         // Simulate supabase calling setAll with cookies
         opts.cookies.setAll([
           { name: "sb-token", value: "abc", options: { path: "/" } },
@@ -105,7 +111,7 @@ describe("middleware.ts — updateSession", () => {
     });
 
     const { updateSession } = await import("./middleware");
-    await updateSession(mockRequest);
+    await updateSession(mockRequest as unknown as NextRequest);
 
     // Should have called cookies.set on request for each cookie
     expect(mockRequest.cookies.set).toHaveBeenCalledWith("sb-token", "abc");

@@ -9,6 +9,7 @@ import type { Prisma as PrismaClient } from "@prisma/client";
 // ─── Schemas ───────────────────────────────────────────────
 
 const OrderStatusSchema = z.enum(["PENDING", "SHIPPED", "DELIVERED", "CANCELLED"]);
+type OrderStatus = z.infer<typeof OrderStatusSchema>;
 
 const UpdateOrderStatusSchema = z.object({
   orderId: z.string().min(1),
@@ -81,20 +82,21 @@ export async function getOrderList(filters: GetOrderListFilters = {}) {
   const where: PrismaClient.OrderWhereInput = {};
 
   if (status && status !== "Todos") {
-    where.status = status as any;
+    where.status = status as OrderStatus;
   }
 
   if (dateFrom || dateTo) {
-    where.createdAt = {};
+    const dateFilter: PrismaClient.DateTimeFilter = {};
     if (dateFrom) {
-      (where.createdAt as any).gte = new Date(dateFrom);
+      dateFilter.gte = new Date(dateFrom);
     }
     if (dateTo) {
       // Include the full day
       const toDate = new Date(dateTo);
       toDate.setHours(23, 59, 59, 999);
-      (where.createdAt as any).lte = toDate;
+      dateFilter.lte = toDate;
     }
+    where.createdAt = dateFilter;
   }
 
   const [orders, total] = await Promise.all([
@@ -132,15 +134,15 @@ export async function updateOrderStatus(
   status: string
 ): Promise<UpdateOrderResult> {
   try {
-    const parsed = OrderStatusSchema.safeParse(status);
+    const parsed = UpdateOrderStatusSchema.safeParse({ orderId, status });
 
     if (!parsed.success) {
       return { success: false, error: "Estado de orden no válido" };
     }
 
     await prisma.order.update({
-      where: { id: orderId },
-      data: { status: parsed.data },
+      where: { id: parsed.data.orderId },
+      data: { status: parsed.data.status },
     });
 
     revalidatePath("/admin/orders");
@@ -185,7 +187,7 @@ export async function updateProduct(
       return { success: false, error: "Datos de producto no válidos" };
     }
 
-    const updateData: any = { ...parsed.data };
+    const updateData = { ...parsed.data } as PrismaClient.ProductUpdateInput;
     if (updateData.retailPrice !== undefined) {
       updateData.retailPrice = updateData.retailPrice;
     }

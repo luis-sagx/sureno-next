@@ -1,8 +1,10 @@
 import { describe, it, expect } from "vitest";
+import { Prisma } from "@prisma/client";
 import {
   getBestWholesalePrice,
   formatPrice,
   getRetailTotal,
+  type VariantWithTiers,
 } from "./pricing";
 
 // Helper to create a mock Decimal-like object
@@ -12,7 +14,7 @@ function dec(value: number) {
     valueOf: () => value,
     toString: () => String(value),
     toNumber: () => value,
-  } as any;
+  } as unknown as Prisma.Decimal;
 }
 
 function mockVariant(overrides: {
@@ -31,7 +33,7 @@ function mockVariant(overrides: {
     stock: 10,
     minOrder: 1,
     wholesaleTiers: overrides.wholesaleTiers ?? [],
-  } as any;
+  } as unknown as VariantWithTiers;
 }
 
 describe("getBestWholesalePrice", () => {

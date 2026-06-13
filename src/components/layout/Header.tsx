@@ -3,7 +3,6 @@
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { CartIcon } from "@/components/cart/CartIcon";
 import { CartDrawer } from "@/components/cart/CartDrawer";
-import { cn } from "@/lib/utils";
 import {
   CircleUser,
   Menu,

@@ -192,7 +192,7 @@ describe("admin actions", () => {
 
     it("returns error for invalid status", async () => {
       const { updateOrderStatus } = await import("./admin");
-      const result = await updateOrderStatus("order-1", "INVALID" as any);
+      const result = await updateOrderStatus("order-1", "INVALID" as unknown as string);
 
       expect(result.success).toBe(false);
       expect(result.error).toBeDefined();
