@@ -86,25 +86,25 @@
    From DESIGN.md — Heritage Light: Golden Amber + Deep Navy
    ============================================================ */
 .light {
-  --theme-primary: #7b580e;
+  --theme-primary: #6f4b16;
   --theme-on-primary: #ffffff;
-  --theme-secondary: #565e74;
-  --theme-on-secondary: #ffffff;
-  --theme-tertiary: #735c00;
+  --theme-secondary: #b8842f;
+  --theme-on-secondary: #211507;
+  --theme-tertiary: #8d6320;
   --theme-on-tertiary: #ffffff;
 
-  --theme-surface: #f8f9fa;
-  --theme-surface-container: #edeeef;
-  --theme-surface-container-high: #e7e8e9;
-  --theme-surface-container-highest: #e1e3e4;
+  --theme-surface: #fbf7ef;
+  --theme-surface-container: #f2eadb;
+  --theme-surface-container-high: #ebdfca;
+  --theme-surface-container-highest: #e1d0b3;
 
-  --theme-on-surface: #191c1d;
-  --theme-on-surface-variant: #4e4538;
+  --theme-on-surface: #23180d;
+  --theme-on-surface-variant: #5f4730;
 
-  --theme-background: #f8f9fa;
+  --theme-background: #f9f3e8;
 
-  --theme-outline: #807666;
-  --theme-outline-variant: #d2c5b3;
+  --theme-outline: #8a6b40;
+  --theme-outline-variant: #cfb58a;
 
   --theme-error: #ba1a1a;
   --theme-on-error: #ffffff;
