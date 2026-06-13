@@ -23,6 +23,17 @@ enum OrderType {
   WHOLESALE
 }
 
+enum PaymentMethod {
+  STRIPE
+  CONTRAENTREGA
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+}
+
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
@@ -138,7 +149,10 @@ model Order {
   street            String
   city              String
   zipCode           String      @map("zip_code")
-  paymentMethod     String      @map("payment_method") // DIRECT_PAYMENT or WHOLESALE_QUOTE
+  paymentMethod     PaymentMethod @map("payment_method")
+  paymentStatus     PaymentStatus @default(PENDING) @map("payment_status")
+  stripeSessionId   String?       @unique @map("stripe_session_id")
+  paidAt            DateTime?     @map("paid_at")
   retailSubtotal    Decimal     @map("retail_subtotal") @db.Decimal(10, 2)
   wholesaleSubtotal Decimal?    @map("wholesale_subtotal") @db.Decimal(10, 2)
   shippingCost      Decimal     @default(0) @map("shipping_cost") @db.Decimal(10, 2)
