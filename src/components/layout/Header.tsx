@@ -6,25 +6,23 @@ import { CartDrawer } from "@/components/cart/CartDrawer";
 import {
   CircleUser,
   Menu,
-  Search,
   X,
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
 const navLinks = [
-  { label: "Mayoreo", href: "/catalog?view=wholesale" },
-  { label: "Retail", href: "/catalog?view=retail" },
-  { label: "Marcas", href: "/catalog" },
-  { label: "Ofertas", href: "/catalog?category=ofertas-relampago" },
-  { label: "Quiénes Somos", href: "/about" },
+  { label: "Inicio", href: "/" },
+  { label: "Quiénes somos", href: "/about" },
+  { label: "Mayoreo", href: "/mayoreo" },
+  { label: "Minorista", href: "/minorista" },
 ];
 
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 w-full backdrop-blur-md bg-background/80 border-b border-outline-variant">
+    <header className="sticky top-0 z-50 w-full border-b border-outline-variant/70 bg-background/90 backdrop-blur-md">
       <div className="mx-auto max-w-[1280px] px-4 flex items-center justify-between h-16">
         {/* Logo */}
         <Link href="/" className="flex-shrink-0">
@@ -48,14 +46,6 @@ export function Header() {
 
         {/* Actions */}
         <div className="flex items-center gap-1">
-          {/* Search */}
-          <button
-            className="w-9 h-9 flex items-center justify-center rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors"
-            aria-label="Buscar"
-          >
-            <Search className="w-5 h-5" />
-          </button>
-
           {/* Cart */}
           <CartIcon />
 

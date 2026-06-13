@@ -9,6 +9,7 @@ import { useCartStore } from "@/store/cart";
 import { cn } from "@/lib/utils";
 import type { Product, Variant, WholesaleTier } from "@prisma/client";
 import { ShoppingCart } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 
 type ProductWithVariants = Product & {
@@ -36,6 +37,7 @@ export function ProductCard({
   className,
 }: ProductCardProps) {
   const [quantity, setQuantity] = useState(1);
+  const [imageFailed, setImageFailed] = useState(false);
   const addItem = useCartStore((s) => s.addItem);
 
   const retailPrice = Number(product.retailPrice);
@@ -43,6 +45,11 @@ export function ProductCard({
   const bestWholesale = firstVariant
     ? getBestWholesalePrice(firstVariant, quantity)
     : null;
+
+  const variantImageUrl =
+    viewMode === "wholesale"
+      ? firstVariant?.wholesaleImageUrl || firstVariant?.retailImageUrl || product.imageUrl || null
+      : firstVariant?.retailImageUrl || firstVariant?.wholesaleImageUrl || product.imageUrl || null;
 
   const handleAddToCart = () => {
     if (!firstVariant) return;
@@ -53,12 +60,9 @@ export function ProductCard({
       productName: product.name,
       productSlug: product.slug,
       variantLabel: firstVariant.label,
-      unitPrice:
-        viewMode === "wholesale" && bestWholesale
-          ? bestWholesale
-          : retailPrice,
+      unitPrice: viewMode === "wholesale" && bestWholesale ? bestWholesale : retailPrice,
       type: viewMode === "wholesale" ? "WHOLESALE" : "RETAIL",
-      imageUrl: product.imageUrl || null,
+      imageUrl: variantImageUrl,
       quantity,
     });
   };
@@ -67,15 +71,23 @@ export function ProductCard({
     <div
       className={cn(
         "group relative flex flex-col rounded-lg bg-surface-container hover:bg-surface-container-high transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/20 hover:border-secondary/40 border border-transparent overflow-hidden",
-        className
+        className,
       )}
     >
-      {/* Image placeholder */}
       <div className="relative aspect-square bg-surface-container-highest flex items-center justify-center overflow-hidden transition-transform duration-500 group-hover:scale-[1.04]">
-        <span className="font-headline text-4xl text-on-surface-variant/20 italic select-none">
-          {product.name.charAt(0)}
-        </span>
-        {/* Badge */}
+        {variantImageUrl && !imageFailed ? (
+          <img
+            src={variantImageUrl}
+            alt={product.name}
+            className="object-cover w-full h-full"
+            onError={() => setImageFailed(true)}
+          />
+        ) : (
+          <span className="font-headline text-4xl text-on-surface-variant/20 italic select-none">
+            {product.name.charAt(0)}
+          </span>
+        )}
+
         {product.badge && (
           <div className="absolute top-2 right-2">
             <Badge
@@ -86,19 +98,17 @@ export function ProductCard({
         )}
       </div>
 
-      {/* Content */}
       <div className="flex flex-col flex-1 p-4 space-y-3">
-        {/* Category label */}
         <span className="text-xs text-on-surface-variant uppercase tracking-wider">
           {product.category?.name || product.type}
         </span>
 
-        {/* Product name */}
-        <h3 className="font-headline text-lg text-on-surface leading-tight line-clamp-2">
-          {product.name}
-        </h3>
+        <Link href={`/product/${product.slug}`} className="group/title">
+          <h3 className="font-headline text-lg leading-tight text-on-surface line-clamp-2 transition-colors group-hover/title:text-secondary">
+            {product.name}
+          </h3>
+        </Link>
 
-        {/* Price */}
         {viewMode === "retail" ? (
           <PriceDisplay retailPrice={retailPrice} size="md" />
         ) : (
@@ -117,23 +127,25 @@ export function ProductCard({
           </div>
         )}
 
-        {/* Quantity + Add to cart */}
-        <div className="flex items-center justify-between pt-2 mt-auto">
-          <QuantitySelector
-            value={quantity}
-            onChange={setQuantity}
-            min={1}
-            max={99}
-          />
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={handleAddToCart}
-            aria-label="Agregar al carrito"
-          >
-            <ShoppingCart className="w-4 h-4 mr-1.5" />
-            Agregar
-          </Button>
+        <div className="mt-auto flex items-center justify-between gap-3 pt-2">
+          <QuantitySelector value={quantity} onChange={setQuantity} min={1} max={99} />
+          <div className="flex items-center gap-2">
+            <Link
+              href={`/product/${product.slug}`}
+              className="text-sm font-medium text-secondary underline-offset-4 hover:underline"
+            >
+              Ver detalle
+            </Link>
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={handleAddToCart}
+              aria-label="Agregar al carrito"
+            >
+              <ShoppingCart className="mr-1.5 h-4 w-4" />
+              Agregar
+            </Button>
+          </div>
         </div>
       </div>
     </div>

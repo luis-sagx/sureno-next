@@ -27,6 +27,8 @@ interface PurchasePanelProps {
   minOrder?: number;
   stockStatus?: string;
   className?: string;
+  mode?: "retail" | "wholesale";
+  onModeChange?: (mode: "retail" | "wholesale") => void;
 }
 
 const stockConfig: Record<string, { label: string; dot: string; text: string }> = {
@@ -54,10 +56,15 @@ export function PurchasePanel({
   minOrder = 1,
   stockStatus = "HIGH",
   className,
+  mode: controlledMode,
+  onModeChange,
 }: PurchasePanelProps) {
-  const [mode, setMode] = useState<"retail" | "wholesale">("retail");
+  const [internalMode, setInternalMode] = useState<"retail" | "wholesale">("retail");
   const [retailQty, setRetailQty] = useState(Math.max(minOrder, 1));
   const [boxes, setBoxes] = useState(1);
+
+  const mode = controlledMode ?? internalMode;
+  const setMode = onModeChange ?? setInternalMode;
 
   const addItem = useCartStore((s) => s.addItem);
   const openCart = useCartStore((s) => s.openCart);
@@ -111,16 +118,21 @@ export function PurchasePanel({
       </div>
 
       {isWholesale && (
-        <div className="flex items-center gap-2 text-sm text-on-surface-variant">
-          <Package className="w-4 h-4 text-secondary" />
-          <span>
-            {units} unidades · {formatPrice(unitPrice)} c/u
-            {savings > 0 && (
-              <span className="ml-2 font-semibold text-green-600 dark:text-green-400">
-                AHORRAS {savings}%
-              </span>
-            )}
-          </span>
+        <div className="rounded-lg border border-secondary/30 bg-secondary/10 px-4 py-3 text-sm text-on-surface">
+          <div className="flex items-center gap-2 text-sm text-on-surface-variant">
+            <Package className="h-4 w-4 text-secondary" />
+            <span>
+              {boxes} {boxes === 1 ? "caja" : "cajas"} · {units} unidades · {formatPrice(unitPrice)} c/u
+              {savings > 0 && (
+                <span className="ml-2 font-semibold text-green-600 dark:text-green-400">
+                  AHORRAS {savings}%
+                </span>
+              )}
+            </span>
+          </div>
+          <p className="mt-2 text-xs text-on-surface-variant">
+            En mayoreo, cada incremento agrega una caja completa de 12 unidades.
+          </p>
         </div>
       )}
 

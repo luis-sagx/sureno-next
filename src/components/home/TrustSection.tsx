@@ -1,21 +1,21 @@
 import { Reveal } from "@/components/motion/Reveal";
-import { ShieldCheck, TrendingUp, Truck } from "lucide-react";
+import { Factory, ShieldCheck, Truck } from "lucide-react";
 
 const trustItems = [
   {
     icon: ShieldCheck,
-    title: "Confiabilidad",
-    description: "Garantía de autenticidad en cada botella",
+    title: "Control y calidad",
+    description: "Procesos cuidados y autenticidad en cada presentación que sale de Sureño.",
   },
   {
-    icon: TrendingUp,
-    title: "Precio Competitivo",
-    description: "Los mejores precios del mercado mayorista",
+    icon: Factory,
+    title: "Historia local",
+    description: "Desde 1998, la marca crece en Quito manteniendo una raíz artesanal y cercana.",
   },
   {
     icon: Truck,
-    title: "Acceso Directo",
-    description: "Logística propia con entrega en 24-48 horas",
+    title: "Compra clara",
+    description: "Una misma casa licorera con lectura distinta para compra por unidad o por cajas de 12.",
   },
 ];
 

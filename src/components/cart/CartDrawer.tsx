@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/Button";
 import { QuantitySelector } from "@/components/ui/QuantitySelector";
-import { formatPrice } from "@/lib/pricing";
+import { CAJA_SIZE, formatPrice } from "@/lib/pricing";
 import { useCartStore } from "@/store/cart";
 import { cn } from "@/lib/utils";
 import { ShoppingBag, X } from "lucide-react";
@@ -24,7 +24,7 @@ export function CartDrawer() {
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm transition-opacity"
+        className="fixed inset-0 z-50 bg-[rgba(20,14,10,0.72)] backdrop-blur-sm transition-opacity"
         onClick={closeCart}
         data-testid="cart-backdrop"
       />
@@ -32,9 +32,9 @@ export function CartDrawer() {
       {/* Drawer */}
       <div
         className={cn(
-          "fixed top-0 right-0 z-50 h-full w-96 max-w-[100vw] bg-background shadow-2xl flex flex-col",
-          "animate-in slide-in-from-right"
-        )}
+            "fixed top-0 right-0 z-50 flex h-full w-96 max-w-[100vw] flex-col border-l border-outline-variant/60 bg-surface shadow-2xl",
+            "animate-in slide-in-from-right"
+          )}
         role="dialog"
         aria-label="Carrito de compras"
       >
@@ -102,8 +102,14 @@ export function CartDrawer() {
 
                     <div className="flex items-center justify-between mt-2">
                       <QuantitySelector
-                        value={item.quantity}
-                        onChange={(qty) => updateQuantity(item.variantId, item.type, qty)}
+                        value={item.type === "WHOLESALE" ? Math.max(1, item.quantity / CAJA_SIZE) : item.quantity}
+                        onChange={(qty) =>
+                          updateQuantity(
+                            item.variantId,
+                            item.type,
+                            item.type === "WHOLESALE" ? qty * CAJA_SIZE : qty,
+                          )
+                        }
                         min={0}
                         max={99}
                       />
@@ -112,24 +118,31 @@ export function CartDrawer() {
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between mt-1">
-                      <span
-                        className={cn(
-                          "text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded",
-                          item.type === "RETAIL"
-                            ? "bg-secondary/20 text-secondary"
-                            : "bg-amber-100 text-amber-900 dark:bg-amber-900/30 dark:text-amber-300"
-                        )}
-                      >
-                        {item.type === "RETAIL" ? "Retail" : "Mayoreo"}
-                      </span>
-                      <button
-                        onClick={() => removeItem(item.variantId, item.type)}
-                        className="text-xs text-on-surface-variant hover:text-error transition-colors"
-                        aria-label={`Eliminar ${item.productName}`}
-                      >
-                        Eliminar
-                      </button>
+                    <div className="mt-1 space-y-1">
+                      {item.type === "WHOLESALE" && (
+                        <p className="text-[11px] text-on-surface-variant">
+                          {item.quantity / CAJA_SIZE} caja(s) · {item.quantity} unidades
+                        </p>
+                      )}
+                      <div className="flex items-center justify-between">
+                        <span
+                          className={cn(
+                            "rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase",
+                            item.type === "RETAIL"
+                              ? "bg-secondary/20 text-secondary"
+                              : "bg-amber-100 text-amber-900 dark:bg-amber-900/30 dark:text-amber-300"
+                          )}
+                        >
+                          {item.type === "RETAIL" ? "Retail" : "Mayoreo"}
+                        </span>
+                        <button
+                          onClick={() => removeItem(item.variantId, item.type)}
+                          className="text-xs text-on-surface-variant transition-colors hover:text-error"
+                          aria-label={`Eliminar ${item.productName}`}
+                        >
+                          Eliminar
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -149,18 +162,21 @@ export function CartDrawer() {
                 )}
                 {wholesaleSubtotal > 0 && (
                   <div className="flex justify-between text-on-surface-variant">
-                    <span>Subtotal Mayoreo</span>
+                    <span>Subtotal Mayoreo (cajas de 12)</span>
                     <span className="tabular-nums">
                       {formatPrice(wholesaleSubtotal)}
                     </span>
                   </div>
                 )}
                 <div className="flex justify-between text-on-surface font-semibold pt-1">
-                  <span>Total ({totalItems} artículos)</span>
+                  <span>Total ({totalItems} unidades)</span>
                   <span className="tabular-nums text-lg">
                     {formatPrice(retailSubtotal + wholesaleSubtotal)}
                   </span>
                 </div>
+                <p className="text-xs text-on-surface-variant">
+                  Entregas coordinadas en Ecuador según ciudad y disponibilidad.
+                </p>
               </div>
 
               <Link href="/checkout" onClick={closeCart} className="block">

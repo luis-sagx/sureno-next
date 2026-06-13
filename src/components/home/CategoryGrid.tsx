@@ -47,17 +47,6 @@ export async function CategoryGrid() {
             </Link>
           </Reveal>
         ))}
-
-        {/* Pedidos Especiales callout */}
-        <Reveal delay={categories.length * 0.06}>
-          <Link href="/catalog?special=true">
-            <CategoryCard
-              icon={Package}
-              label="Pedidos Especiales"
-              className="h-full border-secondary/30 bg-secondary/5 hover:bg-secondary/10"
-            />
-          </Link>
-        </Reveal>
       </div>
     </section>
   );

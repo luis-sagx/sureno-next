@@ -1,70 +1,118 @@
-import { render, screen, fireEvent } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
-import { ProductCard } from "./ProductCard";
-import type { ComponentProps } from "react";
+import { beforeEach, describe, expect, test, vi } from "vitest";
+import { render, screen } from "@testing-library/react";
+import { ProductCard } from "@/components/product/ProductCard";
+import type { Product, Variant, WholesaleTier } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
-type Product = ComponentProps<typeof ProductCard>["product"];
+vi.mock("@/store/cart", () => {
+  return {
+    useCartStore: () => ({ addItem: vi.fn(), openCart: vi.fn() }),
+  };
+});
 
-const mockProduct: Product = {
-  id: "p1",
-  slug: "ron-sureno-anejo",
-  name: "Ron Sureño Añejo",
-  type: "LIQUOR",
-  retailPrice: 450,
-  imageUrl: null,
-  badge: "BEST_SELLER",
+vi.mock("@/lib/pricing", () => {
+  return {
+    formatPrice: (price: number) => `$${price.toFixed(2)}`,
+    getBestWholesalePrice: () => 45,
+  };
+});
+
+const mockProduct: Product & {
+  category?: { name: string } | null;
+  brand?: { name: string } | null;
+  variants: (Variant & { wholesaleTiers: WholesaleTier[] })[];
+} = {
+  id: "test-product-1",
+  slug: "test-product",
+  name: "Test Product",
+  description: "Test description",
+  origin: "Test Origin",
+  volumeMl: 750,
+  abv: null,
+  type: "SPIRIT",
+  imageUrl: "https://example.com/product.jpg",
+  badge: null,
+  retailPrice: new Prisma.Decimal(50),
+  categoryId: "cat-1",
+  brandId: null,
+  aroma: null,
+  palate: null,
+  finish: null,
   stockStatus: "HIGH",
-  category: { name: "Ron" },
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  category: { name: "Test Category" },
+  brand: null,
   variants: [
     {
-      id: "v1",
+      id: "variant-1",
+      productId: "test-product-1",
       label: "750ml",
-      price: 450,
-      stock: 50,
-      productId: "p1",
-      wholesaleTiers: [
-        { id: "wt1", variantId: "v1", minQty: 1, maxQty: null, pricePerUnit: 380 },
-      ],
+      price: new Prisma.Decimal(50),
+      stock: 10,
+      minOrder: 1,
+      retailImageUrl: "https://example.com/variant-retail.jpg",
+      wholesaleImageUrl: "https://example.com/variant-wholesale.jpg",
+      wholesaleTiers: [],
     },
   ],
-} as unknown as Product;
-
-// Mock the cart store
-vi.mock("@/store/cart", () => ({
-  useCartStore: vi.fn((selector?: (s: unknown) => unknown) => {
-    const store = {
-      addItem: vi.fn(),
-      items: [],
-    };
-    return selector ? selector(store) : store;
-  }),
-}));
+};
 
 describe("ProductCard", () => {
-  it("renders the product name", () => {
-    render(<ProductCard product={mockProduct} />);
-    expect(screen.getByText("Ron Sureño Añejo")).toBeInTheDocument();
+  beforeEach(() => {
+    vi.clearAllMocks();
   });
 
-  it("renders the category label", () => {
+  test("renders product name and category", () => {
     render(<ProductCard product={mockProduct} />);
-    expect(screen.getByText("Ron")).toBeInTheDocument();
+
+    expect(screen.getByText("Test Product")).toBeInTheDocument();
+    expect(screen.getByText("Test Category")).toBeInTheDocument();
   });
 
-  it("renders the add-to-cart button", () => {
+  test("displays retail variant image when available", () => {
     render(<ProductCard product={mockProduct} />);
-    expect(screen.getByRole("button", { name: /agregar al carrito/i })).toBeInTheDocument();
+
+    const image = screen.getByAltText("Test Product");
+    expect(image).toBeInTheDocument();
+    expect(image).toHaveAttribute("src", "https://example.com/variant-retail.jpg");
   });
 
-  it("displays retail price by default", () => {
-    render(<ProductCard product={mockProduct} />);
-    expect(screen.getByText(/\$450/)).toBeInTheDocument();
+  test("uses fallback product image when variant image not available", () => {
+    const productNoVariantImage = {
+      ...mockProduct,
+      variants: [
+        {
+          ...mockProduct.variants[0],
+          retailImageUrl: null,
+          wholesaleImageUrl: null,
+        },
+      ],
+    };
+
+    render(<ProductCard product={productNoVariantImage} />);
+
+    const image = screen.getByAltText("Test Product");
+    expect(image).toBeInTheDocument();
+    expect(image).toHaveAttribute("src", "https://example.com/product.jpg");
   });
 
-  it("displays wholesale pricing when viewMode is wholesale", () => {
-    render(<ProductCard product={mockProduct} viewMode="wholesale" />);
-    // Should show AHORRAS savings indicator when wholesale tier exists
-    expect(screen.getByText(/ahorras/i)).toBeInTheDocument();
-    expect(screen.getByText(/\$380/)).toBeInTheDocument();
+  test("uses wholesale variant image in wholesale mode", () => {
+    const productWithVariantImages = {
+      ...mockProduct,
+      variants: [
+        {
+          ...mockProduct.variants[0],
+          retailImageUrl: "https://example.com/variant-retail.jpg",
+          wholesaleImageUrl: "https://example.com/variant-wholesale.jpg",
+        },
+      ],
+    };
+
+    render(<ProductCard product={productWithVariantImages} viewMode="wholesale" />);
+
+    const image = screen.getByAltText("Test Product");
+    expect(image).toBeInTheDocument();
+    expect(image).toHaveAttribute("src", "https://example.com/variant-wholesale.jpg");
   });
 });

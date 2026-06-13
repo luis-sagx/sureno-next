@@ -1,46 +1,33 @@
 "use client";
 
+import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
+import { Button } from "@/components/ui/Button";
 import { useSyncExternalStore } from "react";
-import { Sun, Moon } from "lucide-react";
 
-const emptySubscribe = () => () => {};
+const subscribe = () => () => {};
 
 export function ThemeToggle() {
+  const mounted = useSyncExternalStore(subscribe, () => true, () => false);
   const { theme, setTheme } = useTheme();
 
-  const mounted = useSyncExternalStore(
-    emptySubscribe,
-    () => true,
-    () => false
-  );
-
   if (!mounted) {
-    return (
-      <button
-        className="w-9 h-9 flex items-center justify-center rounded-md text-on-surface-variant"
-        aria-label="Cambiar tema"
-      >
-        <Sun className="w-5 h-5" />
-      </button>
-    );
-  }
-
-  function toggleTheme() {
-    setTheme(theme === "dark" ? "light" : "dark");
+    return null;
   }
 
   return (
-    <button
-      onClick={toggleTheme}
-      className="w-9 h-9 flex items-center justify-center rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors"
-      aria-label={theme === "dark" ? "Cambiar a modo claro" : "Cambiar a modo oscuro"}
+    <Button
+      variant="outline"
+      size="sm"
+      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      aria-label="Toggle theme"
+      className="h-9 w-9 px-0"
     >
       {theme === "dark" ? (
-        <Moon className="w-5 h-5" />
+        <Sun className="h-5 w-5" />
       ) : (
-        <Sun className="w-5 h-5" />
+        <Moon className="h-5 w-5" />
       )}
-    </button>
+    </Button>
   );
 }
