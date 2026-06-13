@@ -12,6 +12,11 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Vendored tooling — not project code:
+    ".agents/**",
+    ".atl/**",
+    ".claude/**",
+    "openspec/**",
   ]),
 ]);
 

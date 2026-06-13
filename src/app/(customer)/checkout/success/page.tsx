@@ -1,17 +1,20 @@
+import { ClearCartOnSuccess } from "@/components/checkout/ClearCartOnSuccess";
 import { Button } from "@/components/ui/Button";
 import { CheckCircle } from "lucide-react";
 import Link from "next/link";
 
 interface SuccessPageProps {
-  searchParams: Promise<{ order?: string }>;
+  searchParams: Promise<{ order?: string; metodo?: string }>;
 }
 
 export default async function SuccessPage({ searchParams }: SuccessPageProps) {
   const params = await searchParams;
   const orderNumber = params.order || "SNO-00000";
+  const isContraentrega = params.metodo === "CONTRAENTREGA";
 
   return (
     <div className="mx-auto max-w-[1280px] px-4 py-20">
+      <ClearCartOnSuccess />
       <div className="max-w-md mx-auto text-center space-y-6">
         {/* Icon */}
         <div className="flex justify-center">
@@ -37,7 +40,9 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
 
         {/* Confirmation message */}
         <p className="text-on-surface-variant">
-          Recibirás un email de confirmación con los detalles de tu pedido.
+          {isContraentrega
+            ? "Pagarás en efectivo al momento de recibir tu pedido. Nuestro equipo te contactará para coordinar la entrega."
+            : "Tu pago fue procesado de forma segura con Stripe. Recibirás un email de confirmación con los detalles de tu pedido."}
         </p>
 
         {/* Action */}

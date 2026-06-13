@@ -85,7 +85,7 @@ describe("admin actions", () => {
           street: "Calle 60",
           city: "Mérida",
           zipCode: "97000",
-          paymentMethod: "DIRECT_PAYMENT",
+          paymentMethod: "STRIPE",
           retailSubtotal: dec(1700),
           wholesaleSubtotal: null,
           shippingCost: dec(1200),
@@ -104,7 +104,7 @@ describe("admin actions", () => {
           street: "Av. Principal",
           city: "Cancún",
           zipCode: "77500",
-          paymentMethod: "WHOLESALE_QUOTE",
+          paymentMethod: "CONTRAENTREGA",
           retailSubtotal: dec(0),
           wholesaleSubtotal: dec(5000),
           shippingCost: dec(1200),
@@ -192,7 +192,7 @@ describe("admin actions", () => {
 
     it("returns error for invalid status", async () => {
       const { updateOrderStatus } = await import("./admin");
-      const result = await updateOrderStatus("order-1", "INVALID" as any);
+      const result = await updateOrderStatus("order-1", "INVALID" as unknown as string);
 
       expect(result.success).toBe(false);
       expect(result.error).toBeDefined();

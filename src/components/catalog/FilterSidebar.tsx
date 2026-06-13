@@ -14,7 +14,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 
 const iconMap: Record<string, LucideIcon> = {
   liquor: GlassWater,

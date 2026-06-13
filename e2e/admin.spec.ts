@@ -14,6 +14,6 @@ test.describe("Admin Pages (Unauthenticated)", () => {
 
   test("login page renders correctly after admin redirect", async ({ page }) => {
     await page.goto("/admin");
-    await expect(page.getByText("Iniciar Sesión")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Iniciar Sesión" })).toBeVisible();
   });
 });

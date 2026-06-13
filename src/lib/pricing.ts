@@ -1,6 +1,9 @@
 import type { Variant, WholesaleTier } from "@prisma/client";
 
-type VariantWithTiers = Variant & { wholesaleTiers: WholesaleTier[] };
+/** Wholesale purchases are made in boxes of 12 units. */
+export const CAJA_SIZE = 12;
+
+export type VariantWithTiers = Variant & { wholesaleTiers: WholesaleTier[] };
 
 export function getBestWholesalePrice(
   variant: VariantWithTiers,

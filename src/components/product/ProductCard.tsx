@@ -66,12 +66,12 @@ export function ProductCard({
   return (
     <div
       className={cn(
-        "group relative flex flex-col rounded-lg bg-surface-container hover:bg-surface-container-high transition-colors overflow-hidden",
+        "group relative flex flex-col rounded-lg bg-surface-container hover:bg-surface-container-high transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/20 hover:border-secondary/40 border border-transparent overflow-hidden",
         className
       )}
     >
       {/* Image placeholder */}
-      <div className="relative aspect-square bg-surface-container-highest flex items-center justify-center overflow-hidden">
+      <div className="relative aspect-square bg-surface-container-highest flex items-center justify-center overflow-hidden transition-transform duration-500 group-hover:scale-[1.04]">
         <span className="font-headline text-4xl text-on-surface-variant/20 italic select-none">
           {product.name.charAt(0)}
         </span>

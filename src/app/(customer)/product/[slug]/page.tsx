@@ -1,6 +1,6 @@
-import { AddToCartSection } from "@/components/product/AddToCartSection";
 import { ImageGallery } from "@/components/product/ImageGallery";
 import { ProductSpecs } from "@/components/product/ProductSpecs";
+import { PurchasePanel } from "@/components/product/PurchasePanel";
 import { TastingNotes } from "@/components/product/TastingNotes";
 import { VolumePricingTable } from "@/components/product/VolumePricingTable";
 import { Badge } from "@/components/ui/Badge";
@@ -131,10 +131,28 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
           {/* Add to cart */}
           <div className="pt-4 border-t border-outline-variant">
-            <AddToCartSection
-              minOrder={mainVariant?.minOrder || 1}
-              stockStatus={product.stockStatus}
-            />
+            {mainVariant ? (
+              <PurchasePanel
+                variantId={mainVariant.id}
+                productId={product.id}
+                productName={product.name}
+                productSlug={product.slug}
+                variantLabel={mainVariant.label}
+                imageUrl={product.imageUrl}
+                retailPrice={retailPrice}
+                tiers={wholesaleTiers.map((t) => ({
+                  minQty: t.minQty,
+                  maxQty: t.maxQty,
+                  pricePerUnit: Number(t.pricePerUnit),
+                }))}
+                minOrder={mainVariant.minOrder}
+                stockStatus={product.stockStatus}
+              />
+            ) : (
+              <p className="text-sm text-on-surface-variant">
+                Producto no disponible actualmente.
+              </p>
+            )}
           </div>
         </div>
       </div>

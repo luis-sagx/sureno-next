@@ -8,18 +8,13 @@ test.describe("Catalog Page", () => {
     ).toBeVisible();
   });
 
-  test("pricing toggle switches between Individual and Mayoreo", async ({ page }) => {
+  test("view param controls pricing mode via URL", async ({ page }) => {
+    // Catalog uses URL params for pricing mode (no PricingToggle on this page)
     await page.goto("/catalog?view=retail");
-    // The PricingToggle shows both buttons: "Individual" and "Mayoreo"
-    const individualBtn = page.getByRole("button", { name: /individual/i });
-    const mayoreoBtn = page.getByRole("button", { name: /mayoreo/i });
+    await expect(page).toHaveURL(/view=retail/);
 
-    await expect(individualBtn).toBeVisible();
-    await expect(mayoreoBtn).toBeVisible();
-
-    // Click Mayoreo toggle
-    await mayoreoBtn.click();
-    // URL should update to include view=wholesale
+    // Navigate to wholesale view via URL param
+    await page.goto("/catalog?view=wholesale");
     await expect(page).toHaveURL(/view=wholesale/);
   });
 

@@ -56,7 +56,7 @@ export function OrderSummary({ className }: OrderSummaryProps) {
                 {formatPrice(item.unitPrice * item.quantity)}
               </span>
               <button
-                onClick={() => removeItem(item.variantId)}
+                onClick={() => removeItem(item.variantId, item.type)}
                 className="text-xs text-on-surface-variant hover:text-error transition-colors"
                 aria-label={`Eliminar ${item.productName}`}
               >
