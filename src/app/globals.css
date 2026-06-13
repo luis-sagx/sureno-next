@@ -1,0 +1,134 @@
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Hanken+Grotesk:wght@400;500;600;700&family=Work+Sans:wght@400;500;600;700&display=swap');
+
+@import "tailwindcss";
+
+/* ============================================================
+   Tailwind v4 Theme — all utility classes are generated from
+   --color-*, --font-*, --radius-* defined here.
+   Values reference CSS variables that switch via :root / .light.
+   ============================================================ */
+
+@theme {
+  /* ── Colors ─────────────────────────────────────────── */
+  --color-primary: var(--theme-primary);
+  --color-on-primary: var(--theme-on-primary);
+  --color-secondary: var(--theme-secondary);
+  --color-on-secondary: var(--theme-on-secondary);
+  --color-tertiary: var(--theme-tertiary);
+  --color-on-tertiary: var(--theme-on-tertiary);
+
+  --color-surface: var(--theme-surface);
+  --color-surface-container: var(--theme-surface-container);
+  --color-surface-container-high: var(--theme-surface-container-high);
+  --color-surface-container-highest: var(--theme-surface-container-highest);
+
+  --color-on-surface: var(--theme-on-surface);
+  --color-on-surface-variant: var(--theme-on-surface-variant);
+
+  --color-background: var(--theme-background);
+
+  --color-outline: var(--theme-outline);
+  --color-outline-variant: var(--theme-outline-variant);
+
+  --color-error: var(--theme-error);
+  --color-on-error: var(--theme-on-error);
+
+  /* ── Typography ─────────────────────────────────────── */
+  --font-headline: var(--theme-font-headline);
+  --font-body: var(--theme-font-body);
+  --font-label: var(--theme-font-label);
+
+  /* ── Radii ──────────────────────────────────────────── */
+  --radius-sm: var(--theme-radius-sm);
+  --radius: var(--theme-radius);
+  --radius-md: var(--theme-radius-md);
+  --radius-lg: var(--theme-radius-lg);
+}
+
+/* ============================================================
+   Dark Theme (default — :root, no class)
+   From DESIGN-dark.md — Matte Black + Dull Gold + Amber
+   ============================================================ */
+:root {
+  --theme-primary: #c7c6c9;
+  --theme-on-primary: #303033;
+  --theme-secondary: #e9c176;
+  --theme-on-secondary: #412d00;
+  --theme-tertiary: #ffb77d;
+  --theme-on-tertiary: #4d2600;
+
+  --theme-surface: #111415;
+  --theme-surface-container: #1d2021;
+  --theme-surface-container-high: #282a2b;
+  --theme-surface-container-highest: #323536;
+
+  --theme-on-surface: #e1e3e4;
+  --theme-on-surface-variant: #c6c6ca;
+
+  --theme-background: #111415;
+
+  --theme-outline: #909094;
+  --theme-outline-variant: #45474a;
+
+  --theme-error: #ffb4ab;
+  --theme-on-error: #690005;
+
+  --theme-font-headline: 'EB Garamond', serif;
+  --theme-font-body: 'Hanken Grotesk', sans-serif;
+  --theme-font-label: 'Hanken Grotesk', sans-serif;
+
+  --theme-radius-sm: 0.125rem;
+  --theme-radius: 0.25rem;
+  --theme-radius-md: 0.375rem;
+  --theme-radius-lg: 0.5rem;
+}
+
+/* ============================================================
+   Light Theme (.light class on <html>)
+   From DESIGN.md — Heritage Light: Golden Amber + Deep Navy
+   ============================================================ */
+.light {
+  --theme-primary: #7b580e;
+  --theme-on-primary: #ffffff;
+  --theme-secondary: #565e74;
+  --theme-on-secondary: #ffffff;
+  --theme-tertiary: #735c00;
+  --theme-on-tertiary: #ffffff;
+
+  --theme-surface: #f8f9fa;
+  --theme-surface-container: #edeeef;
+  --theme-surface-container-high: #e7e8e9;
+  --theme-surface-container-highest: #e1e3e4;
+
+  --theme-on-surface: #191c1d;
+  --theme-on-surface-variant: #4e4538;
+
+  --theme-background: #f8f9fa;
+
+  --theme-outline: #807666;
+  --theme-outline-variant: #d2c5b3;
+
+  --theme-error: #ba1a1a;
+  --theme-on-error: #ffffff;
+
+  --theme-font-headline: 'EB Garamond', serif;
+  --theme-font-body: 'Work Sans', sans-serif;
+  --theme-font-label: 'Work Sans', sans-serif;
+
+  --theme-radius-sm: 0.125rem;
+  --theme-radius: 0.25rem;
+  --theme-radius-md: 0.375rem;
+  --theme-radius-lg: 0.5rem;
+}
+
+/* ============================================================
+   Base Styles
+   ============================================================ */
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-on-surface);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
