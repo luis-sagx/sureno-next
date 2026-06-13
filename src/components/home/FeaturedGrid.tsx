@@ -1,6 +1,7 @@
 "use client";
 
 import { PricingToggle } from "@/components/catalog/PricingToggle";
+import { Reveal } from "@/components/motion/Reveal";
 import { ProductCard } from "@/components/product/ProductCard";
 import { useState, type ComponentProps } from "react";
 
@@ -23,8 +24,10 @@ export function FeaturedGrid({ products }: FeaturedGridProps) {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {products.map((product) => (
-          <ProductCard key={product.id} product={product} viewMode={viewMode} />
+        {products.map((product, index) => (
+          <Reveal key={product.id} delay={index * 0.06}>
+            <ProductCard product={product} viewMode={viewMode} />
+          </Reveal>
         ))}
       </div>
     </>
