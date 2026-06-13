@@ -25,13 +25,13 @@ test.describe("Homepage", () => {
 
   test("header navigation links work", async ({ page }) => {
     await page.goto("/");
-    await page.getByRole("link", { name: /mayoreo/i }).click();
-    await expect(page).toHaveURL(/catalog/);
+    await page.locator("header").getByRole("link", { name: /mayoreo/i }).click();
+    await page.waitForURL(/catalog/);
   });
 
   test("footer is present", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByText("Licorería Sureño")).toBeVisible();
+    await expect(page.locator("footer").getByText("Licorería Sureño")).toBeVisible();
     await expect(
       page.getByText(/todos los derechos reservados/i)
     ).toBeVisible();

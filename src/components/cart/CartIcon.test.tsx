@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { CartIcon } from "./CartIcon";
 import { useCartStore } from "@/store/cart";
@@ -16,11 +16,11 @@ describe("CartIcon", () => {
     expect(button).toBeInTheDocument();
   });
 
-  it("shows 0 when cart is empty", () => {
+  it("does not show badge when cart is empty", () => {
     render(<CartIcon />);
 
-    // The badge should display 0
-    expect(screen.getByText("0")).toBeInTheDocument();
+    // Badge is hidden when totalItems === 0 — good UX pattern
+    expect(screen.queryByText("0")).toBeNull();
   });
 
   it("shows totalItems count in the badge", () => {

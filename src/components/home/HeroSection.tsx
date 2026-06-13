@@ -9,12 +9,14 @@ import {
 } from "motion/react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useSyncExternalStore } from "react";
 
 const HeroScene = dynamic(
   () => import("@/components/three/HeroScene").then((m) => m.HeroScene),
   { ssr: false }
 );
+
+const emptySubscribe = () => () => {};
 
 function supportsWebGL(): boolean {
   try {
@@ -59,11 +61,14 @@ export function HeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const progressRef = useRef(0);
   const reduceMotion = useReducedMotion();
-  const [webgl, setWebgl] = useState<boolean | null>(null);
 
-  useEffect(() => {
-    setWebgl(supportsWebGL());
-  }, []);
+  // Detect WebGL client-side without triggering set-state-in-effect.
+  // supportsWebGL() accesses document.createElement which is only available in the browser.
+  const webgl = useSyncExternalStore(
+    emptySubscribe,
+    () => supportsWebGL(),
+    () => false
+  );
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,

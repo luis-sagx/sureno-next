@@ -96,7 +96,7 @@ describe("middleware.ts — updateSession", () => {
     mockGetUser.mockResolvedValue({ data: { user: null } });
 
     mockCreateServerClient.mockImplementation(
-      (opts: { cookies: { setAll: (cookies: Array<{ name: string; value: string; options: { path: string } }>) => void } }) => {
+      (_url: string, _key: string, opts: { cookies: { setAll: (cookies: Array<{ name: string; value: string; options: { path: string } }>) => void } }) => {
         // Simulate supabase calling setAll with cookies
         opts.cookies.setAll([
           { name: "sb-token", value: "abc", options: { path: "/" } },
