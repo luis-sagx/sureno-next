@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { getStripe } from "@/lib/stripe";
+import { canPayContraentrega } from "@/lib/payments";
 
 const CartItemSchema = z.object({
   variantId: z.string().min(1),
@@ -20,7 +22,7 @@ const CreateOrderSchema = z.object({
   street: z.string().min(1, "La dirección es requerida"),
   city: z.string().min(1, "La ciudad es requerida"),
   zipCode: z.string().min(1, "El código postal es requerido"),
-  paymentMethod: z.enum(["DIRECT_PAYMENT", "WHOLESALE_QUOTE"]),
+  paymentMethod: z.enum(["STRIPE", "CONTRAENTREGA"]),
   items: z.array(CartItemSchema).min(1, "El carrito no puede estar vacío"),
 });
 
@@ -46,6 +48,17 @@ export async function createOrder(formData: FormData) {
     };
 
     const validated = CreateOrderSchema.parse(data);
+
+    // Gate CONTRAENTREGA eligibility
+    if (validated.paymentMethod === "CONTRAENTREGA") {
+      if (!canPayContraentrega(validated.items)) {
+        return {
+          success: false,
+          error:
+            "Contra entrega solo está disponible para pedidos mayoristas en cajas completas (múltiplos de 12 unidades).",
+        };
+      }
+    }
 
     const retailItems = validated.items.filter((i) => i.type === "RETAIL");
     const wholesaleItems = validated.items.filter(
@@ -78,6 +91,7 @@ export async function createOrder(formData: FormData) {
         city: validated.city,
         zipCode: validated.zipCode,
         paymentMethod: validated.paymentMethod,
+        paymentStatus: "PENDING",
         retailSubtotal,
         wholesaleSubtotal:
           wholesaleSubtotal > 0 ? wholesaleSubtotal : null,
@@ -98,10 +112,51 @@ export async function createOrder(formData: FormData) {
 
     revalidatePath("/checkout");
 
+    // CONTRAENTREGA: direct success redirect
+    if (validated.paymentMethod === "CONTRAENTREGA") {
+      return {
+        success: true,
+        orderId: order.id,
+        orderNumber: order.orderNumber,
+        redirectUrl: `/checkout/success?order=${order.orderNumber}`,
+      };
+    }
+
+    // STRIPE: create checkout session
+    const stripe = getStripe();
+
+    const lineItems = validated.items.map((item) => ({
+      price_data: {
+        currency: "mxn",
+        product_data: {
+          name: `${item.productName} — ${item.variantLabel}`,
+        },
+        unit_amount: Math.round(item.unitPrice * 100), // Stripe uses cents
+      },
+      quantity: item.quantity,
+    }));
+
+    const session = await stripe.checkout.sessions.create({
+      mode: "payment",
+      currency: "mxn",
+      line_items: lineItems,
+      metadata: {
+        orderId: order.id,
+      },
+      success_url: `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/checkout/success?order=${order.orderNumber}`,
+      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/checkout`,
+    });
+
+    await prisma.order.update({
+      where: { id: order.id },
+      data: { stripeSessionId: session.id },
+    });
+
     return {
       success: true,
       orderId: order.id,
       orderNumber: order.orderNumber,
+      redirectUrl: session.url || "",
     };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Error de validación";
@@ -167,8 +222,8 @@ export async function submitOrder(
 ): Promise<SubmitOrderState> {
   const result = await createOrder(formData);
 
-  if (result.success && result.orderNumber) {
-    redirect(`/checkout/success?order=${result.orderNumber}`);
+  if (result.success && result.redirectUrl) {
+    redirect(result.redirectUrl);
   }
 
   return {
