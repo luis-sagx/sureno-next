@@ -2,7 +2,6 @@ import { FilterSidebar } from "@/components/catalog/FilterSidebar";
 import { ProductGrid } from "@/components/catalog/ProductGrid";
 import { prisma } from "@/lib/prisma";
 import { serializeDecimal } from "@/lib/serialize";
-import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -14,28 +13,17 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
   const params = await searchParams;
 
   const categorySlug = typeof params.category === "string" ? params.category : "";
-  const brandSlug = typeof params.brand === "string" ? params.brand : "";
   const minPrice = typeof params.minPrice === "string" ? parseFloat(params.minPrice) : undefined;
   const maxPrice = typeof params.maxPrice === "string" ? parseFloat(params.maxPrice) : undefined;
   const viewMode = params.view === "wholesale" ? "wholesale" : "retail";
 
-  // Fetch categories and brands for filters
-  const [categories, brands] = serializeDecimal(
-    await Promise.all([
-      prisma.category.findMany({ orderBy: { name: "asc" } }),
-      prisma.brand.findMany({ orderBy: { name: "asc" } }),
-    ])
-  );
+  const categories = serializeDecimal(await prisma.category.findMany({ orderBy: { name: "asc" } }));
 
   // Build product query
   const where: Record<string, unknown> = {};
 
   if (categorySlug) {
     where.category = { slug: categorySlug };
-  }
-
-  if (brandSlug) {
-    where.brand = { slug: brandSlug };
   }
 
   if (minPrice !== undefined && !isNaN(minPrice)) {
@@ -51,7 +39,7 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
 
   const products = serializeDecimal(
     await prisma.product.findMany({
-      where: where as any,
+      where,
       include: {
         category: true,
         brand: true,
@@ -80,7 +68,7 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Sidebar filters (client) */}
         <div className="w-full lg:w-64 flex-shrink-0">
-          <FilterSidebar categories={categories} brands={brands} />
+          <FilterSidebar categories={categories} />
         </div>
 
         {/* Products area */}
