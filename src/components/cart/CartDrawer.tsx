@@ -39,7 +39,7 @@ export function CartDrawer() {
         aria-label="Carrito de compras"
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-outline-variant">
+        <div className="flex h-16 flex-shrink-0 items-center justify-between border-b border-outline-variant/70 px-6">
           <h2 className="font-headline text-xl text-on-surface">
             Tu Carrito
           </h2>
