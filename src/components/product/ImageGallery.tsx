@@ -32,7 +32,7 @@ export function ImageGallery({
           <img
             src={imageUrl ?? undefined}
             alt={productName}
-            className="object-cover w-full h-full"
+            className="object-contain w-full h-full p-4"
             onError={() => setImageFailed(true)}
           />
         ) : (

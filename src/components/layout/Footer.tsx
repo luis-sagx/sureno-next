@@ -21,7 +21,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/catalog?mode=wholesale"
+                  href="/mayoreo"
                   className="text-sm text-on-surface-variant hover:text-on-surface transition-colors"
                 >
                   Pedidos al Mayoreo
@@ -50,14 +50,6 @@ export function Footer() {
                   className="text-sm text-on-surface-variant hover:text-on-surface transition-colors"
                 >
                   Términos de Servicio
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/privacy"
-                  className="text-sm text-on-surface-variant hover:text-on-surface transition-colors"
-                >
-                  Política de Privacidad
                 </Link>
               </li>
             </ul>

@@ -4,11 +4,11 @@ import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { PriceDisplay } from '@/components/ui/PriceDisplay'
 import { QuantitySelector } from '@/components/ui/QuantitySelector'
-import { formatPrice, getBestWholesalePrice } from '@/lib/pricing'
+import { CAJA_SIZE, formatPrice, getBestWholesalePrice } from '@/lib/pricing'
 import { cn } from '@/lib/utils'
 import { useCartStore } from '@/store/cart'
 import type { Product, Variant, WholesaleTier } from '@prisma/client'
-import { ShoppingCart } from 'lucide-react'
+import { Eye, ShoppingCart } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
 
@@ -48,6 +48,8 @@ export function ProductCard({
   const bestWholesale = firstVariant
     ? getBestWholesalePrice(firstVariant, quantity)
     : null
+  const appliesWholesaleInRetail =
+    viewMode === 'retail' && bestWholesale !== null && quantity >= CAJA_SIZE
 
   const variantImageUrl =
     viewMode === 'wholesale'
@@ -63,15 +65,22 @@ export function ProductCard({
   const handleAddToCart = () => {
     if (!firstVariant) return
 
+    const effectivePrice =
+      (viewMode === 'wholesale' || appliesWholesaleInRetail) && bestWholesale
+        ? bestWholesale
+        : retailPrice
+
     addItem({
       variantId: firstVariant.id,
       productId: product.id,
       productName: product.name,
       productSlug: product.slug,
       variantLabel: firstVariant.label,
-      unitPrice:
-        viewMode === 'wholesale' && bestWholesale ? bestWholesale : retailPrice,
-      type: viewMode === 'wholesale' ? 'WHOLESALE' : 'RETAIL',
+      unitPrice: effectivePrice,
+      type:
+        viewMode === 'wholesale' || appliesWholesaleInRetail
+          ? 'WHOLESALE'
+          : 'RETAIL',
       imageUrl: variantImageUrl,
       quantity,
     })
@@ -119,8 +128,20 @@ export function ProductCard({
           </h3>
         </Link>
 
-        {viewMode === 'retail' ? (
+        {viewMode === 'retail' && !appliesWholesaleInRetail ? (
           <PriceDisplay retailPrice={retailPrice} size="md" />
+        ) : viewMode === 'retail' && appliesWholesaleInRetail ? (
+          <div className="space-y-1">
+            <span className="text-sm text-on-surface-variant line-through">
+              {formatPrice(retailPrice)}
+            </span>
+            <span className="font-headline font-semibold text-xl text-on-surface block">
+              {formatPrice(bestWholesale!)}
+            </span>
+            <span className="text-xs text-green-600 dark:text-green-400 font-medium block">
+              PRECIO MAYORISTA APLICADO
+            </span>
+          </div>
         ) : (
           <div className="space-y-1">
             <span className="text-sm text-on-surface-variant line-through">
@@ -149,8 +170,9 @@ export function ProductCard({
           <div className="flex items-center gap-2">
             <Link
               href={`/product/${product.slug}`}
-              className="text-sm font-medium text-secondary underline-offset-4 hover:underline"
+              className="inline-flex items-center gap-1.5 h-9 px-3 text-xs font-label font-semibold uppercase tracking-wider rounded border-2 border-secondary text-secondary bg-transparent hover:bg-secondary/10 transition-all duration-200"
             >
+              <Eye className="h-3.5 w-3.5" />
               Ver detalle
             </Link>
             <Button

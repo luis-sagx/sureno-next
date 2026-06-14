@@ -10,9 +10,8 @@ interface ProductSpecsProps {
 }
 
 const specItems = [
-  { key: "origin", icon: MapPin, label: "Origen" },
   { key: "volume", icon: Beaker, label: "Volumen" },
-  { key: "abv", icon: Gauge, label: "ABV" },
+  { key: "abv", icon: Gauge, label: "Graduación" },
   { key: "category", icon: Tag, label: "Categoría" },
 ] as const;
 

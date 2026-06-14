@@ -162,6 +162,47 @@ export default function AboutPage() {
           ))}
         </div>
       </section>
+      {/* Shipping Info */}
+      <section
+        id="shipping"
+        className="mx-auto max-w-7xl px-4 py-20 space-y-10"
+      >
+        <div className="space-y-2">
+          <p className="text-sm font-label uppercase tracking-[0.2em] text-secondary">
+            Logística
+          </p>
+          <h2 className="font-headline text-4xl text-on-surface">
+            Información de Envío
+          </h2>
+        </div>
+
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="rounded-xl border border-outline-variant bg-surface-container p-6 space-y-3">
+            <h3 className="font-headline text-lg text-on-surface">Cobertura</h3>
+            <p className="text-sm text-on-surface-variant leading-relaxed">
+              Realizamos entregas en todo Quito y sus valles. Para provincias
+              fuera de Pichincha, coordinamos el envío con transportistas
+              de confianza a nivel nacional.
+            </p>
+          </div>
+          <div className="rounded-xl border border-outline-variant bg-surface-container p-6 space-y-3">
+            <h3 className="font-headline text-lg text-on-surface">Tiempos de entrega</h3>
+            <p className="text-sm text-on-surface-variant leading-relaxed">
+              Pedidos dentro de Quito: <strong className="text-on-surface">24-48 horas</strong>.
+              Pedidos al resto del país: <strong className="text-on-surface">3-5 días hábiles</strong>.
+              Los pedidos mayoristas pueden requerir 1-2 días adicionales de preparación.
+            </p>
+          </div>
+          <div className="rounded-xl border border-outline-variant bg-surface-container p-6 space-y-3">
+            <h3 className="font-headline text-lg text-on-surface">Pedidos mayoristas</h3>
+            <p className="text-sm text-on-surface-variant leading-relaxed">
+              Para pedidos de caja completa (12 unidades) accedés al precio mayorista
+              automáticamente. El transporte de cajas completas tiene costo preferencial
+              o puede ser coordinado con retiro en planta.
+            </p>
+          </div>
+        </div>
+      </section>
     </div>
   )
 }

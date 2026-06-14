@@ -72,11 +72,14 @@ export function PurchasePanel({
   const hasTiers = tiers.length > 0;
   const isWholesale = mode === "wholesale" && hasTiers;
   const units = isWholesale ? boxes * CAJA_SIZE : retailQty;
+  const autoWholesale = !isWholesale && hasTiers && retailQty >= CAJA_SIZE;
   const unitPrice = isWholesale
     ? bestTierPrice(tiers, units) ?? retailPrice
+    : autoWholesale
+    ? bestTierPrice(tiers, retailQty) ?? retailPrice
     : retailPrice;
   const savings =
-    isWholesale && unitPrice < retailPrice
+    (isWholesale || autoWholesale) && unitPrice < retailPrice
       ? Math.round((1 - unitPrice / retailPrice) * 100)
       : 0;
   const isOut = stockStatus === "OUT";
@@ -91,7 +94,7 @@ export function PurchasePanel({
       variantLabel,
       imageUrl,
       unitPrice,
-      type: isWholesale ? "WHOLESALE" : "RETAIL",
+      type: isWholesale || autoWholesale ? "WHOLESALE" : "RETAIL",
       quantity: units,
     });
     openCart();
@@ -116,6 +119,20 @@ export function PurchasePanel({
           />
         )}
       </div>
+
+      {autoWholesale && (
+        <div className="rounded-lg border border-green-500/30 bg-green-500/10 px-4 py-3 text-sm text-on-surface">
+          <div className="flex items-center gap-2 text-sm text-green-700 dark:text-green-400 font-medium">
+            <Package className="h-4 w-4" />
+            <span>
+              Precio mayorista aplicado — {retailQty} unidades · {formatPrice(unitPrice)} c/u
+              {savings > 0 && (
+                <span className="ml-2 font-semibold">AHORRAS {savings}%</span>
+              )}
+            </span>
+          </div>
+        </div>
+      )}
 
       {isWholesale && (
         <div className="rounded-lg border border-secondary/30 bg-secondary/10 px-4 py-3 text-sm text-on-surface">
