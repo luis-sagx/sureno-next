@@ -26,10 +26,12 @@ export function ProductGrid({ products, viewMode }: ProductGridProps) {
     );
   }
 
-  // Flatten: one card per variant so each size/presentation appears independently
+  // Flatten: one card per variant so each size/presentation appears independently.
+  // 375ml variants get "Media" prepended to the name to distinguish them.
   const cards = products.flatMap((product) =>
     product.variants.map((variant) => ({
       ...product,
+      name: variant.label === "375ml" ? `Media ${product.name}` : product.name,
       variants: [variant],
     }))
   );

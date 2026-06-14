@@ -70,9 +70,7 @@ export function Footer() {
             </h3>
             <ul className="space-y-2">
               <li className="text-sm text-on-surface-variant">
-                Av. Principal 123, Col. Centro
-                <br />
-                Ciudad de México, CDMX
+                Quito, Ecuador
               </li>
               <li>
                 <Link

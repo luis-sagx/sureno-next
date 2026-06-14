@@ -1,33 +1,34 @@
-"use client";
+'use client'
 
-import { createClient } from "@/lib/supabase/client";
-import Link from "next/link";
-import { useState, type FormEvent } from "react";
+import { createClient } from '@/lib/supabase/client'
+import Image from 'next/image'
+import Link from 'next/link'
+import { useState, type FormEvent } from 'react'
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
   async function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
+    e.preventDefault()
+    setError('')
+    setLoading(true)
 
-    const supabase = createClient();
+    const supabase = createClient()
     const { error: authError } = await supabase.auth.signInWithPassword({
       email,
       password,
-    });
+    })
 
     if (authError) {
-      setError(authError.message);
-      setLoading(false);
-      return;
+      setError(authError.message)
+      setLoading(false)
+      return
     }
 
-    window.location.href = "/";
+    window.location.href = '/'
   }
 
   return (
@@ -35,9 +36,14 @@ export default function LoginPage() {
       {/* Logo */}
       <div className="text-center">
         <Link href="/" className="inline-block">
-          <h1 className="font-headline text-2xl italic text-secondary">
-            Licorería Sureño
-          </h1>
+          <Image
+            src="/logo-text.webp"
+            alt="Licorería Sureño"
+            width={180}
+            height={50}
+            className="h-28 w-auto"
+            priority
+          />
         </Link>
       </div>
 
@@ -95,12 +101,12 @@ export default function LoginPage() {
           disabled={loading}
           className="w-full h-11 px-6 rounded-md bg-secondary text-on-secondary font-semibold uppercase tracking-wider hover:bg-secondary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {loading ? "Iniciando sesión..." : "Iniciar Sesión"}
+          {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
         </button>
       </form>
 
       <p className="text-center text-sm text-on-surface-variant">
-        ¿No tienes cuenta?{" "}
+        ¿No tienes cuenta?{' '}
         <Link
           href="/auth/register"
           className="text-secondary hover:underline font-medium"
@@ -109,5 +115,5 @@ export default function LoginPage() {
         </Link>
       </p>
     </div>
-  );
+  )
 }

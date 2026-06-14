@@ -1,58 +1,67 @@
-"use client";
+'use client'
 
-import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
-import { PriceDisplay } from "@/components/ui/PriceDisplay";
-import { QuantitySelector } from "@/components/ui/QuantitySelector";
-import { formatPrice, getBestWholesalePrice } from "@/lib/pricing";
-import { useCartStore } from "@/store/cart";
-import { cn } from "@/lib/utils";
-import type { Product, Variant, WholesaleTier } from "@prisma/client";
-import { ShoppingCart } from "lucide-react";
-import Link from "next/link";
-import { useState } from "react";
+import { Badge } from '@/components/ui/Badge'
+import { Button } from '@/components/ui/Button'
+import { PriceDisplay } from '@/components/ui/PriceDisplay'
+import { QuantitySelector } from '@/components/ui/QuantitySelector'
+import { formatPrice, getBestWholesalePrice } from '@/lib/pricing'
+import { cn } from '@/lib/utils'
+import { useCartStore } from '@/store/cart'
+import type { Product, Variant, WholesaleTier } from '@prisma/client'
+import { ShoppingCart } from 'lucide-react'
+import Link from 'next/link'
+import { useState } from 'react'
 
 type ProductWithVariants = Product & {
-  category?: { name: string } | null;
-  brand?: { name: string } | null;
-  variants: (Variant & { wholesaleTiers: WholesaleTier[] })[];
-};
-
-interface ProductCardProps {
-  product: ProductWithVariants;
-  viewMode?: "retail" | "wholesale";
-  className?: string;
+  category?: { name: string } | null
+  brand?: { name: string } | null
+  variants: (Variant & { wholesaleTiers: WholesaleTier[] })[]
 }
 
-const badgeVariantMap: Record<string, "save" | "bestseller" | "limited" | "premium"> = {
-  SAVE_15: "save",
-  BEST_SELLER: "bestseller",
-  LIMITED_STOCK: "limited",
-  PREMIUM_RESERVE: "premium",
-};
+interface ProductCardProps {
+  product: ProductWithVariants
+  viewMode?: 'retail' | 'wholesale'
+  className?: string
+}
+
+const badgeVariantMap: Record<
+  string,
+  'save' | 'bestseller' | 'limited' | 'premium'
+> = {
+  SAVE_15: 'save',
+  BEST_SELLER: 'bestseller',
+  LIMITED_STOCK: 'limited',
+  PREMIUM_RESERVE: 'premium',
+}
 
 export function ProductCard({
   product,
-  viewMode = "retail",
+  viewMode = 'retail',
   className,
 }: ProductCardProps) {
-  const [quantity, setQuantity] = useState(1);
-  const [imageFailed, setImageFailed] = useState(false);
-  const addItem = useCartStore((s) => s.addItem);
+  const [quantity, setQuantity] = useState(1)
+  const [imageFailed, setImageFailed] = useState(false)
+  const addItem = useCartStore((s) => s.addItem)
 
-  const retailPrice = Number(product.retailPrice);
-  const firstVariant = product.variants[0];
+  const retailPrice = Number(product.retailPrice)
+  const firstVariant = product.variants[0]
   const bestWholesale = firstVariant
     ? getBestWholesalePrice(firstVariant, quantity)
-    : null;
+    : null
 
   const variantImageUrl =
-    viewMode === "wholesale"
-      ? firstVariant?.wholesaleImageUrl || firstVariant?.retailImageUrl || product.imageUrl || null
-      : firstVariant?.retailImageUrl || firstVariant?.wholesaleImageUrl || product.imageUrl || null;
+    viewMode === 'wholesale'
+      ? firstVariant?.wholesaleImageUrl ||
+        firstVariant?.retailImageUrl ||
+        product.imageUrl ||
+        null
+      : firstVariant?.retailImageUrl ||
+        firstVariant?.wholesaleImageUrl ||
+        product.imageUrl ||
+        null
 
   const handleAddToCart = () => {
-    if (!firstVariant) return;
+    if (!firstVariant) return
 
     addItem({
       variantId: firstVariant.id,
@@ -60,17 +69,18 @@ export function ProductCard({
       productName: product.name,
       productSlug: product.slug,
       variantLabel: firstVariant.label,
-      unitPrice: viewMode === "wholesale" && bestWholesale ? bestWholesale : retailPrice,
-      type: viewMode === "wholesale" ? "WHOLESALE" : "RETAIL",
+      unitPrice:
+        viewMode === 'wholesale' && bestWholesale ? bestWholesale : retailPrice,
+      type: viewMode === 'wholesale' ? 'WHOLESALE' : 'RETAIL',
       imageUrl: variantImageUrl,
       quantity,
-    });
-  };
+    })
+  }
 
   return (
     <div
       className={cn(
-        "group relative flex flex-col rounded-lg bg-surface-container hover:bg-surface-container-high transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/20 hover:border-secondary/40 border border-transparent overflow-hidden",
+        'group relative flex flex-col rounded-lg bg-surface-container hover:bg-surface-container-high transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/20 hover:border-secondary/40 border border-transparent overflow-hidden',
         className,
       )}
     >
@@ -79,7 +89,7 @@ export function ProductCard({
           <img
             src={variantImageUrl}
             alt={product.name}
-            className="object-cover w-full h-full"
+            className="object-contain w-full h-full"
             onError={() => setImageFailed(true)}
           />
         ) : (
@@ -91,8 +101,8 @@ export function ProductCard({
         {product.badge && (
           <div className="absolute top-2 right-2">
             <Badge
-              variant={badgeVariantMap[product.badge] || "bestseller"}
-              discount={product.badge === "SAVE_15" ? "15%" : undefined}
+              variant={badgeVariantMap[product.badge] || 'bestseller'}
+              discount={product.badge === 'SAVE_15' ? '15%' : undefined}
             />
           </div>
         )}
@@ -109,7 +119,7 @@ export function ProductCard({
           </h3>
         </Link>
 
-        {viewMode === "retail" ? (
+        {viewMode === 'retail' ? (
           <PriceDisplay retailPrice={retailPrice} size="md" />
         ) : (
           <div className="space-y-1">
@@ -117,7 +127,9 @@ export function ProductCard({
               {formatPrice(retailPrice)}
             </span>
             <span className="font-headline font-semibold text-xl text-on-surface block">
-              {bestWholesale ? formatPrice(bestWholesale) : formatPrice(retailPrice)}
+              {bestWholesale
+                ? formatPrice(bestWholesale)
+                : formatPrice(retailPrice)}
             </span>
             {bestWholesale && (
               <span className="text-xs text-green-600 dark:text-green-400 font-medium block">
@@ -128,7 +140,12 @@ export function ProductCard({
         )}
 
         <div className="mt-auto flex items-center justify-between gap-3 pt-2">
-          <QuantitySelector value={quantity} onChange={setQuantity} min={1} max={99} />
+          <QuantitySelector
+            value={quantity}
+            onChange={setQuantity}
+            min={1}
+            max={99}
+          />
           <div className="flex items-center gap-2">
             <Link
               href={`/product/${product.slug}`}
@@ -149,5 +166,5 @@ export function ProductCard({
         </div>
       </div>
     </div>
-  );
+  )
 }

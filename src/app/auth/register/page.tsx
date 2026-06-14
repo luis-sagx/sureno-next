@@ -1,26 +1,27 @@
-"use client";
+'use client'
 
-import { createClient } from "@/lib/supabase/client";
-import Link from "next/link";
-import { useState, type FormEvent } from "react";
+import { createClient } from '@/lib/supabase/client'
+import Image from 'next/image'
+import Link from 'next/link'
+import { useState, type FormEvent } from 'react'
 
 export default function RegisterPage() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [accountType, setAccountType] = useState("INDIVIDUAL");
-  const [company, setCompany] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [accountType, setAccountType] = useState('INDIVIDUAL')
+  const [company, setCompany] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [successMessage, setSuccessMessage] = useState('')
 
   async function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    setError("");
-    setSuccessMessage("");
-    setLoading(true);
+    e.preventDefault()
+    setError('')
+    setSuccessMessage('')
+    setLoading(true)
 
-    const supabase = createClient();
+    const supabase = createClient()
     const { error: authError } = await supabase.auth.signUp({
       email,
       password,
@@ -28,19 +29,19 @@ export default function RegisterPage() {
         data: {
           full_name: name,
           account_type: accountType,
-          company: accountType === "EMPRESA" ? company : null,
+          company: accountType === 'EMPRESA' ? company : null,
         },
       },
-    });
+    })
 
     if (authError) {
-      setError(authError.message);
-      setLoading(false);
-      return;
+      setError(authError.message)
+      setLoading(false)
+      return
     }
 
-    setSuccessMessage("Revisa tu email para confirmar tu cuenta");
-    setLoading(false);
+    setSuccessMessage('Revisa tu email para confirmar tu cuenta')
+    setLoading(false)
   }
 
   return (
@@ -48,9 +49,14 @@ export default function RegisterPage() {
       {/* Logo */}
       <div className="text-center">
         <Link href="/" className="inline-block">
-          <h1 className="font-headline text-2xl italic text-secondary">
-            Licorería Sureño
-          </h1>
+          <Image
+            src="/logo-text.webp"
+            alt="Licorería Sureño"
+            width={180}
+            height={50}
+            className="h-28 w-auto"
+            priority
+          />
         </Link>
       </div>
 
@@ -146,7 +152,7 @@ export default function RegisterPage() {
           </select>
         </div>
 
-        {accountType === "EMPRESA" && (
+        {accountType === 'EMPRESA' && (
           <div>
             <label
               htmlFor="company"
@@ -171,12 +177,12 @@ export default function RegisterPage() {
           disabled={loading}
           className="w-full h-11 px-6 rounded-md bg-secondary text-on-secondary font-semibold uppercase tracking-wider hover:bg-secondary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {loading ? "Creando cuenta..." : "Crear Cuenta"}
+          {loading ? 'Creando cuenta...' : 'Crear Cuenta'}
         </button>
       </form>
 
       <p className="text-center text-sm text-on-surface-variant">
-        ¿Ya tienes cuenta?{" "}
+        ¿Ya tienes cuenta?{' '}
         <Link
           href="/auth/login"
           className="text-secondary hover:underline font-medium"
@@ -185,5 +191,5 @@ export default function RegisterPage() {
         </Link>
       </p>
     </div>
-  );
+  )
 }
