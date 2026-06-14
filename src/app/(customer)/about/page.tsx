@@ -14,23 +14,17 @@ const products = [
 
 const bgImage = { backgroundImage: "url('/bg.webp')" }
 
-const stats = [
-  { value: '1998', label: 'Año de fundación' },
-  { value: 'INEN', label: 'Normas certificadas' },
-  { value: 'ARCSA', label: 'Procesos controlados' },
-]
-
 export default function AboutPage() {
   return (
     <div>
       {/* Hero — bg fixed da el efecto parallax al hacer scroll */}
       <section
-        className="relative h-96 flex items-center justify-center bg-cover bg-fixed bg-center"
+        className="relative h-80 flex items-center justify-center bg-cover bg-fixed bg-center"
         style={bgImage}
       >
         <div className="absolute inset-0 bg-linear-to-b from-black/70 via-black/55 to-black/75" />
         <div className="relative z-10 flex flex-col items-center gap-6 px-4 text-center">
-          <p className="max-w-xl font-headline text-xl italic text-white/90 drop-shadow-lg leading-relaxed">
+          <p className="max-w-2xl font-headline text-2xl italic text-white/90 drop-shadow-lg leading-relaxed">
             &ldquo;En cada botella destilamos tradición, pasión y el sabor de lo
             auténtico, para que cada momento se convierta en una experiencia
             única.&rdquo;
@@ -78,24 +72,20 @@ export default function AboutPage() {
         style={bgImage}
       >
         <div className="absolute inset-0 bg-linear-to-b from-black/75 via-black/60 to-black/75" />
-        <div className="relative z-10 flex flex-wrap items-center justify-center gap-x-12 gap-y-6 px-4 text-center text-white sm:gap-x-20">
-          {stats.map((s) => (
-            <div key={s.value} className="space-y-1">
-              <p className="font-headline text-3xl md:text-4xl text-secondary drop-shadow">
-                {s.value}
-              </p>
-              <p className="text-xs font-label uppercase tracking-[0.2em] text-white/80">
-                {s.label}
-              </p>
-            </div>
-          ))}
+        <div className="relative z-10 flex flex-col items-center gap-2 px-4 text-center">
+          <p className="font-headline text-2xl italic text-white/95 drop-shadow-lg md:text-3xl">
+            El sabor auténtico del sur de Quito, en cada botella.
+          </p>
+          <div className="h-0.5 w-12 rounded bg-secondary" />
         </div>
       </section>
 
-      {/* Misión y Visión */}
+      <section className="my-20"></section>
+
+      {/* Misión */}
       <section className="border-y border-outline-variant/50 bg-surface-container">
-        <div className="mx-auto max-w-7xl grid gap-0 md:grid-cols-2">
-          <article className="space-y-4 border-b border-outline-variant/50 px-8 py-14 md:border-b-0 md:border-r">
+        <div className="grid items-stretch md:grid-cols-2">
+          <article className="space-y-4 px-8 py-14 md:px-16 lg:px-24">
             <h2 className="font-headline text-3xl text-on-surface">Misión</h2>
             <div className="h-0.5 w-12 rounded bg-secondary" />
             <p className="text-base leading-relaxed text-on-surface-variant">
@@ -105,7 +95,31 @@ export default function AboutPage() {
               humano, técnico y sostenible.
             </p>
           </article>
-          <article className="space-y-4 px-8 py-14">
+          <div className="relative h-72 min-h-72 md:h-auto overflow-hidden">
+            <Image
+              src="/mision.png"
+              alt="Misión Sureño"
+              fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-cover"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Visión */}
+      <section className="border-b border-outline-variant/50 bg-surface">
+        <div className="grid items-stretch md:grid-cols-2">
+          <div className="relative h-72 min-h-72 md:h-auto overflow-hidden order-2 md:order-1">
+            <Image
+              src="/vision.png"
+              alt="Visión Sureño"
+              fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-cover"
+            />
+          </div>
+          <article className="space-y-4 px-8 py-14 md:px-16 lg:px-24 order-1 md:order-2">
             <h2 className="font-headline text-3xl text-on-surface">Visión</h2>
             <div className="h-0.5 w-12 rounded bg-secondary" />
             <p className="text-base leading-relaxed text-on-surface-variant">
@@ -115,19 +129,6 @@ export default function AboutPage() {
               trabajadores, proveedores y comunidad.
             </p>
           </article>
-        </div>
-      </section>
-
-      <section
-        className="relative h-48 flex items-center justify-center bg-cover bg-fixed bg-center"
-        style={bgImage}
-      >
-        <div className="absolute inset-0 bg-linear-to-b from-black/75 via-black/60 to-black/75" />
-        <div className="relative z-10 flex flex-col items-center gap-2 px-4 text-center">
-          <p className="font-headline text-2xl italic text-white/95 drop-shadow-lg md:text-3xl">
-            El sabor auténtico del sur de Quito, en cada botella.
-          </p>
-          <div className="h-0.5 w-12 rounded bg-secondary" />
         </div>
       </section>
 
