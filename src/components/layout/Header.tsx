@@ -22,6 +22,7 @@ export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
+    <>
     <header className="sticky top-0 z-50 w-full border-b border-outline-variant/70 bg-background/90 backdrop-blur-md">
       <div className="mx-auto max-w-[1280px] px-4 flex items-center justify-between h-16">
         {/* Logo */}
@@ -94,8 +95,12 @@ export function Header() {
         </div>
       )}
 
-      {/* Cart Drawer */}
-      <CartDrawer />
     </header>
+
+    {/* Cart Drawer — rendered outside <header> so its `fixed` positioning
+        resolves against the viewport, not the backdrop-blurred header
+        (backdrop-filter creates a containing block for fixed descendants). */}
+    <CartDrawer />
+    </>
   );
 }

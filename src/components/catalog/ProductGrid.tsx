@@ -26,11 +26,19 @@ export function ProductGrid({ products, viewMode }: ProductGridProps) {
     );
   }
 
+  // Flatten: one card per variant so each size/presentation appears independently
+  const cards = products.flatMap((product) =>
+    product.variants.map((variant) => ({
+      ...product,
+      variants: [variant],
+    }))
+  );
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      {products.map((product) => (
+      {cards.map((product) => (
         <ProductCard
-          key={product.id}
+          key={`${product.id}-${product.variants[0].id}`}
           product={product}
           viewMode={viewMode}
         />
