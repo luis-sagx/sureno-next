@@ -122,7 +122,7 @@ export function ProductCard({
           {product.category?.name || product.type}
         </span>
 
-        <Link href={`/product/${product.slug}`} className="group/title">
+        <Link href={viewMode === 'wholesale' ? `/product/${product.slug}?mode=wholesale` : `/product/${product.slug}`} className="group/title">
           <h3 className="font-headline text-lg leading-tight text-on-surface line-clamp-2 transition-colors group-hover/title:text-secondary">
             {product.name}
           </h3>
@@ -169,11 +169,11 @@ export function ProductCard({
           />
           <div className="flex items-center gap-2">
             <Link
-              href={`/product/${product.slug}`}
+              href={viewMode === 'wholesale' ? `/product/${product.slug}?mode=wholesale` : `/product/${product.slug}`}
               className="inline-flex items-center gap-1.5 h-9 px-3 text-xs font-label font-semibold uppercase tracking-wider rounded border-2 border-secondary text-secondary bg-transparent hover:bg-secondary/10 transition-all duration-200"
             >
               <Eye className="h-3.5 w-3.5" />
-              Ver detalle
+              Ver más
             </Link>
             <Button
               variant="primary"

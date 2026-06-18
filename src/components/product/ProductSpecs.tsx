@@ -25,7 +25,7 @@ export function ProductSpecs({
   const values: Record<string, string> = {
     origin: origin || "—",
     volume: volumeMl ? `${volumeMl}ml` : "—",
-    abv: abv ? `${abv}%` : "—",
+    abv: abv ? `Alc. ${abv}%` : "—",
     category: category || "—",
   };
 

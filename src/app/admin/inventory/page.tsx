@@ -43,7 +43,7 @@ export default async function InventoryPage() {
 
       {products.length === 0 ? (
         <EmptyState
-          icon={Package}
+          icon={<Package className="w-16 h-16 text-on-surface-variant/30" />}
           title="Sin productos"
           description="No hay productos en el inventario todavía."
         />

@@ -3,9 +3,16 @@
 import { createClient } from '@/lib/supabase/client'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState, type FormEvent } from 'react'
+import { useSearchParams } from 'next/navigation'
+import { Suspense, useState, type FormEvent } from 'react'
 
-export default function LoginPage() {
+const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL ?? 'sagxluis@gmail.com'
+
+function LoginForm() {
+  const searchParams = useSearchParams()
+  const returnTo = searchParams.get('returnTo') ?? '/'
+  const message = searchParams.get('message')
+
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -28,7 +35,12 @@ export default function LoginPage() {
       return
     }
 
-    window.location.href = '/'
+    // Admins always go to /admin, customers go to returnTo or /
+    if (email === ADMIN_EMAIL) {
+      window.location.href = '/admin'
+    } else {
+      window.location.href = returnTo
+    }
   }
 
   return (
@@ -50,6 +62,12 @@ export default function LoginPage() {
       <h2 className="font-headline text-2xl text-on-surface text-center">
         Iniciar Sesión
       </h2>
+
+      {message && (
+        <div className="bg-secondary/10 border border-secondary/30 text-secondary rounded-md px-4 py-3 text-sm">
+          {message}
+        </div>
+      )}
 
       {error && (
         <div className="bg-error/10 border border-error text-error rounded-md px-4 py-3 text-sm">
@@ -115,5 +133,13 @@ export default function LoginPage() {
         </Link>
       </p>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="bg-surface-container rounded-lg shadow-lg p-8 h-96 animate-pulse" />}>
+      <LoginForm />
+    </Suspense>
   )
 }

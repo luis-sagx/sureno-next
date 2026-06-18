@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic";
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ mode?: string }>;
 }
 
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
@@ -45,8 +46,10 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   };
 }
 
-export default async function ProductPage({ params }: ProductPageProps) {
+export default async function ProductPage({ params, searchParams }: ProductPageProps) {
   const { slug } = await params;
+  const { mode } = await searchParams;
+  const initialMode = mode === "wholesale" ? "wholesale" : "retail";
 
   const product = serializeDecimal(
     await prisma.product.findUnique({
@@ -66,5 +69,5 @@ export default async function ProductPage({ params }: ProductPageProps) {
     notFound();
   }
 
-  return <ProductDetailView product={product} />;
+  return <ProductDetailView product={product} initialMode={initialMode} />;
 }

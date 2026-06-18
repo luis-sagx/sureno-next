@@ -226,7 +226,7 @@ export function UserDirectoryClient({
       {/* Table */}
       {initialUsers.length === 0 ? (
         <EmptyState
-          icon={Users}
+          icon={<Users className="w-16 h-16 text-on-surface-variant/30" />}
           title="Sin usuarios"
           description="No se encontraron usuarios con los filtros actuales."
         />

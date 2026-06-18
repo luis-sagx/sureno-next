@@ -19,6 +19,7 @@ type ProductWithRelations = Product & {
 
 interface ProductDetailViewProps {
   product: ProductWithRelations;
+  initialMode?: "retail" | "wholesale";
 }
 
 const badgeVariantMap: Record<string, "save" | "bestseller" | "limited" | "premium"> = {
@@ -33,9 +34,9 @@ function parseVolumeMl(label: string, fallback: number | null) {
   return match ? Number(match[1]) : fallback;
 }
 
-export function ProductDetailView({ product }: ProductDetailViewProps) {
+export function ProductDetailView({ product, initialMode = "retail" }: ProductDetailViewProps) {
   const [selectedVariantId, setSelectedVariantId] = useState(product.variants[0]?.id ?? "");
-  const [mode, setMode] = useState<"retail" | "wholesale">("retail");
+  const [mode, setMode] = useState<"retail" | "wholesale">(initialMode);
 
   const selectedVariant = useMemo(
     () => product.variants.find((variant) => variant.id === selectedVariantId) ?? product.variants[0],
