@@ -83,28 +83,28 @@
 
 /* ============================================================
    Light Theme (.light class on <html>)
-   From DESIGN.md — Heritage Light: Golden Amber + Deep Navy
+   Heritage Light: Golden Amber + Deep Navy
    ============================================================ */
 .light {
   --theme-primary: #6f4b16;
   --theme-on-primary: #ffffff;
   --theme-secondary: #b8842f;
-  --theme-on-secondary: #211507;
-  --theme-tertiary: #8d6320;
+  --theme-on-secondary: #ffffff;
+  --theme-tertiary: #1e3a5f;
   --theme-on-tertiary: #ffffff;
 
-  --theme-surface: #fbf7ef;
-  --theme-surface-container: #f2eadb;
-  --theme-surface-container-high: #ebdfca;
-  --theme-surface-container-highest: #e1d0b3;
+  --theme-surface: #ffffff;
+  --theme-surface-container: #f5f3ef;
+  --theme-surface-container-high: #ede9e2;
+  --theme-surface-container-highest: #e3ddd3;
 
   --theme-on-surface: #23180d;
-  --theme-on-surface-variant: #5f4730;
+  --theme-on-surface-variant: #5a4535;
 
-  --theme-background: #f9f3e8;
+  --theme-background: #fafaf8;
 
   --theme-outline: #8a6b40;
-  --theme-outline-variant: #cfb58a;
+  --theme-outline-variant: #d4c4aa;
 
   --theme-error: #ba1a1a;
   --theme-on-error: #ffffff;
