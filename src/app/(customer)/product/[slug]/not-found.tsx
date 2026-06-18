@@ -10,7 +10,7 @@ export default function ProductNotFound() {
   return (
     <div className="min-h-[60vh] flex flex-col items-center justify-center">
       <EmptyState
-        icon={PackageSearch}
+        icon={<PackageSearch className="w-16 h-16 text-on-surface-variant/30" />}
         title="Producto no encontrado"
         description="El producto que buscas no existe o ha sido removido de nuestro catálogo."
         actionLabel="Ver Catálogo"
