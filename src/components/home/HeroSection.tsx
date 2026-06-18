@@ -85,7 +85,7 @@ export function HeroSection() {
                   </Link>
                   <Link
                     href="/minorista"
-                    className="inline-flex items-center justify-center rounded-md border-2 border-secondary px-8 py-3 font-label text-base font-semibold uppercase tracking-wider text-secondary transition hover:bg-secondary/10"
+                    className="inline-flex items-center justify-center rounded-md border-2 border-tertiary px-8 py-3 font-label text-base font-semibold uppercase tracking-wider text-tertiary transition hover:bg-tertiary/10"
                   >
                     Minorista
                   </Link>
@@ -182,7 +182,7 @@ export function HeroSection() {
               </Link>
               <Link
                 href="/minorista"
-                className="inline-flex items-center justify-center rounded-md border-2 border-secondary px-8 py-3 font-label text-base font-semibold uppercase tracking-wider text-secondary transition hover:bg-secondary/10"
+                className="inline-flex items-center justify-center rounded-md border-2 border-tertiary px-8 py-3 font-label text-base font-semibold uppercase tracking-wider text-tertiary transition hover:bg-tertiary/10"
               >
                 Minorista
               </Link>

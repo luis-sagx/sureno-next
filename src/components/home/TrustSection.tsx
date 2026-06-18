@@ -26,7 +26,7 @@ export function TrustSection() {
         {trustItems.map((item, index) => (
           <Reveal key={item.title} delay={index * 0.1}>
             <div className="flex flex-col items-center text-center p-8 rounded-lg bg-surface-container hover:bg-surface-container-high transition-colors">
-              <item.icon className="w-10 h-10 text-secondary mb-4" />
+              <item.icon className="w-10 h-10 text-tertiary mb-4" />
               <h3 className="font-headline text-xl text-on-surface mb-2">
                 {item.title}
               </h3>

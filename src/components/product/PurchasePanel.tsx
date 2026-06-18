@@ -32,7 +32,7 @@ interface PurchasePanelProps {
 }
 
 const stockConfig: Record<string, { label: string; dot: string; text: string }> = {
-  HIGH: { label: "Stock Alto", dot: "bg-green-500", text: "text-green-600 dark:text-green-400" },
+  HIGH: { label: "Stock Alto", dot: "bg-secondary", text: "text-secondary" },
   MEDIUM: { label: "Stock Medio", dot: "bg-amber-500", text: "text-amber-600 dark:text-amber-400" },
   LOW: { label: "Stock Bajo", dot: "bg-red-500", text: "text-red-600 dark:text-red-400" },
   OUT: { label: "Agotado", dot: "bg-red-500", text: "text-red-600 dark:text-red-400 line-through" },
@@ -121,8 +121,8 @@ export function PurchasePanel({
       </div>
 
       {autoWholesale && (
-        <div className="rounded-lg border border-green-500/30 bg-green-500/10 px-4 py-3 text-sm text-on-surface">
-          <div className="flex items-center gap-2 text-sm text-green-700 dark:text-green-400 font-medium">
+        <div className="rounded-lg border border-tertiary/30 bg-tertiary/10 px-4 py-3 text-sm text-on-surface">
+          <div className="flex items-center gap-2 text-sm text-tertiary font-medium">
             <Package className="h-4 w-4" />
             <span>
               Precio mayorista aplicado — {retailQty} unidades · {formatPrice(unitPrice)} c/u
@@ -141,7 +141,7 @@ export function PurchasePanel({
             <span>
               {boxes} {boxes === 1 ? "caja" : "cajas"} · {units} unidades · {formatPrice(unitPrice)} c/u
               {savings > 0 && (
-                <span className="ml-2 font-semibold text-green-600 dark:text-green-400">
+                <span className="ml-2 font-semibold text-tertiary">
                   AHORRAS {savings}%
                 </span>
               )}

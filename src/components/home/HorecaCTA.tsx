@@ -16,7 +16,7 @@ export function HorecaCTA() {
           </p>
           <Link
             href="/catalog?view=wholesale"
-            className="inline-flex items-center justify-center font-label font-semibold uppercase tracking-wider transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary h-13 px-8 text-base border-2 border-secondary text-secondary bg-transparent hover:bg-secondary/10 rounded-md"
+            className="inline-flex items-center justify-center font-label font-semibold uppercase tracking-wider transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-tertiary h-13 px-8 text-base border-2 border-tertiary text-tertiary bg-transparent hover:bg-tertiary/10 rounded-md"
           >
             DESCARGAR TARIFARIO MAYORISTA
           </Link>

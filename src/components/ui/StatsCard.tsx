@@ -32,7 +32,7 @@ export function StatsCard({
           <span
             className={cn(
               "inline-flex items-center text-xs font-medium",
-              trend.positive ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"
+              trend.positive ? "text-tertiary" : "text-red-600 dark:text-red-400"
             )}
           >
             {trend.positive ? "↑" : "↓"} {trend.value}

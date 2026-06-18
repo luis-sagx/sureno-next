@@ -71,7 +71,7 @@ export function VolumePricingTable({
                   {formatPrice(pricePerUnit)}
                 </p>
                 {savings > 0 && (
-                  <p className="text-xs text-green-600 dark:text-green-400">
+                  <p className="text-xs text-tertiary font-medium">
                     AHORRAS {savingsPercent}%
                   </p>
                 )}

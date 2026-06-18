@@ -20,7 +20,7 @@ export function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full border-b border-outline-variant/70 bg-background/90 backdrop-blur-md">
+      <header className="sticky top-0 z-50 w-full border-b-2 border-tertiary/30 bg-background/90 backdrop-blur-md">
         <div className="mx-auto max-w-7xl px-4 flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="shrink-0">
@@ -40,7 +40,7 @@ export function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="px-3 py-2 text-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-md transition-colors"
+                className="px-3 py-2 text-sm text-on-surface-variant hover:text-tertiary hover:bg-surface-container rounded-md transition-colors"
               >
                 {link.label}
               </Link>
@@ -55,7 +55,7 @@ export function Header() {
             {/* Account */}
             <Link
               href="/auth/login"
-              className="w-9 h-9 flex items-center justify-center rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors"
+              className="w-9 h-9 flex items-center justify-center rounded-md text-on-surface-variant hover:bg-surface-container hover:text-tertiary transition-colors"
               aria-label="Cuenta"
             >
               <CircleUser className="w-5 h-5" />
@@ -88,7 +88,7 @@ export function Header() {
                   key={link.href}
                   href={link.href}
                   onClick={() => setMobileOpen(false)}
-                  className="px-3 py-2.5 text-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-md transition-colors"
+                  className="px-3 py-2.5 text-sm text-on-surface-variant hover:text-tertiary hover:bg-surface-container rounded-md transition-colors"
                 >
                   {link.label}
                 </Link>

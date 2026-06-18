@@ -89,7 +89,7 @@ export function ProductCard({
   return (
     <div
       className={cn(
-        'group relative flex flex-col rounded-lg bg-surface-container hover:bg-surface-container-high transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/20 hover:border-secondary/40 border border-transparent overflow-hidden',
+        'group relative flex flex-col rounded-lg bg-surface-container hover:bg-surface-container-high transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/20 hover:border-tertiary/50 border border-transparent overflow-hidden',
         className,
       )}
     >
@@ -123,7 +123,7 @@ export function ProductCard({
         </span>
 
         <Link href={viewMode === 'wholesale' ? `/product/${product.slug}?mode=wholesale` : `/product/${product.slug}`} className="group/title">
-          <h3 className="font-headline text-lg leading-tight text-on-surface line-clamp-2 transition-colors group-hover/title:text-secondary">
+          <h3 className="font-headline text-lg leading-tight text-on-surface line-clamp-2 transition-colors group-hover/title:text-tertiary">
             {product.name}
           </h3>
         </Link>
@@ -138,7 +138,7 @@ export function ProductCard({
             <span className="font-headline font-semibold text-xl text-on-surface block">
               {formatPrice(bestWholesale!)}
             </span>
-            <span className="text-xs text-green-600 dark:text-green-400 font-medium block">
+            <span className="text-xs text-tertiary font-medium block">
               PRECIO MAYORISTA APLICADO
             </span>
           </div>
@@ -153,7 +153,7 @@ export function ProductCard({
                 : formatPrice(retailPrice)}
             </span>
             {bestWholesale && (
-              <span className="text-xs text-green-600 dark:text-green-400 font-medium block">
+              <span className="text-xs text-tertiary font-medium block">
                 AHORRAS {formatPrice(retailPrice - bestWholesale)}
               </span>
             )}
@@ -170,7 +170,7 @@ export function ProductCard({
           <div className="flex items-center gap-2">
             <Link
               href={viewMode === 'wholesale' ? `/product/${product.slug}?mode=wholesale` : `/product/${product.slug}`}
-              className="inline-flex items-center gap-1.5 h-9 px-3 text-xs font-label font-semibold uppercase tracking-wider rounded border-2 border-secondary text-secondary bg-transparent hover:bg-secondary/10 transition-all duration-200"
+              className="inline-flex items-center gap-1.5 h-9 px-3 text-xs font-label font-semibold uppercase tracking-wider rounded border-2 border-tertiary text-tertiary bg-transparent hover:bg-tertiary/10 transition-all duration-200"
             >
               <Eye className="h-3.5 w-3.5" />
               Ver más

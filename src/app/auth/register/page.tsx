@@ -81,11 +81,11 @@ function RegisterForm() {
   }
 
   return (
-    <div className="bg-surface rounded-lg shadow-lg border border-outline-variant p-8 space-y-6">
+    <div className="bg-surface rounded-lg shadow-lg border border-outline-variant border-t-2 border-t-tertiary p-8 space-y-6">
       {/* Back link */}
       <Link
         href="/"
-        className="inline-flex items-center gap-1.5 text-sm text-on-surface-variant hover:text-on-surface transition-colors"
+        className="inline-flex items-center gap-1.5 text-sm text-tertiary hover:text-tertiary/80 font-medium transition-colors"
       >
         <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
           <path fillRule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
@@ -128,7 +128,7 @@ function RegisterForm() {
 
       <div className="relative flex items-center gap-3">
         <div className="flex-1 h-px bg-outline-variant" />
-        <span className="text-xs text-on-surface-variant">o con email</span>
+        <span className="text-xs text-tertiary font-medium">o con email</span>
         <div className="flex-1 h-px bg-outline-variant" />
       </div>
 
@@ -148,7 +148,7 @@ function RegisterForm() {
             required
             autoComplete="name"
             placeholder="Tu nombre completo"
-            className="w-full h-11 px-4 rounded-md bg-surface-container-highest border border-outline-variant text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-secondary"
+            className="w-full h-11 px-4 rounded-md bg-surface-container-highest border border-outline-variant text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-tertiary"
           />
         </div>
 
@@ -167,7 +167,7 @@ function RegisterForm() {
             required
             autoComplete="email"
             placeholder="tu@email.com"
-            className="w-full h-11 px-4 rounded-md bg-surface-container-highest border border-outline-variant text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-secondary"
+            className="w-full h-11 px-4 rounded-md bg-surface-container-highest border border-outline-variant text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-tertiary"
           />
         </div>
 
@@ -186,7 +186,7 @@ function RegisterForm() {
             required
             autoComplete="new-password"
             placeholder="Mínimo 6 caracteres"
-            className="w-full h-11 px-4 rounded-md bg-surface-container-highest border border-outline-variant text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-secondary"
+            className="w-full h-11 px-4 rounded-md bg-surface-container-highest border border-outline-variant text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-tertiary"
           />
         </div>
 
@@ -201,7 +201,7 @@ function RegisterForm() {
             id="accountType"
             value={accountType}
             onChange={(e) => setAccountType(e.target.value)}
-            className="w-full h-11 px-4 rounded-md bg-surface-container-highest border border-outline-variant text-on-surface focus:outline-none focus:ring-2 focus:ring-secondary"
+            className="w-full h-11 px-4 rounded-md bg-surface-container-highest border border-outline-variant text-on-surface focus:outline-none focus:ring-2 focus:ring-tertiary"
           >
             <option value="INDIVIDUAL">Individual</option>
             <option value="EMPRESA">Empresa</option>
@@ -223,7 +223,7 @@ function RegisterForm() {
               onChange={(e) => setCompany(e.target.value)}
               required
               placeholder="Razón social"
-              className="w-full h-11 px-4 rounded-md bg-surface-container-highest border border-outline-variant text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-secondary"
+              className="w-full h-11 px-4 rounded-md bg-surface-container-highest border border-outline-variant text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-tertiary"
             />
           </div>
         )}
@@ -241,7 +241,7 @@ function RegisterForm() {
         ¿Ya tienes cuenta?{' '}
         <Link
           href="/auth/login"
-          className="text-secondary hover:underline font-medium"
+          className="text-tertiary hover:underline font-medium"
         >
           Iniciar Sesión
         </Link>

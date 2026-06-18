@@ -40,14 +40,14 @@ export function PriceDisplay({
           <span className="text-sm text-on-surface-variant line-through">
             {formatCurrency(retailPrice)}
           </span>
-          <span className="text-sm text-green-600 dark:text-green-400 font-medium">
+          <span className="text-sm text-tertiary font-medium">
             Mayoreo: {formatCurrency(wholesalePrice)}
           </span>
         </div>
       )}
 
       {hasWholesale && showSavings && (
-        <span className="text-xs text-green-600 dark:text-green-400 font-medium block">
+        <span className="text-xs text-tertiary font-medium block">
           AHORRAS {formatCurrency(retailPrice - wholesalePrice)}
         </span>
       )}
