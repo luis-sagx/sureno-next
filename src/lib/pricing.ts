@@ -18,7 +18,7 @@ export function getBestWholesalePrice(
   if (!applicable.length) return null;
 
   const best = applicable.reduce((a, b) =>
-    a.pricePerUnit.lt(b.pricePerUnit) ? a : b
+    Number(a.pricePerUnit) < Number(b.pricePerUnit) ? a : b
   );
 
   return Number(best.pricePerUnit);

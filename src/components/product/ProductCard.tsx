@@ -39,7 +39,7 @@ export function ProductCard({
   viewMode = 'retail',
   className,
 }: ProductCardProps) {
-  const [quantity, setQuantity] = useState(1)
+  const [quantity, setQuantity] = useState(viewMode === 'wholesale' ? CAJA_SIZE : 1)
   const [imageFailed, setImageFailed] = useState(false)
   const addItem = useCartStore((s) => s.addItem)
 
@@ -144,17 +144,24 @@ export function ProductCard({
           </div>
         ) : (
           <div className="space-y-1">
-            <span className="text-sm text-on-surface-variant line-through">
-              {formatPrice(retailPrice)}
-            </span>
-            <span className="font-headline font-semibold text-xl text-on-surface block">
-              {bestWholesale
-                ? formatPrice(bestWholesale)
-                : formatPrice(retailPrice)}
-            </span>
-            {bestWholesale && (
-              <span className="text-xs text-tertiary font-medium block">
-                AHORRAS {formatPrice(retailPrice - bestWholesale)}
+            {bestWholesale != null && bestWholesale < retailPrice ? (
+              <>
+                <span className="text-sm text-on-surface-variant line-through">
+                  {formatPrice(retailPrice * CAJA_SIZE)}
+                </span>
+                <span className="font-headline font-semibold text-xl text-on-surface block">
+                  {formatPrice(bestWholesale * CAJA_SIZE)}
+                </span>
+                <span className="text-xs text-on-surface-variant block">
+                  {formatPrice(bestWholesale)} c/u · caja de {CAJA_SIZE}
+                </span>
+                <span className="text-xs text-tertiary font-medium block">
+                  AHORRAS {formatPrice((retailPrice - bestWholesale) * CAJA_SIZE)}
+                </span>
+              </>
+            ) : (
+              <span className="font-headline font-semibold text-xl text-on-surface block">
+                {formatPrice(retailPrice * CAJA_SIZE)}
               </span>
             )}
           </div>
@@ -164,8 +171,9 @@ export function ProductCard({
           <QuantitySelector
             value={quantity}
             onChange={setQuantity}
-            min={1}
-            max={99}
+            min={viewMode === 'wholesale' ? CAJA_SIZE : 1}
+            max={viewMode === 'wholesale' ? CAJA_SIZE * 20 : 99}
+            step={viewMode === 'wholesale' ? CAJA_SIZE : 1}
           />
           <div className="flex items-center gap-2">
             <Link

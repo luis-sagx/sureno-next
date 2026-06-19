@@ -8,6 +8,7 @@ interface QuantitySelectorProps {
   onChange: (value: number) => void;
   min?: number;
   max?: number;
+  step?: number;
   className?: string;
 }
 
@@ -16,14 +17,15 @@ export function QuantitySelector({
   onChange,
   min = 1,
   max = 99,
+  step = 1,
   className,
 }: QuantitySelectorProps) {
   function decrement() {
-    if (value > min) onChange(value - 1);
+    if (value > min) onChange(Math.max(min, value - step));
   }
 
   function increment() {
-    if (value < max) onChange(value + 1);
+    if (value < max) onChange(Math.min(max, value + step));
   }
 
   const decDisabled = value <= min;
