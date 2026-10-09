@@ -14,7 +14,7 @@ Make the root Next.js app generate and import a Prisma 7 client before developme
 - Point all application, test, and database-script imports to the configured generated output.
 - Generate the client before normal `dev`, `build`, and test commands.
 - Clear `.next` and verify the development app starts.
-- Preserve existing database models and mappings; relation navigation fields needed for Prisma validation are allowed. Do not migrate/push the database or alter external services.
+- Preserve existing database models and mappings; relation navigation fields needed for Prisma validation are allowed. Do not migrate/push the database or alter external services without explicit target and operation authorization.
 - Ignore generated client output; regenerate it through project scripts.
 - Preserve the pre-existing untracked root `AGENTS.md`.
 
@@ -67,4 +67,4 @@ The user approved this design: configure Prisma 7, generate before `dev`, clear 
 
 ## Progress and next step
 
-P7-01 and P7-02 implementation commits are recorded; Prisma client generation is green, all imports target the generated client, and the dev server starts without the original Next module-resolution error. P7-02 remains open: `/` returns 500 because the configured database lacks `categories.created_at`, and the production build exposes a mismatch between `prisma/add-sureno-products.ts` and the current Product model. No database operation or unrelated script/schema correction has been authorized.
+P7-01 and P7-02 implementation commits are recorded; Prisma client generation is green, all imports target the generated client, and the dev server starts without the original Next module-resolution error. A repository-only mapping found broader drift: `prisma/setup.ts`, `schema.prisma`, application actions, and seed/import scripts describe different fields. The setup SQL also uses `CREATE TABLE IF NOT EXISTS`, so editing it cannot evolve an existing database. P7-02 remains open: `/` returns 500 because the configured database lacks `categories.created_at`, and the production build exposes a mismatch between `prisma/add-sureno-products.ts` and the current Product model. Choosing the canonical schema and operating on the configured database requires the user's target, operation, and credential/session authorization.
