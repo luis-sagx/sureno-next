@@ -3,7 +3,7 @@
 import { Input } from "@/components/ui/Input";
 import { CategoryCard } from "@/components/ui/CategoryCard";
 import { cn } from "@/lib/utils";
-import type { Category } from "@prisma/client";
+import type { Category } from "../../generated/prisma/client";
 import {
   GlassWater,
   Grape,

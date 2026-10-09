@@ -1,4 +1,4 @@
-import type { Variant, WholesaleTier } from "@prisma/client";
+import type { Variant, WholesaleTier } from "../generated/prisma/client";
 
 /** Wholesale purchases are made in boxes of 12 units. */
 export const CAJA_SIZE = 12;

@@ -2,7 +2,7 @@
 
 import { formatPrice } from "@/lib/pricing";
 import { cn } from "@/lib/utils";
-import type { WholesaleTier } from "@prisma/client";
+import type { WholesaleTier } from "../../generated/prisma/client";
 import { Crown } from "lucide-react";
 
 interface VolumePricingTableProps {

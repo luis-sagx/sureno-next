@@ -8,7 +8,7 @@ import { VolumePricingTable } from "@/components/product/VolumePricingTable";
 import { Badge } from "@/components/ui/Badge";
 import { PriceDisplay } from "@/components/ui/PriceDisplay";
 import { formatPrice } from "@/lib/pricing";
-import type { Category, Product, Variant, WholesaleTier, Brand } from "@prisma/client";
+import type { Category, Product, Variant, WholesaleTier, Brand } from "../../generated/prisma/client";
 import { useMemo, useState } from "react";
 
 type ProductWithRelations = Product & {

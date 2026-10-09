@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { ProductCard } from "@/components/product/ProductCard";
-import type { Product, Variant, WholesaleTier } from "@prisma/client";
-import { Prisma } from "@prisma/client";
+import type { Product, Variant, WholesaleTier } from "../../generated/prisma/client";
+import { Prisma } from "../../generated/prisma/client";
 
 vi.mock("@/store/cart", () => {
   return {

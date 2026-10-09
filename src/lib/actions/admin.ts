@@ -4,8 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { serializeDecimal } from "@/lib/serialize";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { Prisma } from "@prisma/client";
-import type { Prisma as PrismaClient } from "@prisma/client";
+import { Prisma } from "../../generated/prisma/client";
+import type { Prisma as PrismaClient } from "../../generated/prisma/client";
 
 // ─── Schemas ───────────────────────────────────────────────
 

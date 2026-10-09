@@ -2,7 +2,7 @@ import "dotenv/config";
 import fs from "fs/promises";
 import { fileURLToPath } from "url";
 import path from "path";
-import { Prisma, PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "../src/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 

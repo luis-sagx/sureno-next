@@ -1,5 +1,5 @@
 import { ProductCard } from "@/components/product/ProductCard";
-import type { Product, Category, Brand, Variant, WholesaleTier } from "@prisma/client";
+import type { Product, Category, Brand, Variant, WholesaleTier } from "../../generated/prisma/client";
 
 type ProductWithRelations = Product & {
   category: Category;
