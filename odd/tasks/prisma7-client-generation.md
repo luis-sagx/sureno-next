@@ -75,16 +75,16 @@ The user authorized analyzing and applying local changes, then supplied Supabase
   - Database limitation: `npm run dev` previously started successfully but `GET /` returned P2022 because the connected database lacks `categories.created_at`. No existing database was altered.
   - Commit: `778e697` (`fix(prisma): align schema with app data contract`).
   - RDD assessment: disabled/unmanaged (opt-in mode; no enabled state or tooling observed).
-- [ ] P7-04: Align the existing Supabase schema with the local app contract and verify the root route.
+- [x] P7-04: Align the existing Supabase schema with the local app contract and verify the root route.
   - Route: delegated direct (writer trigger: Prisma schema, fresh-database setup, and an additive existing-database patch); remote action uses the explicitly authorized project/session.
   - RED: `GET /` returns 500/P2022 because `categories.created_at` is absent. Read-only metadata inspection of authorized project `ygxuoaheldmjaajipsfo`, with endpoint verification and a read-only transaction, confirmed additional schema drift: missing `categories.created_at`/`updated_at`, `brands.created_at`/`updated_at`, `products.wholesale_price`, `variants.cost`, `wholesale_tiers.created_at`, and table `about_sections`; database `orders.payment_status` is enum `PaymentStatus` (`PENDING`, `PAID`, `FAILED`) while Prisma currently models a string.
   - Implementation: added idempotent SQL patch `prisma/patches/20261009_add_missing_app_schema.sql`; updated Prisma and fresh-database bootstrap to use the already-existing `PaymentStatus` enum.
   - GREEN: `npm run db:generate` passed; `npm run build` passed compilation, TypeScript, and static generation. Applied the SQL patch in one transaction through the authorized `DATABASE_URL`; a read-only metadata query confirmed all seven missing columns and `about_sections` now exist. Started `npm run dev`; `GET /` returned HTTP 200 with no Prisma error in server output.
   - Safety: only schema metadata was inspected; patch added columns/table with defaults and did not delete tables or read/modify existing row values. Newly added non-null columns receive their declared defaults.
   - Authorization: user provided project `ygxuoaheldmjaajipsfo`, authorized use of the repo's configured `DATABASE_URL`, and explicitly authorized inspection plus additive schema writes without data deletion.
-  - Commit: pending.
+  - Commit: `5901ea8` (`fix(prisma): align existing Supabase schema`).
   - RDD assessment: disabled/unmanaged (opt-in mode; no enabled state or tooling observed).
 
 ## Progress and next step
 
-P7-01 through P7-03 local implementation work is committed. P7-04's additive schema patch was applied to authorized Supabase project `ygxuoaheldmjaajipsfo`; Prisma client generation and production build pass, and the development route now returns HTTP 200. The user selected `single-pr`. `setup.ts` remains a fresh-database bootstrap, not an existing-database migration. The P7-04 work-unit commit and evidence update are pending.
+P7-01 through P7-04 local implementation work is committed. P7-04's additive schema patch was applied to authorized Supabase project `ygxuoaheldmjaajipsfo`; Prisma client generation and production build pass, and the development route now returns HTTP 200. The user selected `single-pr`. `setup.ts` remains a fresh-database bootstrap, not an existing-database migration. The Engram mirror remains unavailable in this environment.
