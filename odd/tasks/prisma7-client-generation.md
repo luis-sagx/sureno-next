@@ -2,7 +2,7 @@
 
 ## Objective
 
-Make the root Next.js app generate and import a Prisma 7 client before development starts, and remove the stale Next development cache that surfaced as a missing `next/app.js` module.
+Make the root Next.js app generate and import a Prisma 7 client before development starts, align Prisma's schema/bootstrap with the active app contract, and remove the stale Next development cache that surfaced as a missing `next/app.js` module.
 
 ## Problem and rationale
 
@@ -12,38 +12,42 @@ Make the root Next.js app generate and import a Prisma 7 client before developme
 
 - Add the Prisma 7 PostgreSQL datasource and generated-client configuration.
 - Point all application, test, and database-script imports to the configured generated output.
+- Make `prisma/schema.prisma` represent the models and fields used by active app, admin, checkout, webhook, seed, and import flows; align fresh-database setup SQL to the same contract.
 - Generate the client before normal `dev`, `build`, and test commands.
 - Clear `.next` and verify the development app starts.
-- Preserve existing database models and mappings; relation navigation fields needed for Prisma validation are allowed. Do not migrate/push the database or alter external services without explicit target and operation authorization.
+- Do not inspect or modify Supabase until the user confirms the exact project, operation scope, and configured credential/session to use.
+- Do not delete existing tables or data; document any schema change requiring a database operation before attempting it.
 - Ignore generated client output; regenerate it through project scripts.
 - Preserve the pre-existing untracked root `AGENTS.md`.
 
 ## Authorized scope
 
-The user approved this design: configure Prisma 7, generate before `dev`, clear `.next`, and check startup.
+The user authorized analyzing and applying the corresponding local changes, including trying Supabase if applicable. The schema recommendation is to align Prisma with active app/seed/import flows and make bootstrap SQL consistent. Remote execution remains pending the exact Supabase target and credential/session authorization.
 
 ## Routing and workflow
 
 - Route: delegated direct.
 - Trigger: initial implementation spans three non-trivial files; follow-up import migration spans 14 consumer files and used a bounded mapping plus writer.
-- Feature forecast: about 35 authored changed lines; observed feature diff is about 140 authored lines, below the ~400-line delivery budget; strategy `ask-on-risk`.
+- Feature forecast: about 430 authored changed lines including schema/bootstrap reconciliation. User selected `single-pr`: all feature work stays on this branch and is intended for one PR; the size heuristic does not split the work.
 - TDD mode: enabled by the applicable session skill `/home/luissagnay/.agents/skills/test-driven-development/SKILL.md`; project runner: `npm run test:run` (Vitest 4.1.8). This configuration-only fix uses `npm run db:generate` as its focused RED/GREEN check.
 - Engram mirror: pending; no Engram/memory tool is available in this session.
-- Receipt-driven development: not assessed; `gentle-ai` CLI is unavailable in this environment.
+- Receipt-driven development: disabled/unmanaged; no active opt-in state or `gentle-ai` CLI was available in this environment.
 
 ## Acceptance criteria
 
 - Prisma 7 client generation succeeds from the repository scripts.
 - The Prisma runtime imports the generated client at the configured output.
 - Starting `npm run dev` generates the client and clears the reported Next module-resolution error.
-- Serving `/` requires the configured database to match the Prisma schema.
-- No database migration or schema push is performed.
+- `npm run build` completes TypeScript validation against the generated client.
+- A fresh database created from the local setup script matches the Prisma schema and app contract.
+- The existing Supabase database is not changed until its exact target and write operation are explicitly confirmed.
 
 ## Checks
 
 - `npm run db:generate`
-- `npm run build` to confirm client generation and check application types.
+- `npm run build` to confirm client generation and check application types. The sandboxed run could not fetch Google Fonts; rerunning with approved network access passed compilation, TypeScript, and static generation.
 - `npm run dev`, then request `/` locally and inspect server output.
+- `npm run db:setup` was not run: it executes SQL against `DATABASE_URL` and is a create-if-not-exists bootstrap, not an upgrade migration for the existing database.
 - Vitest was not run in this pass.
 
 ## Tasks and evidence
@@ -64,7 +68,21 @@ The user approved this design: configure Prisma 7, generate before `dev`, clear 
   - GREEN: pending database schema alignment and confirmation that `/` serves successfully.
   - Commit: `39e6e5c` (`fix(prisma): migrate imports to generated client`).
   - RDD assessment: disabled/unmanaged (opt-in mode; no enabled state or tooling observed).
+- [x] P7-03: Reconcile the Prisma models and fresh-database setup SQL with the active app contract.
+  - Route: delegated direct (mapping spans app actions, checkout/webhook, schema, bootstrap SQL, and data scripts).
+  - RED: current `npm run build` fails typechecking on Product fields absent from `schema.prisma`; a clean development request fails on schema field `Category.createdAt` absent from the setup SQL/current database.
+  - GREEN: `npm run db:generate` generated Prisma Client 7.8.0 and `npm run build` passed Next compilation, TypeScript, and static generation. The SQL bootstrap now describes the app models for fresh databases; it was reviewed but not executed against a database.
+  - Database limitation: `npm run dev` previously started successfully but `GET /` returned P2022 because the connected database lacks `categories.created_at`. No existing database was altered.
+  - Commit: pending.
+  - RDD assessment: disabled/unmanaged (opt-in mode; no enabled state or tooling observed).
+- [ ] P7-04: Verify the aligned local contract and apply any required Supabase schema change after explicit target/operation authorization.
+  - Route: delegated direct for local verification; remote execution remains unauthorized until required details are supplied.
+  - RED: `GET /` returns 500/P2022 while the existing database lacks `categories.created_at`.
+  - GREEN: pending. The local production build passes; an application request still needs a compatible database schema.
+  - Remote authorization pending: exact Supabase project, scope (read-only inspection and/or schema write), and configured credential/session.
+  - Commit: pending.
+  - RDD assessment: disabled/unmanaged (opt-in mode; no enabled state or tooling observed).
 
 ## Progress and next step
 
-P7-01 and P7-02 implementation commits are recorded; Prisma client generation is green, all imports target the generated client, and the dev server starts without the original Next module-resolution error. A repository-only mapping found broader drift: `prisma/setup.ts`, `schema.prisma`, application actions, and seed/import scripts describe different fields. The setup SQL also uses `CREATE TABLE IF NOT EXISTS`, so editing it cannot evolve an existing database. P7-02 remains open: `/` returns 500 because the configured database lacks `categories.created_at`, and the production build exposes a mismatch between `prisma/add-sureno-products.ts` and the current Product model. Choosing the canonical schema and operating on the configured database requires the user's target, operation, and credential/session authorization.
+P7-01 through P7-03 local implementation work is complete; P7-01 and P7-02 have commits, while P7-03 awaits its work-unit commit. The production build and client generation pass. The dev server starts without the original Next module-resolution error, but `/` still returns P2022 against the configured database because `categories.created_at` is missing. `setup.ts` is for fresh databases and is not an existing-database migration. P7-04 remains open for database-backed verification and any authorized Supabase schema operation. The user selected `single-pr`; exact remote target/scope/session remain pending.
