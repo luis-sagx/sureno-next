@@ -15,14 +15,14 @@ Make the root Next.js app generate and import a Prisma 7 client before developme
 - Make `prisma/schema.prisma` represent the models and fields used by active app, admin, checkout, webhook, seed, and import flows; align fresh-database setup SQL to the same contract.
 - Generate the client before normal `dev`, `build`, and test commands.
 - Clear `.next` and verify the development app starts.
-- Supabase read-only inspection is authorized by the user; exact project and configured credential/session are still required before remote access. Schema writes require explicit scope confirmation for the exact target/session.
+- User authorized inspection and additive schema writes on Supabase project `ygxuoaheldmjaajipsfo` through the configured `DATABASE_URL`; no tables or data may be deleted.
 - Do not delete existing tables or data; document any schema change requiring a database operation before attempting it.
 - Ignore generated client output; regenerate it through project scripts.
 - Preserve the pre-existing untracked root `AGENTS.md`.
 
 ## Authorized scope
 
-The user authorized analyzing and applying the corresponding local changes, including trying Supabase if applicable, and later explicitly authorized read-only Supabase inspection. The schema recommendation is to align Prisma with active app/seed/import flows and make bootstrap SQL consistent. Remote execution remains pending the exact Supabase target and configured credential/session; schema writes also need their scope confirmed.
+The user authorized analyzing and applying local changes, then supplied Supabase project `ygxuoaheldmjaajipsfo`, authorized the configured `DATABASE_URL` session, and explicitly authorized inspection plus additive schema changes without data deletion. The local schema/bootstrap are being aligned with active app and data flows; remote metadata inspection is complete and the additive patch is pending.
 
 ## Routing and workflow
 
@@ -40,7 +40,7 @@ The user authorized analyzing and applying the corresponding local changes, incl
 - Starting `npm run dev` generates the client and clears the reported Next module-resolution error.
 - `npm run build` completes TypeScript validation against the generated client.
 - A fresh database created from the local setup script matches the Prisma schema and app contract.
-- The existing Supabase database is not changed until its exact target and write operation are explicitly confirmed.
+- Supabase project `ygxuoaheldmjaajipsfo` is authorized for inspection and additive schema changes through the configured `DATABASE_URL`; no tables or data may be deleted.
 
 ## Checks
 
@@ -75,14 +75,16 @@ The user authorized analyzing and applying the corresponding local changes, incl
   - Database limitation: `npm run dev` previously started successfully but `GET /` returned P2022 because the connected database lacks `categories.created_at`. No existing database was altered.
   - Commit: `778e697` (`fix(prisma): align schema with app data contract`).
   - RDD assessment: disabled/unmanaged (opt-in mode; no enabled state or tooling observed).
-- [ ] P7-04: Verify the aligned local contract and apply any required Supabase schema change after explicit target/operation authorization.
-  - Route: delegated direct for local verification; remote inspection cannot proceed until the user identifies the exact project and configured session.
-  - RED: `GET /` returns 500/P2022 while the existing database lacks `categories.created_at`.
-  - GREEN: pending. The local production build passes; an application request still needs a compatible database schema.
-  - User authorized read-only Supabase inspection. Remote authorization pending: exact project and configured credential/session. A schema write still requires scope confirmation for that target/session.
+- [ ] P7-04: Align the existing Supabase schema with the local app contract and verify the root route.
+  - Route: delegated direct (writer trigger: Prisma schema, fresh-database setup, and an additive existing-database patch); remote action uses the explicitly authorized project/session.
+  - RED: `GET /` returns 500/P2022 because `categories.created_at` is absent. Read-only metadata inspection of authorized project `ygxuoaheldmjaajipsfo`, with endpoint verification and a read-only transaction, confirmed additional schema drift: missing `categories.created_at`/`updated_at`, `brands.created_at`/`updated_at`, `products.wholesale_price`, `variants.cost`, `wholesale_tiers.created_at`, and table `about_sections`; database `orders.payment_status` is enum `PaymentStatus` (`PENDING`, `PAID`, `FAILED`) while Prisma currently models a string.
+  - Implementation: added idempotent SQL patch `prisma/patches/20261009_add_missing_app_schema.sql`; updated Prisma and fresh-database bootstrap to use the already-existing `PaymentStatus` enum.
+  - GREEN: `npm run db:generate` passed; `npm run build` passed compilation, TypeScript, and static generation. Applied the SQL patch in one transaction through the authorized `DATABASE_URL`; a read-only metadata query confirmed all seven missing columns and `about_sections` now exist. Started `npm run dev`; `GET /` returned HTTP 200 with no Prisma error in server output.
+  - Safety: only schema metadata was inspected; patch added columns/table with defaults and did not delete tables or read/modify existing row values. Newly added non-null columns receive their declared defaults.
+  - Authorization: user provided project `ygxuoaheldmjaajipsfo`, authorized use of the repo's configured `DATABASE_URL`, and explicitly authorized inspection plus additive schema writes without data deletion.
   - Commit: pending.
   - RDD assessment: disabled/unmanaged (opt-in mode; no enabled state or tooling observed).
 
 ## Progress and next step
 
-P7-01 through P7-03 local implementation work is committed; the production build and client generation pass. The dev server starts without the original Next module-resolution error, but `/` still returns P2022 against the configured database because `categories.created_at` is missing. `setup.ts` is for fresh databases and is not an existing-database migration. P7-04 remains open for database-backed verification and any authorized Supabase schema operation. The user selected `single-pr` and authorized read-only Supabase inspection; exact remote target and configured session remain pending, as does write scope confirmation.
+P7-01 through P7-03 local implementation work is committed. P7-04's additive schema patch was applied to authorized Supabase project `ygxuoaheldmjaajipsfo`; Prisma client generation and production build pass, and the development route now returns HTTP 200. The user selected `single-pr`. `setup.ts` remains a fresh-database bootstrap, not an existing-database migration. The P7-04 work-unit commit and evidence update are pending.

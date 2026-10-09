@@ -29,6 +29,12 @@ enum PaymentMethod {
   CONTRAENTREGA
 }
 
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+}
+
 model User {
   id         String         @id @default(cuid())
   email      String         @unique
@@ -143,7 +149,7 @@ model Order {
   city              String        @default("")
   zipCode           String        @default("") @map("zip_code")
   paymentMethod     PaymentMethod @default(STRIPE) @map("payment_method")
-  paymentStatus     String        @default("PENDING") @map("payment_status")
+  paymentStatus     PaymentStatus @default(PENDING) @map("payment_status")
   stripeSessionId   String?       @map("stripe_session_id")
   paidAt            DateTime?     @map("paid_at")
   retailSubtotal    Decimal       @default(0) @map("retail_subtotal") @db.Decimal(10, 2)

@@ -23,6 +23,10 @@ DO $$ BEGIN
   CREATE TYPE "PaymentMethod" AS ENUM ('STRIPE', 'CONTRAENTREGA');
 EXCEPTION WHEN duplicate_object THEN NULL;
 END $$;
+DO $$ BEGIN
+  CREATE TYPE "PaymentStatus" AS ENUM ('PENDING', 'PAID', 'FAILED');
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- Users
 CREATE TABLE IF NOT EXISTS "users" (
@@ -129,7 +133,7 @@ CREATE TABLE IF NOT EXISTS "orders" (
   "city" TEXT NOT NULL DEFAULT '',
   "zip_code" TEXT NOT NULL DEFAULT '',
   "payment_method" "PaymentMethod" NOT NULL DEFAULT 'STRIPE',
-  "payment_status" TEXT NOT NULL DEFAULT 'PENDING',
+  "payment_status" "PaymentStatus" NOT NULL DEFAULT 'PENDING',
   "stripe_session_id" TEXT,
   "paid_at" TIMESTAMPTZ,
   "retail_subtotal" DECIMAL(10,2) NOT NULL DEFAULT 0,
