@@ -25,8 +25,8 @@ The user approved this design: configure Prisma 7, generate before `dev`, clear 
 ## Routing and workflow
 
 - Route: delegated direct.
-- Trigger: implementation spans three non-trivial files (`prisma/schema.prisma`, `src/lib/prisma.ts`, and `package.json`); delegate one bounded writer.
-- Feature forecast: about 35 authored changed lines, below the ~400-line delivery budget; strategy `ask-on-risk`.
+- Trigger: initial implementation spans three non-trivial files; follow-up import migration spans 14 consumer files and used a bounded mapping plus writer.
+- Feature forecast: about 35 authored changed lines; observed feature diff is about 140 authored lines, below the ~400-line delivery budget; strategy `ask-on-risk`.
 - TDD mode: enabled by the applicable session skill `/home/luissagnay/.agents/skills/test-driven-development/SKILL.md`; project runner: `npm run test:run` (Vitest 4.1.8). This configuration-only fix uses `npm run db:generate` as its focused RED/GREEN check.
 - Engram mirror: pending; no Engram/memory tool is available in this session.
 - Receipt-driven development: not assessed; `gentle-ai` CLI is unavailable in this environment.
@@ -62,9 +62,9 @@ The user approved this design: configure Prisma 7, generate before `dev`, clear 
   - Build result: Next compiled, then TypeScript failed in `prisma/add-sureno-products.ts` because its `Product` updates use `volumeMl`, `abv`, and `stockStatus`, which are absent from the current Prisma model. This script/schema mismatch predates this import migration; no business-model changes were made.
   - Development result: `npm run dev` generated Prisma Client 7.8.0 and Next reported ready at `http://localhost:3000`. `GET /` returned 500 because the configured database lacks `categories.created_at` (`P2022`). No database was inspected or changed.
   - GREEN: pending database schema alignment and confirmation that `/` serves successfully.
-  - Commit: pending.
+  - Commit: `39e6e5c` (`fix(prisma): migrate imports to generated client`).
   - RDD assessment: disabled/unmanaged (opt-in mode; no enabled state or tooling observed).
 
 ## Progress and next step
 
-P7-01 is committed and Prisma client generation is green. All remaining imports now target the generated client. Clearing `.next` removed the original Next module error, and the dev server starts. The root route remains blocked by the configured database missing `categories.created_at`; the production build also exposes an existing mismatch between `prisma/add-sureno-products.ts` and the current Product model. Both follow-ups require scope decisions; no database operation has been authorized.
+P7-01 and P7-02 implementation commits are recorded; Prisma client generation is green, all imports target the generated client, and the dev server starts without the original Next module-resolution error. P7-02 remains open: `/` returns 500 because the configured database lacks `categories.created_at`, and the production build exposes a mismatch between `prisma/add-sureno-products.ts` and the current Product model. No database operation or unrelated script/schema correction has been authorized.
