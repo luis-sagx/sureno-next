@@ -15,14 +15,14 @@ Make the root Next.js app generate and import a Prisma 7 client before developme
 - Make `prisma/schema.prisma` represent the models and fields used by active app, admin, checkout, webhook, seed, and import flows; align fresh-database setup SQL to the same contract.
 - Generate the client before normal `dev`, `build`, and test commands.
 - Clear `.next` and verify the development app starts.
-- Do not inspect or modify Supabase until the user confirms the exact project, operation scope, and configured credential/session to use.
+- Supabase read-only inspection is authorized by the user; exact project and configured credential/session are still required before remote access. Schema writes require explicit scope confirmation for the exact target/session.
 - Do not delete existing tables or data; document any schema change requiring a database operation before attempting it.
 - Ignore generated client output; regenerate it through project scripts.
 - Preserve the pre-existing untracked root `AGENTS.md`.
 
 ## Authorized scope
 
-The user authorized analyzing and applying the corresponding local changes, including trying Supabase if applicable. The schema recommendation is to align Prisma with active app/seed/import flows and make bootstrap SQL consistent. Remote execution remains pending the exact Supabase target and credential/session authorization.
+The user authorized analyzing and applying the corresponding local changes, including trying Supabase if applicable, and later explicitly authorized read-only Supabase inspection. The schema recommendation is to align Prisma with active app/seed/import flows and make bootstrap SQL consistent. Remote execution remains pending the exact Supabase target and configured credential/session; schema writes also need their scope confirmed.
 
 ## Routing and workflow
 
@@ -73,16 +73,16 @@ The user authorized analyzing and applying the corresponding local changes, incl
   - RED: current `npm run build` fails typechecking on Product fields absent from `schema.prisma`; a clean development request fails on schema field `Category.createdAt` absent from the setup SQL/current database.
   - GREEN: `npm run db:generate` generated Prisma Client 7.8.0 and `npm run build` passed Next compilation, TypeScript, and static generation. The SQL bootstrap now describes the app models for fresh databases; it was reviewed but not executed against a database.
   - Database limitation: `npm run dev` previously started successfully but `GET /` returned P2022 because the connected database lacks `categories.created_at`. No existing database was altered.
-  - Commit: pending.
+  - Commit: `778e697` (`fix(prisma): align schema with app data contract`).
   - RDD assessment: disabled/unmanaged (opt-in mode; no enabled state or tooling observed).
 - [ ] P7-04: Verify the aligned local contract and apply any required Supabase schema change after explicit target/operation authorization.
-  - Route: delegated direct for local verification; remote execution remains unauthorized until required details are supplied.
+  - Route: delegated direct for local verification; remote inspection cannot proceed until the user identifies the exact project and configured session.
   - RED: `GET /` returns 500/P2022 while the existing database lacks `categories.created_at`.
   - GREEN: pending. The local production build passes; an application request still needs a compatible database schema.
-  - Remote authorization pending: exact Supabase project, scope (read-only inspection and/or schema write), and configured credential/session.
+  - User authorized read-only Supabase inspection. Remote authorization pending: exact project and configured credential/session. A schema write still requires scope confirmation for that target/session.
   - Commit: pending.
   - RDD assessment: disabled/unmanaged (opt-in mode; no enabled state or tooling observed).
 
 ## Progress and next step
 
-P7-01 through P7-03 local implementation work is complete; P7-01 and P7-02 have commits, while P7-03 awaits its work-unit commit. The production build and client generation pass. The dev server starts without the original Next module-resolution error, but `/` still returns P2022 against the configured database because `categories.created_at` is missing. `setup.ts` is for fresh databases and is not an existing-database migration. P7-04 remains open for database-backed verification and any authorized Supabase schema operation. The user selected `single-pr`; exact remote target/scope/session remain pending.
+P7-01 through P7-03 local implementation work is committed; the production build and client generation pass. The dev server starts without the original Next module-resolution error, but `/` still returns P2022 against the configured database because `categories.created_at` is missing. `setup.ts` is for fresh databases and is not an existing-database migration. P7-04 remains open for database-backed verification and any authorized Supabase schema operation. The user selected `single-pr` and authorized read-only Supabase inspection; exact remote target and configured session remain pending, as does write scope confirmation.
