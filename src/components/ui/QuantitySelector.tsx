@@ -8,6 +8,7 @@ interface QuantitySelectorProps {
   onChange: (value: number) => void;
   min?: number;
   max?: number;
+  step?: number;
   className?: string;
 }
 
@@ -16,14 +17,15 @@ export function QuantitySelector({
   onChange,
   min = 1,
   max = 99,
+  step = 1,
   className,
 }: QuantitySelectorProps) {
   function decrement() {
-    if (value > min) onChange(value - 1);
+    if (value > min) onChange(Math.max(min, value - step));
   }
 
   function increment() {
-    if (value < max) onChange(value + 1);
+    if (value < max) onChange(Math.min(max, value + step));
   }
 
   const decDisabled = value <= min;
@@ -41,14 +43,14 @@ export function QuantitySelector({
         onClick={decrement}
         disabled={decDisabled}
         className={cn(
-          "w-10 h-10 flex items-center justify-center bg-surface-container hover:bg-surface-container-high transition-colors",
-          "disabled:opacity-30 disabled:cursor-not-allowed"
+          "w-10 h-10 flex items-center justify-center border border-outline-variant bg-surface-container text-secondary hover:bg-surface-container-high hover:text-on-surface transition-colors",
+          "disabled:opacity-40 disabled:cursor-not-allowed"
         )}
         aria-label="Reducir cantidad"
       >
         <Minus className="w-4 h-4" />
       </button>
-      <span className="w-12 h-10 flex items-center justify-center bg-surface-container-high text-on-surface font-medium text-sm tabular-nums">
+      <span className="w-12 h-10 flex items-center justify-center border-y border-outline-variant bg-surface-container-high text-on-surface font-semibold text-sm tabular-nums">
         {value}
       </span>
       <button
@@ -56,8 +58,8 @@ export function QuantitySelector({
         onClick={increment}
         disabled={incDisabled}
         className={cn(
-          "w-10 h-10 flex items-center justify-center bg-surface-container hover:bg-surface-container-high transition-colors",
-          "disabled:opacity-30 disabled:cursor-not-allowed"
+          "w-10 h-10 flex items-center justify-center border border-outline-variant bg-surface-container text-secondary hover:bg-surface-container-high hover:text-on-surface transition-colors",
+          "disabled:opacity-40 disabled:cursor-not-allowed"
         )}
         aria-label="Aumentar cantidad"
       >

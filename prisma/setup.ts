@@ -7,10 +7,26 @@ const pool = new Pool({
 });
 
 const SQL = `
--- Enums as text with check constraints handled by application
-CREATE TYPE "Role" AS ENUM ('CUSTOMER', 'ADMIN');
-CREATE TYPE "OrderStatus" AS ENUM ('PENDING', 'SHIPPED', 'DELIVERED', 'CANCELLED');
-CREATE TYPE "OrderType" AS ENUM ('RETAIL', 'WHOLESALE');
+DO $$ BEGIN
+  CREATE TYPE "Role" AS ENUM ('CUSTOMER', 'ADMIN');
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+DO $$ BEGIN
+  CREATE TYPE "OrderStatus" AS ENUM ('PENDING', 'SHIPPED', 'DELIVERED', 'CANCELLED');
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+DO $$ BEGIN
+  CREATE TYPE "OrderType" AS ENUM ('RETAIL', 'WHOLESALE');
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+DO $$ BEGIN
+  CREATE TYPE "PaymentMethod" AS ENUM ('STRIPE', 'CONTRAENTREGA');
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+DO $$ BEGIN
+  CREATE TYPE "PaymentStatus" AS ENUM ('PENDING', 'PAID', 'FAILED');
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- Users
 CREATE TABLE IF NOT EXISTS "users" (
@@ -29,17 +45,21 @@ CREATE TABLE IF NOT EXISTS "users" (
 -- Categories
 CREATE TABLE IF NOT EXISTS "categories" (
   "id" TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
-  "name" TEXT NOT NULL,
+  "name" TEXT UNIQUE NOT NULL,
   "slug" TEXT UNIQUE NOT NULL,
-  "icon" TEXT NOT NULL
+  "icon" TEXT NOT NULL DEFAULT 'wine',
+  "created_at" TIMESTAMPTZ NOT NULL DEFAULT now(),
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 -- Brands
 CREATE TABLE IF NOT EXISTS "brands" (
   "id" TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
-  "name" TEXT NOT NULL,
+  "name" TEXT UNIQUE NOT NULL,
   "slug" TEXT UNIQUE NOT NULL,
-  "image_url" TEXT
+  "image_url" TEXT,
+  "created_at" TIMESTAMPTZ NOT NULL DEFAULT now(),
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 -- Products
@@ -55,8 +75,9 @@ CREATE TABLE IF NOT EXISTS "products" (
   "image_url" TEXT,
   "badge" TEXT,
   "retail_price" DECIMAL(10,2) NOT NULL DEFAULT 0,
-  "category_id" TEXT NOT NULL REFERENCES "categories"("id"),
-  "brand_id" TEXT REFERENCES "brands"("id"),
+  "wholesale_price" DECIMAL(10,2) NOT NULL DEFAULT 0,
+  "category_id" TEXT NOT NULL REFERENCES "categories"("id") ON DELETE RESTRICT,
+  "brand_id" TEXT REFERENCES "brands"("id") ON DELETE SET NULL,
   "aroma" TEXT,
   "palate" TEXT,
   "finish" TEXT,
@@ -70,9 +91,13 @@ CREATE TABLE IF NOT EXISTS "variants" (
   "id" TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
   "product_id" TEXT NOT NULL REFERENCES "products"("id") ON DELETE CASCADE,
   "label" TEXT NOT NULL,
+  "retail_image_url" TEXT,
+  "wholesale_image_url" TEXT,
   "price" DECIMAL(10,2) NOT NULL DEFAULT 0,
+  "cost" DECIMAL(10,2),
   "stock" INTEGER NOT NULL DEFAULT 0,
-  "min_order" INTEGER NOT NULL DEFAULT 1
+  "min_order" INTEGER NOT NULL DEFAULT 1,
+  CONSTRAINT "variants_product_id_label_key" UNIQUE ("product_id", "label")
 );
 
 -- Wholesale Tiers
@@ -82,7 +107,8 @@ CREATE TABLE IF NOT EXISTS "wholesale_tiers" (
   "min_qty" INTEGER NOT NULL,
   "max_qty" INTEGER,
   "price_per_unit" DECIMAL(10,2) NOT NULL,
-  "label" TEXT
+  "label" TEXT,
+  "created_at" TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 -- Cart Items
@@ -100,13 +126,16 @@ CREATE TABLE IF NOT EXISTS "cart_items" (
 CREATE TABLE IF NOT EXISTS "orders" (
   "id" TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
   "order_number" TEXT UNIQUE NOT NULL,
-  "user_id" TEXT,
+  "user_id" TEXT REFERENCES "users"("id") ON DELETE SET NULL,
   "full_name" TEXT NOT NULL DEFAULT '',
   "company" TEXT,
   "street" TEXT NOT NULL DEFAULT '',
   "city" TEXT NOT NULL DEFAULT '',
   "zip_code" TEXT NOT NULL DEFAULT '',
-  "payment_method" TEXT NOT NULL DEFAULT 'DIRECT_PAYMENT',
+  "payment_method" "PaymentMethod" NOT NULL DEFAULT 'STRIPE',
+  "payment_status" "PaymentStatus" NOT NULL DEFAULT 'PENDING',
+  "stripe_session_id" TEXT,
+  "paid_at" TIMESTAMPTZ,
   "retail_subtotal" DECIMAL(10,2) NOT NULL DEFAULT 0,
   "wholesale_subtotal" DECIMAL(10,2) DEFAULT 0,
   "shipping_cost" DECIMAL(10,2) NOT NULL DEFAULT 0,
@@ -134,6 +163,16 @@ CREATE TABLE IF NOT EXISTS "user_activities" (
   "action" TEXT NOT NULL DEFAULT '',
   "details" TEXT,
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- Existing Prisma model retained for the root app's content schema.
+CREATE TABLE IF NOT EXISTS "about_sections" (
+  "id" TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+  "title" TEXT NOT NULL,
+  "content" TEXT NOT NULL,
+  "type" TEXT NOT NULL DEFAULT 'paragraph',
+  "created_at" TIMESTAMPTZ NOT NULL DEFAULT now(),
+  "updated_at" TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 -- Indexes

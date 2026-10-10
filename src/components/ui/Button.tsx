@@ -11,7 +11,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = "primary", size = "md", children, ...props }, ref) => {
     const baseStyles =
-      "inline-flex items-center justify-center font-label font-semibold uppercase tracking-wider transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary disabled:opacity-50 disabled:cursor-not-allowed";
+      "inline-flex items-center justify-center font-label font-semibold uppercase tracking-wider transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-tertiary disabled:opacity-50 disabled:cursor-not-allowed";
 
     const variants = {
       primary:
@@ -19,15 +19,15 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       secondary:
         "bg-surface-container-high text-on-surface border border-outline-variant hover:bg-surface-container-highest",
       outline:
-        "border-2 border-secondary text-secondary bg-transparent hover:bg-secondary/10",
+        "border-2 border-tertiary text-tertiary bg-transparent hover:bg-tertiary/10",
       ghost:
-        "text-on-surface-variant hover:bg-surface-container hover:text-on-surface",
+        "text-on-surface-variant hover:bg-surface-container hover:text-tertiary",
     };
 
     const sizes = {
       sm: "h-9 px-4 text-xs",
       md: "h-11 px-6 text-sm",
-      lg: "h-13 px-8 text-base",
+      lg: "h-[3.25rem] px-8 text-base",
     };
 
     return (

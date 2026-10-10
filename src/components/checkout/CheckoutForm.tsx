@@ -47,11 +47,11 @@ export function CheckoutForm() {
 
         <p className="text-xs text-on-surface-variant text-center leading-relaxed">
           Al completar este pedido, aceptas los Términos de Servicio y las
-          regulaciones de distribución de alcohol de Licorería Sureño.
+          regulaciones de distribución de alcohol de Sureño.
         </p>
 
         <div className="flex items-center justify-center gap-2 text-xs text-on-surface-variant">
-          <ShieldCheck className="w-4 h-4 text-green-600 dark:text-green-400" />
+          <ShieldCheck className="w-4 h-4 text-tertiary" />
           <span>Checkout seguro — Tus datos están protegidos</span>
         </div>
       </div>

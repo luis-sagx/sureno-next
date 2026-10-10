@@ -1,167 +1,208 @@
-import {
-  ShieldCheck,
-  Factory,
-  Truck,
-  MapPin,
-  Bus,
-  Award,
-  TrendingUp,
-} from "lucide-react";
-import Link from "next/link";
+import Image from 'next/image'
+
+const products = [
+  { src: '/img-minorista/cana-surena.webp', label: 'Caña Sureña' },
+  { src: '/img-minorista/vodka-blue.webp', label: 'Vodka Blue' },
+  { src: '/img-minorista/licor-oro.webp', label: 'Licor Oro' },
+  { src: '/img-minorista/cannabis.webp', label: 'Cannabis' },
+  {
+    src: '/img-minorista/aguardiente-diamante.webp',
+    label: 'Aguardiente Diamante',
+  },
+  { src: '/img-minorista/wisky-red-diez.webp', label: 'Whisky Red 10' },
+]
+
+const bgImage = { backgroundImage: "url('/bg.webp')" }
 
 export default function AboutPage() {
   return (
-    <div className="space-y-0">
-      {/* Hero */}
-      <section className="relative w-full overflow-hidden bg-surface">
-        <div className="absolute inset-0 bg-gradient-to-br from-secondary/10 via-transparent to-surface" />
-        <div className="relative mx-auto max-w-[1280px] px-4 py-24 md:py-32 text-center">
-          <h1 className="font-headline text-5xl md:text-6xl lg:text-7xl italic text-on-surface mb-6">
-            Tradición y Calidad
+    <div>
+      {/* Hero — bg fixed da el efecto parallax al hacer scroll */}
+      <section
+        className="relative h-80 flex items-center justify-center bg-cover bg-fixed bg-center"
+        style={bgImage}
+      >
+        <div className="absolute inset-0 bg-linear-to-b from-black/70 via-black/55 to-black/75" />
+        <div className="relative z-10 flex flex-col items-center gap-6 px-4 text-center">
+          <p className="max-w-2xl font-headline text-2xl italic text-white/90 drop-shadow-lg leading-relaxed">
+            &ldquo;En cada botella destilamos tradición, pasión y el sabor de lo
+            auténtico, para que cada momento se convierta en una experiencia
+            única.&rdquo;
+          </p>
+        </div>
+      </section>
+
+      {/* Historia */}
+      <section className="mx-auto max-w-7xl px-4 py-20 grid gap-12 md:grid-cols-[60fr_40fr] items-center">
+        <div className="space-y-5">
+          <p className="text-sm font-label uppercase tracking-[0.2em] text-secondary">
+            Quiénes somos
+          </p>
+          <h1 className="font-headline text-4xl md:text-5xl text-on-surface leading-tight">
+            Una historia nacida en el sur de Quito.
           </h1>
-          <p className="text-lg md:text-xl text-on-surface-variant max-w-2xl mx-auto leading-relaxed">
-            Legado en cada botella, compromiso en cada entrega.
+          <p className="text-base leading-relaxed text-on-surface-variant">
+            El 22 de mayo de 1998 nace la idea de formar una pequeña industria
+            licorera en el sur de la ciudad de Quito llamada{' '}
+            <strong className="text-on-surface">SUREÑO</strong>, desarrollándose
+            al principio artesanalmente. Con el transcurso del tiempo evolucionó
+            como microempresa, cumpliendo siempre con las normas INEN y procesos
+            controlados por el ARCSA.
+          </p>
+          <p className="text-base leading-relaxed text-on-surface-variant">
+            Maximizamos la satisfacción de nuestros clientes y de todos los que
+            conformamos la familia Sureño, superándonos cada día para estar a la
+            altura de sus exigencias.
           </p>
         </div>
+
+        <div className="flex items-center justify-center p-10">
+          <Image
+            src="/logo-isotipo.png"
+            alt="Sureño — Vinos & Licores"
+            width={260}
+            height={260}
+            className="opacity-90"
+          />
+        </div>
       </section>
 
-      {/* Nuestra Historia */}
-      <section className="mx-auto max-w-[1280px] px-4 py-20">
-        <div className="max-w-3xl mx-auto text-center space-y-6">
-          <h2 className="font-headline text-3xl md:text-4xl text-on-surface">
-            Nuestra Historia
-          </h2>
-          <p className="text-lg text-on-surface-variant leading-relaxed">
-            Con más de 30 años de trayectoria, Licorería Sureño nació como un
-            pequeño negocio familiar dedicado a la venta de licores selectos.
-            Lo que comenzó en una modesta bodega se ha transformado en uno de
-            los distribuidores más confiables del sector HORECA en todo el
-            territorio nacional. Hoy combinamos la tradición familiar con la
-            logística más moderna para llevar los mejores destilados a cada
-            rincón del país.
+      <section
+        className="relative h-48 flex items-center justify-center bg-cover bg-fixed bg-center"
+        style={bgImage}
+      >
+        <div className="absolute inset-0 bg-linear-to-b from-black/75 via-black/60 to-black/75" />
+        <div className="relative z-10 flex flex-col items-center gap-2 px-4 text-center">
+          <p className="font-headline text-2xl italic text-white/95 drop-shadow-lg md:text-3xl">
+            El sabor auténtico del sur de Quito, en cada botella.
           </p>
+          <div className="h-0.5 w-12 rounded bg-secondary" />
         </div>
       </section>
 
-      {/* Stats */}
-      <section className="bg-surface-container py-16">
-        <div className="mx-auto max-w-[1280px] px-4 grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="flex flex-col items-center text-center p-8 rounded-lg bg-surface-container-high">
-            <Award className="w-12 h-12 text-secondary mb-4" />
-            <span className="font-headline text-5xl text-on-surface mb-2">
-              30+
-            </span>
-            <span className="text-sm text-on-surface-variant uppercase tracking-wider">
-              Años de Experiencia
-            </span>
-          </div>
-          <div className="flex flex-col items-center text-center p-8 rounded-lg bg-surface-container-high">
-            <TrendingUp className="w-12 h-12 text-secondary mb-4" />
-            <span className="font-headline text-5xl text-on-surface mb-2">
-              1500+
-            </span>
-            <span className="text-sm text-on-surface-variant uppercase tracking-wider">
-              Etiquetas Exclusivas
-            </span>
-          </div>
-        </div>
-      </section>
+      <section className="my-20"></section>
 
-      {/* Compromiso Inquebrantable */}
-      <section className="mx-auto max-w-[1280px] px-4 py-20">
-        <h2 className="font-headline text-3xl md:text-4xl text-on-surface mb-12 text-center">
-          Compromiso Inquebrantable
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="flex flex-col items-center text-center p-8 rounded-lg bg-surface-container">
-            <ShieldCheck className="w-10 h-10 text-secondary mb-4" />
-            <h3 className="font-headline text-xl text-on-surface mb-2">
-              Origen Certificado
-            </h3>
-            <p className="text-sm text-on-surface-variant leading-relaxed">
-              Trabajamos directamente con productores y distribuidores
-              autorizados. Cada botella tiene trazabilidad garantizada desde
-              su origen hasta tu establecimiento.
+      {/* Misión */}
+      <section className="border-y border-outline-variant/50 bg-surface-container">
+        <div className="grid items-stretch md:grid-cols-2">
+          <article className="space-y-4 px-8 py-14 md:px-16 lg:px-24">
+            <h2 className="font-headline text-3xl text-on-surface">Misión</h2>
+            <div className="h-0.5 w-12 rounded bg-secondary" />
+            <p className="text-base leading-relaxed text-on-surface-variant">
+              Producir y comercializar licores con los más altos estándares de
+              calidad para satisfacer a nuestros clientes y consumidores,
+              acompañándolos en sus momentos más importantes con un equipo
+              humano, técnico y sostenible.
             </p>
-          </div>
-          <div className="flex flex-col items-center text-center p-8 rounded-lg bg-surface-container">
-            <Factory className="w-10 h-10 text-secondary mb-4" />
-            <h3 className="font-headline text-xl text-on-surface mb-2">
-              Precios de Fábrica
-            </h3>
-            <p className="text-sm text-on-surface-variant leading-relaxed">
-              Nuestra red de alianzas estratégicas nos permite ofrecer precios
-              de mayoreo sin intermediarios, maximizando tu margen de
-              rentabilidad en cada pedido.
-            </p>
-          </div>
-          <div className="flex flex-col items-center text-center p-8 rounded-lg bg-surface-container">
-            <Truck className="w-10 h-10 text-secondary mb-4" />
-            <h3 className="font-headline text-xl text-on-surface mb-2">
-              Logística Predictiva
-            </h3>
-            <p className="text-sm text-on-surface-variant leading-relaxed">
-              Flota propia con rastreo en tiempo real. Entregas programadas que
-              te permiten planificar tu inventario sin interrupciones ni
-              sorpresas.
-            </p>
+          </article>
+          <div className="relative h-72 min-h-72 md:h-auto overflow-hidden">
+            <Image
+              src="/mision.png"
+              alt="Misión Sureño"
+              fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-cover"
+            />
           </div>
         </div>
       </section>
 
-      {/* Alcance Regional */}
-      <section className="bg-surface-container py-20">
-        <div className="mx-auto max-w-[1280px] px-4">
-          <h2 className="font-headline text-3xl md:text-4xl text-on-surface mb-12 text-center">
-            Alcance Regional
+      {/* Visión */}
+      <section className="border-b border-outline-variant/50 bg-surface">
+        <div className="grid items-stretch md:grid-cols-2">
+          <div className="relative h-72 min-h-72 md:h-auto overflow-hidden order-2 md:order-1">
+            <Image
+              src="/vision.png"
+              alt="Visión Sureño"
+              fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-cover"
+            />
+          </div>
+          <article className="space-y-4 px-8 py-14 md:px-16 lg:px-24 order-1 md:order-2">
+            <h2 className="font-headline text-3xl text-on-surface">Visión</h2>
+            <div className="h-0.5 w-12 rounded bg-secondary" />
+            <p className="text-base leading-relaxed text-on-surface-variant">
+              Ampliar nuestra participación en el mercado nacional e incursionar
+              en el mercado internacional, con mejora continua, innovación del
+              portafolio y la más alta responsabilidad social para nuestros
+              trabajadores, proveedores y comunidad.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      {/* Nuestros Productos */}
+      <section className="mx-auto max-w-7xl px-4 py-20 space-y-10">
+        <div className="space-y-2">
+          <p className="text-sm font-label uppercase tracking-[0.2em] text-secondary">
+            Lo que ofrecemos
+          </p>
+          <h2 className="font-headline text-4xl text-on-surface">
+            Nuestros Productos
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-2xl mx-auto">
-            <div className="flex items-center gap-4 p-6 rounded-lg bg-surface-container-high">
-              <MapPin className="w-8 h-8 text-secondary flex-shrink-0" />
-              <div>
-                <p className="font-headline text-2xl text-on-surface">
-                  Cobertura Total
-                </p>
-                <p className="text-sm text-on-surface-variant">
-                  45+ ciudades en todo el territorio nacional
-                </p>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+          {products.map((p) => (
+            <div key={p.src} className="group flex flex-col items-center gap-3">
+              <div className="relative w-full aspect-[3/4] overflow-hidden rounded-xl border border-outline-variant/50 bg-surface-container transition-shadow group-hover:shadow-lg">
+                <Image
+                  src={p.src}
+                  alt={p.label}
+                  fill
+                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 17vw"
+                  className="object-contain p-3 transition-transform duration-300 group-hover:scale-105"
+                />
               </div>
+              <span className="text-xs text-center font-label text-on-surface-variant">
+                {p.label}
+              </span>
             </div>
-            <div className="flex items-center gap-4 p-6 rounded-lg bg-surface-container-high">
-              <Bus className="w-8 h-8 text-secondary flex-shrink-0" />
-              <div>
-                <p className="font-headline text-2xl text-on-surface">
-                  Flota Propia
-                </p>
-                <p className="text-sm text-on-surface-variant">
-                  200+ vehículos con logística integrada
-                </p>
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
       </section>
+      {/* Shipping Info */}
+      <section
+        id="shipping"
+        className="mx-auto max-w-7xl px-4 py-20 space-y-10"
+      >
+        <div className="space-y-2">
+          <p className="text-sm font-label uppercase tracking-[0.2em] text-secondary">
+            Logística
+          </p>
+          <h2 className="font-headline text-4xl text-on-surface">
+            Información de Envío
+          </h2>
+        </div>
 
-      {/* Bottom CTA */}
-      <section className="mx-auto max-w-[1280px] px-4 py-20 text-center">
-        <h2 className="font-headline text-3xl md:text-4xl text-on-surface mb-8">
-          ¿Listo para elevar su inventario?
-        </h2>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Link
-            href="/catalog?view=wholesale"
-            className="inline-flex items-center justify-center font-label font-semibold uppercase tracking-wider transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary h-13 px-8 text-base bg-secondary text-on-secondary hover:bg-secondary/90 shadow-sm hover:shadow-md rounded-md"
-          >
-            Catálogo Mayorista
-          </Link>
-          <Link
-            href="/support"
-            className="inline-flex items-center justify-center font-label font-semibold uppercase tracking-wider transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary h-13 px-8 text-base border-2 border-secondary text-secondary bg-transparent hover:bg-secondary/10 rounded-md"
-          >
-            Hablar con un Agente
-          </Link>
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="rounded-xl border border-outline-variant bg-surface-container p-6 space-y-3">
+            <h3 className="font-headline text-lg text-on-surface">Cobertura</h3>
+            <p className="text-sm text-on-surface-variant leading-relaxed">
+              Realizamos entregas en todo Quito y sus valles. Para provincias
+              fuera de Pichincha, coordinamos el envío con transportistas
+              de confianza a nivel nacional.
+            </p>
+          </div>
+          <div className="rounded-xl border border-outline-variant bg-surface-container p-6 space-y-3">
+            <h3 className="font-headline text-lg text-on-surface">Tiempos de entrega</h3>
+            <p className="text-sm text-on-surface-variant leading-relaxed">
+              Pedidos dentro de Quito: <strong className="text-on-surface">24-48 horas</strong>.
+              Pedidos al resto del país: <strong className="text-on-surface">3-5 días hábiles</strong>.
+              Los pedidos mayoristas pueden requerir 1-2 días adicionales de preparación.
+            </p>
+          </div>
+          <div className="rounded-xl border border-outline-variant bg-surface-container p-6 space-y-3">
+            <h3 className="font-headline text-lg text-on-surface">Pedidos mayoristas</h3>
+            <p className="text-sm text-on-surface-variant leading-relaxed">
+              Para pedidos de caja completa (12 unidades) accedés al precio mayorista
+              automáticamente. El transporte de cajas completas tiene costo preferencial
+              o puede ser coordinado con retiro en planta.
+            </p>
+          </div>
         </div>
       </section>
     </div>
-  );
+  )
 }

@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -35,17 +36,16 @@ enum PaymentStatus {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  name      String
-  role      Role     @default(CUSTOMER)
-  type      String   @default("INDIVIDUAL") // INDIVIDUAL or WHOLESALE
-  company   String?
-  taxId     String?
-  address   String?
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
+  id         String         @id @default(cuid())
+  email      String         @unique
+  name       String
+  role       Role           @default(CUSTOMER)
+  type       String         @default("INDIVIDUAL")
+  company    String?
+  taxId      String?        @map("tax_id")
+  address    String?
+  createdAt  DateTime       @default(now()) @map("created_at")
+  updatedAt  DateTime       @updatedAt @map("updated_at")
   orders     Order[]
   activities UserActivity[]
 
@@ -53,143 +53,154 @@ model User {
 }
 
 model Product {
-  id          String    @id @default(uuid())
-  slug        String    @unique
-  name        String
-  description String
-  origin      String?
-  volumeMl    Int?      @map("volume_ml")
-  abv         Decimal?  @db.Decimal(4, 1)
-  type        String    // SPIRIT, WINE, BEER, PACK
-  imageUrl    String?   @map("image_url")
-  badge       String?   // SAVE_15, BEST_SELLER, LIMITED_STOCK, PREMIUM_RESERVE
-  retailPrice Decimal   @map("retail_price") @db.Decimal(10, 2)
-  categoryId  String    @map("category_id")
-  brandId     String?   @map("brand_id")
-  aroma       String?
-  palate      String?
-  finish      String?
-  stockStatus String    @default("HIGH") @map("stock_status") // HIGH, MEDIUM, LOW, OUT
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
+  id            String     @id @default(cuid())
+  name          String
+  slug          String     @unique
+  description   String     @default("")
+  origin        String?
+  volumeMl      Int?       @map("volume_ml")
+  abv           Decimal?   @db.Decimal(4, 1)
+  retailPrice   Decimal    @default(0) @map("retail_price") @db.Decimal(10, 2)
+  wholesalePrice Decimal   @default(0) @map("wholesale_price") @db.Decimal(10, 2)
+  imageUrl      String?    @map("image_url")
+  type          String     @default("SPIRIT")
+  badge         String?
+  categoryId    String     @map("category_id")
+  brandId       String?    @map("brand_id")
+  aroma         String?
+  palate        String?
+  finish        String?
+  stockStatus   String     @default("HIGH") @map("stock_status")
+  createdAt     DateTime   @default(now()) @map("created_at")
+  updatedAt     DateTime   @updatedAt @map("updated_at")
+  category      Category   @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  brand         Brand?     @relation(fields: [brandId], references: [id], onDelete: SetNull)
+  variants      Variant[]
 
-  category Category @relation(fields: [categoryId], references: [id])
-  brand    Brand?   @relation(fields: [brandId], references: [id])
-  variants Variant[]
-
+  @@index([categoryId], map: "idx_products_category")
+  @@index([brandId], map: "idx_products_brand")
   @@map("products")
 }
 
-model Variant {
-  id        String  @id @default(uuid())
-  productId String  @map("product_id")
-  label     String  // e.g. "750ml", "Caja 12 unids"
-  price     Decimal @db.Decimal(10, 2)
-  stock     Int     @default(0)
-  minOrder  Int     @default(1) @map("min_order")
-
-  product        Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
-  wholesaleTiers WholesaleTier[]
-  orderItems     OrderItem[]
-
-  @@map("variants")
-}
-
-model WholesaleTier {
-  id           String  @id @default(uuid())
-  variantId    String  @map("variant_id")
-  minQty       Int     @map("min_qty")
-  maxQty       Int?    @map("max_qty")
-  pricePerUnit Decimal @map("price_per_unit") @db.Decimal(10, 2)
-  label        String? // e.g. "1-5 unids", "6-11 unids", "12+ (Caja)"
-
-  variant Variant @relation(fields: [variantId], references: [id], onDelete: Cascade)
-
-  @@map("wholesale_tiers")
-}
-
 model Category {
-  id       String    @id @default(uuid())
-  name     String
-  slug     String    @unique
-  icon     String    // Material icon name
-  products Product[]
+  id        String    @id @default(cuid())
+  name      String    @unique
+  slug      String    @unique
+  icon      String    @default("wine")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  products  Product[]
 
   @@map("categories")
 }
 
 model Brand {
-  id       String    @id @default(uuid())
-  name     String
-  slug     String    @unique
-  imageUrl String?   @map("image_url")
-  products Product[]
+  id        String    @id @default(cuid())
+  name      String    @unique
+  slug      String    @unique
+  imageUrl  String?   @map("image_url")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  products  Product[]
 
   @@map("brands")
 }
 
-model CartItem {
-  id        String   @id @default(uuid())
-  userId    String?  @map("user_id")
-  variantId String   @map("variant_id")
-  quantity  Int      @default(1)
-  type      String   @default("RETAIL") // RETAIL or WHOLESALE
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+model Variant {
+  id                 String          @id @default(cuid())
+  productId          String          @map("product_id")
+  label              String
+  retailImageUrl     String?         @map("retail_image_url")
+  wholesaleImageUrl  String?         @map("wholesale_image_url")
+  price              Decimal         @default(0) @db.Decimal(10, 2)
+  cost               Decimal?        @db.Decimal(10, 2)
+  stock              Int             @default(0)
+  minOrder           Int             @default(1) @map("min_order")
+  product            Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+  wholesaleTiers     WholesaleTier[]
+  orderItems         OrderItem[]
 
-  @@map("cart_items")
+  @@unique([productId, label])
+  @@index([productId], map: "idx_variants_product")
+  @@map("variants")
+}
+
+model WholesaleTier {
+  id           String   @id @default(cuid())
+  variantId    String   @map("variant_id")
+  minQty       Int      @map("min_qty")
+  maxQty       Int?     @map("max_qty")
+  pricePerUnit Decimal  @map("price_per_unit") @db.Decimal(10, 2)
+  label        String?
+  createdAt    DateTime @default(now()) @map("created_at")
+  variant      Variant  @relation(fields: [variantId], references: [id], onDelete: Cascade)
+
+  @@index([variantId], map: "idx_wholesale_tiers_variant")
+  @@map("wholesale_tiers")
 }
 
 model Order {
-  id                String      @id @default(uuid())
-  orderNumber       String      @unique @map("order_number")
-  userId            String?     @map("user_id")
-  fullName          String      @map("full_name")
+  id                String        @id @default(cuid())
+  orderNumber       String        @unique @map("order_number")
+  userId            String?       @map("user_id")
+  fullName          String        @default("") @map("full_name")
   company           String?
-  street            String
-  city              String
-  zipCode           String      @map("zip_code")
-  paymentMethod     PaymentMethod @map("payment_method")
+  street            String        @default("")
+  city              String        @default("")
+  zipCode           String        @default("") @map("zip_code")
+  paymentMethod     PaymentMethod @default(STRIPE) @map("payment_method")
   paymentStatus     PaymentStatus @default(PENDING) @map("payment_status")
-  stripeSessionId   String?       @unique @map("stripe_session_id")
+  stripeSessionId   String?       @map("stripe_session_id")
   paidAt            DateTime?     @map("paid_at")
-  retailSubtotal    Decimal     @map("retail_subtotal") @db.Decimal(10, 2)
-  wholesaleSubtotal Decimal?    @map("wholesale_subtotal") @db.Decimal(10, 2)
-  shippingCost      Decimal     @default(0) @map("shipping_cost") @db.Decimal(10, 2)
-  total             Decimal     @db.Decimal(10, 2)
-  status            OrderStatus @default(PENDING)
-  type              OrderType   @default(RETAIL)
-  createdAt         DateTime    @default(now()) @map("created_at")
-  updatedAt         DateTime    @updatedAt @map("updated_at")
+  retailSubtotal    Decimal       @default(0) @map("retail_subtotal") @db.Decimal(10, 2)
+  wholesaleSubtotal Decimal?      @default(0) @map("wholesale_subtotal") @db.Decimal(10, 2)
+  shippingCost      Decimal       @default(0) @map("shipping_cost") @db.Decimal(10, 2)
+  total             Decimal       @default(0) @db.Decimal(10, 2)
+  status            OrderStatus   @default(PENDING)
+  type              OrderType     @default(RETAIL)
+  createdAt         DateTime      @default(now()) @map("created_at")
+  updatedAt         DateTime      @updatedAt @map("updated_at")
+  user              User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  items             OrderItem[]
 
-  user User? @relation(fields: [userId], references: [id])
-  items OrderItem[]
-
+  @@index([userId], map: "idx_orders_user")
+  @@index([status], map: "idx_orders_status")
   @@map("orders")
 }
 
 model OrderItem {
-  id        String  @id @default(uuid())
+  id        String  @id @default(cuid())
   orderId   String  @map("order_id")
   variantId String  @map("variant_id")
-  quantity  Int
-  unitPrice Decimal @map("unit_price") @db.Decimal(10, 2)
-  type      String  @default("RETAIL") // RETAIL or WHOLESALE
+  quantity  Int     @default(1)
+  unitPrice Decimal @default(0) @map("unit_price") @db.Decimal(10, 2)
+  type      String  @default("RETAIL")
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  variant   Variant @relation(fields: [variantId], references: [id], onDelete: Restrict)
 
-  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  variant Variant @relation(fields: [variantId], references: [id])
-
+  @@index([orderId], map: "idx_order_items_order")
   @@map("order_items")
 }
 
 model UserActivity {
-  id        String   @id @default(uuid())
+  id        String   @id @default(cuid())
   userId    String   @map("user_id")
-  action    String
+  action    String   @default("")
   details   String?
   createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
+  @@index([userId], map: "idx_user_activities_user")
   @@map("user_activities")
+}
+
+model AboutSection {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  type      String   @default("paragraph")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("about_sections")
 }

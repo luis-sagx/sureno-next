@@ -1,4 +1,4 @@
-import type { Variant, WholesaleTier } from "@prisma/client";
+import type { Variant, WholesaleTier } from "../generated/prisma/client";
 
 /** Wholesale purchases are made in boxes of 12 units. */
 export const CAJA_SIZE = 12;
@@ -18,7 +18,7 @@ export function getBestWholesalePrice(
   if (!applicable.length) return null;
 
   const best = applicable.reduce((a, b) =>
-    a.pricePerUnit.lt(b.pricePerUnit) ? a : b
+    Number(a.pricePerUnit) < Number(b.pricePerUnit) ? a : b
   );
 
   return Number(best.pricePerUnit);

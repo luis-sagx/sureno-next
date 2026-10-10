@@ -1,51 +1,74 @@
-"use client";
+'use client'
 
-import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
-import { PriceDisplay } from "@/components/ui/PriceDisplay";
-import { QuantitySelector } from "@/components/ui/QuantitySelector";
-import { formatPrice, getBestWholesalePrice } from "@/lib/pricing";
-import { useCartStore } from "@/store/cart";
-import { cn } from "@/lib/utils";
-import type { Product, Variant, WholesaleTier } from "@prisma/client";
-import { ShoppingCart } from "lucide-react";
-import { useState } from "react";
+import { Badge } from '@/components/ui/Badge'
+import { Button } from '@/components/ui/Button'
+import { PriceDisplay } from '@/components/ui/PriceDisplay'
+import { QuantitySelector } from '@/components/ui/QuantitySelector'
+import { CAJA_SIZE, formatPrice, getBestWholesalePrice } from '@/lib/pricing'
+import { cn } from '@/lib/utils'
+import { useCartStore } from '@/store/cart'
+import type { Product, Variant, WholesaleTier } from '../../generated/prisma/client'
+import { Eye, ShoppingCart } from 'lucide-react'
+import Link from 'next/link'
+import { useState } from 'react'
 
 type ProductWithVariants = Product & {
-  category?: { name: string } | null;
-  brand?: { name: string } | null;
-  variants: (Variant & { wholesaleTiers: WholesaleTier[] })[];
-};
-
-interface ProductCardProps {
-  product: ProductWithVariants;
-  viewMode?: "retail" | "wholesale";
-  className?: string;
+  category?: { name: string } | null
+  brand?: { name: string } | null
+  variants: (Variant & { wholesaleTiers: WholesaleTier[] })[]
 }
 
-const badgeVariantMap: Record<string, "save" | "bestseller" | "limited" | "premium"> = {
-  SAVE_15: "save",
-  BEST_SELLER: "bestseller",
-  LIMITED_STOCK: "limited",
-  PREMIUM_RESERVE: "premium",
-};
+interface ProductCardProps {
+  product: ProductWithVariants
+  viewMode?: 'retail' | 'wholesale'
+  className?: string
+}
+
+const badgeVariantMap: Record<
+  string,
+  'save' | 'bestseller' | 'limited' | 'premium'
+> = {
+  SAVE_15: 'save',
+  BEST_SELLER: 'bestseller',
+  LIMITED_STOCK: 'limited',
+  PREMIUM_RESERVE: 'premium',
+}
 
 export function ProductCard({
   product,
-  viewMode = "retail",
+  viewMode = 'retail',
   className,
 }: ProductCardProps) {
-  const [quantity, setQuantity] = useState(1);
-  const addItem = useCartStore((s) => s.addItem);
+  const [quantity, setQuantity] = useState(viewMode === 'wholesale' ? CAJA_SIZE : 1)
+  const [imageFailed, setImageFailed] = useState(false)
+  const addItem = useCartStore((s) => s.addItem)
 
-  const retailPrice = Number(product.retailPrice);
-  const firstVariant = product.variants[0];
+  const retailPrice = Number(product.retailPrice)
+  const firstVariant = product.variants[0]
   const bestWholesale = firstVariant
     ? getBestWholesalePrice(firstVariant, quantity)
-    : null;
+    : null
+  const appliesWholesaleInRetail =
+    viewMode === 'retail' && bestWholesale !== null && quantity >= CAJA_SIZE
+
+  const variantImageUrl =
+    viewMode === 'wholesale'
+      ? firstVariant?.wholesaleImageUrl ||
+        firstVariant?.retailImageUrl ||
+        product.imageUrl ||
+        null
+      : firstVariant?.retailImageUrl ||
+        firstVariant?.wholesaleImageUrl ||
+        product.imageUrl ||
+        null
 
   const handleAddToCart = () => {
-    if (!firstVariant) return;
+    if (!firstVariant) return
+
+    const effectivePrice =
+      (viewMode === 'wholesale' || appliesWholesaleInRetail) && bestWholesale
+        ? bestWholesale
+        : retailPrice
 
     addItem({
       variantId: firstVariant.id,
@@ -53,89 +76,125 @@ export function ProductCard({
       productName: product.name,
       productSlug: product.slug,
       variantLabel: firstVariant.label,
-      unitPrice:
-        viewMode === "wholesale" && bestWholesale
-          ? bestWholesale
-          : retailPrice,
-      type: viewMode === "wholesale" ? "WHOLESALE" : "RETAIL",
-      imageUrl: product.imageUrl || null,
+      unitPrice: effectivePrice,
+      type:
+        viewMode === 'wholesale' || appliesWholesaleInRetail
+          ? 'WHOLESALE'
+          : 'RETAIL',
+      imageUrl: variantImageUrl,
       quantity,
-    });
-  };
+    })
+  }
 
   return (
     <div
       className={cn(
-        "group relative flex flex-col rounded-lg bg-surface-container hover:bg-surface-container-high transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/20 hover:border-secondary/40 border border-transparent overflow-hidden",
-        className
+        'group relative flex flex-col rounded-lg bg-surface-container hover:bg-surface-container-high transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/20 hover:border-tertiary/50 border border-transparent overflow-hidden',
+        className,
       )}
     >
-      {/* Image placeholder */}
       <div className="relative aspect-square bg-surface-container-highest flex items-center justify-center overflow-hidden transition-transform duration-500 group-hover:scale-[1.04]">
-        <span className="font-headline text-4xl text-on-surface-variant/20 italic select-none">
-          {product.name.charAt(0)}
-        </span>
-        {/* Badge */}
+        {variantImageUrl && !imageFailed ? (
+          <img
+            src={variantImageUrl}
+            alt={product.name}
+            className="object-contain w-full h-full"
+            onError={() => setImageFailed(true)}
+          />
+        ) : (
+          <span className="font-headline text-4xl text-on-surface-variant/20 italic select-none">
+            {product.name.charAt(0)}
+          </span>
+        )}
+
         {product.badge && (
           <div className="absolute top-2 right-2">
             <Badge
-              variant={badgeVariantMap[product.badge] || "bestseller"}
-              discount={product.badge === "SAVE_15" ? "15%" : undefined}
+              variant={badgeVariantMap[product.badge] || 'bestseller'}
+              discount={product.badge === 'SAVE_15' ? '15%' : undefined}
             />
           </div>
         )}
       </div>
 
-      {/* Content */}
       <div className="flex flex-col flex-1 p-4 space-y-3">
-        {/* Category label */}
         <span className="text-xs text-on-surface-variant uppercase tracking-wider">
           {product.category?.name || product.type}
         </span>
 
-        {/* Product name */}
-        <h3 className="font-headline text-lg text-on-surface leading-tight line-clamp-2">
-          {product.name}
-        </h3>
+        <Link href={viewMode === 'wholesale' ? `/product/${product.slug}?mode=wholesale` : `/product/${product.slug}`} className="group/title">
+          <h3 className="font-headline text-lg leading-tight text-on-surface line-clamp-2 transition-colors group-hover/title:text-tertiary">
+            {product.name}
+          </h3>
+        </Link>
 
-        {/* Price */}
-        {viewMode === "retail" ? (
+        {viewMode === 'retail' && !appliesWholesaleInRetail ? (
           <PriceDisplay retailPrice={retailPrice} size="md" />
-        ) : (
+        ) : viewMode === 'retail' && appliesWholesaleInRetail ? (
           <div className="space-y-1">
             <span className="text-sm text-on-surface-variant line-through">
               {formatPrice(retailPrice)}
             </span>
             <span className="font-headline font-semibold text-xl text-on-surface block">
-              {bestWholesale ? formatPrice(bestWholesale) : formatPrice(retailPrice)}
+              {formatPrice(bestWholesale!)}
             </span>
-            {bestWholesale && (
-              <span className="text-xs text-green-600 dark:text-green-400 font-medium block">
-                AHORRAS {formatPrice(retailPrice - bestWholesale)}
+            <span className="text-xs text-tertiary font-medium block">
+              PRECIO MAYORISTA APLICADO
+            </span>
+          </div>
+        ) : (
+          <div className="space-y-1">
+            {bestWholesale != null && bestWholesale < retailPrice ? (
+              <>
+                <span className="text-sm text-on-surface-variant line-through">
+                  {formatPrice(retailPrice * CAJA_SIZE)}
+                </span>
+                <span className="font-headline font-semibold text-xl text-on-surface block">
+                  {formatPrice(bestWholesale * CAJA_SIZE)}
+                </span>
+                <span className="text-xs text-on-surface-variant block">
+                  {formatPrice(bestWholesale)} c/u · caja de {CAJA_SIZE}
+                </span>
+                <span className="text-xs text-tertiary font-medium block">
+                  AHORRAS {formatPrice((retailPrice - bestWholesale) * CAJA_SIZE)}
+                </span>
+              </>
+            ) : (
+              <span className="font-headline font-semibold text-xl text-on-surface block">
+                {formatPrice(retailPrice * CAJA_SIZE)}
               </span>
             )}
           </div>
         )}
 
-        {/* Quantity + Add to cart */}
-        <div className="flex items-center justify-between pt-2 mt-auto">
+        <div className="mt-auto flex items-center justify-between gap-3 pt-2">
           <QuantitySelector
             value={quantity}
             onChange={setQuantity}
-            min={1}
-            max={99}
+            min={viewMode === 'wholesale' ? CAJA_SIZE : 1}
+            max={viewMode === 'wholesale' ? CAJA_SIZE * 20 : 99}
+            step={viewMode === 'wholesale' ? CAJA_SIZE : 1}
           />
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={handleAddToCart}
-            aria-label="Agregar al carrito"
-          >
-            <ShoppingCart className="w-4 h-4 mr-1.5" />
-            Agregar
-          </Button>
+          <div className="flex items-center gap-2">
+            <Link
+              href={viewMode === 'wholesale' ? `/product/${product.slug}?mode=wholesale` : `/product/${product.slug}`}
+              className="inline-flex items-center gap-1.5 h-9 px-3 text-xs font-label font-semibold uppercase tracking-wider rounded border-2 border-tertiary text-tertiary bg-transparent hover:bg-tertiary/10 transition-all duration-200"
+            >
+              <Eye className="h-3.5 w-3.5" />
+              Ver más
+            </Link>
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={handleAddToCart}
+              aria-label="Agregar al carrito"
+            >
+              <ShoppingCart className="mr-1.5 h-4 w-4" />
+              Agregar
+            </Button>
+          </div>
         </div>
       </div>
     </div>
-  );
+  )
 }

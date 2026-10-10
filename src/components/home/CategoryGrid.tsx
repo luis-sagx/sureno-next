@@ -35,10 +35,10 @@ export async function CategoryGrid() {
         </h2>
       </Reveal>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+      <div className="grid auto-rows-fr grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
         {categories.map((category, index) => (
-          <Reveal key={category.id} delay={index * 0.06}>
-            <Link href={`/catalog?category=${category.slug}`}>
+          <Reveal key={category.id} delay={index * 0.06} className="h-full">
+            <Link href={`/catalog?category=${category.slug}`} className="block h-full">
               <CategoryCard
                 icon={iconMap[category.icon] || Package}
                 label={category.name}
@@ -47,17 +47,6 @@ export async function CategoryGrid() {
             </Link>
           </Reveal>
         ))}
-
-        {/* Pedidos Especiales callout */}
-        <Reveal delay={categories.length * 0.06}>
-          <Link href="/catalog?special=true">
-            <CategoryCard
-              icon={Package}
-              label="Pedidos Especiales"
-              className="h-full border-secondary/30 bg-secondary/5 hover:bg-secondary/10"
-            />
-          </Link>
-        </Reveal>
       </div>
     </section>
   );

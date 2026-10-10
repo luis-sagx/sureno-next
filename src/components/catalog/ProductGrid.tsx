@@ -1,5 +1,5 @@
 import { ProductCard } from "@/components/product/ProductCard";
-import type { Product, Category, Brand, Variant, WholesaleTier } from "@prisma/client";
+import type { Product, Category, Brand, Variant, WholesaleTier } from "../../generated/prisma/client";
 
 type ProductWithRelations = Product & {
   category: Category;
@@ -26,11 +26,21 @@ export function ProductGrid({ products, viewMode }: ProductGridProps) {
     );
   }
 
+  // Flatten: one card per variant so each size/presentation appears independently.
+  // 375ml variants get "Media" prepended to the name to distinguish them.
+  const cards = products.flatMap((product) =>
+    product.variants.map((variant) => ({
+      ...product,
+      name: variant.label === "375ml" ? `Media ${product.name}` : product.name,
+      variants: [variant],
+    }))
+  );
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      {products.map((product) => (
+      {cards.map((product) => (
         <ProductCard
-          key={product.id}
+          key={`${product.id}-${product.variants[0].id}`}
           product={product}
           viewMode={viewMode}
         />

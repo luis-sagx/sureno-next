@@ -27,10 +27,12 @@ interface PurchasePanelProps {
   minOrder?: number;
   stockStatus?: string;
   className?: string;
+  mode?: "retail" | "wholesale";
+  onModeChange?: (mode: "retail" | "wholesale") => void;
 }
 
 const stockConfig: Record<string, { label: string; dot: string; text: string }> = {
-  HIGH: { label: "Stock Alto", dot: "bg-green-500", text: "text-green-600 dark:text-green-400" },
+  HIGH: { label: "Stock Alto", dot: "bg-secondary", text: "text-secondary" },
   MEDIUM: { label: "Stock Medio", dot: "bg-amber-500", text: "text-amber-600 dark:text-amber-400" },
   LOW: { label: "Stock Bajo", dot: "bg-red-500", text: "text-red-600 dark:text-red-400" },
   OUT: { label: "Agotado", dot: "bg-red-500", text: "text-red-600 dark:text-red-400 line-through" },
@@ -54,10 +56,15 @@ export function PurchasePanel({
   minOrder = 1,
   stockStatus = "HIGH",
   className,
+  mode: controlledMode,
+  onModeChange,
 }: PurchasePanelProps) {
-  const [mode, setMode] = useState<"retail" | "wholesale">("retail");
+  const [internalMode, setInternalMode] = useState<"retail" | "wholesale">("retail");
   const [retailQty, setRetailQty] = useState(Math.max(minOrder, 1));
   const [boxes, setBoxes] = useState(1);
+
+  const mode = controlledMode ?? internalMode;
+  const setMode = onModeChange ?? setInternalMode;
 
   const addItem = useCartStore((s) => s.addItem);
   const openCart = useCartStore((s) => s.openCart);
@@ -65,11 +72,14 @@ export function PurchasePanel({
   const hasTiers = tiers.length > 0;
   const isWholesale = mode === "wholesale" && hasTiers;
   const units = isWholesale ? boxes * CAJA_SIZE : retailQty;
+  const autoWholesale = !isWholesale && hasTiers && retailQty >= CAJA_SIZE;
   const unitPrice = isWholesale
     ? bestTierPrice(tiers, units) ?? retailPrice
+    : autoWholesale
+    ? bestTierPrice(tiers, retailQty) ?? retailPrice
     : retailPrice;
   const savings =
-    isWholesale && unitPrice < retailPrice
+    (isWholesale || autoWholesale) && unitPrice < retailPrice
       ? Math.round((1 - unitPrice / retailPrice) * 100)
       : 0;
   const isOut = stockStatus === "OUT";
@@ -84,7 +94,7 @@ export function PurchasePanel({
       variantLabel,
       imageUrl,
       unitPrice,
-      type: isWholesale ? "WHOLESALE" : "RETAIL",
+      type: isWholesale || autoWholesale ? "WHOLESALE" : "RETAIL",
       quantity: units,
     });
     openCart();
@@ -110,17 +120,36 @@ export function PurchasePanel({
         )}
       </div>
 
+      {autoWholesale && (
+        <div className="rounded-lg border border-tertiary/30 bg-tertiary/10 px-4 py-3 text-sm text-on-surface">
+          <div className="flex items-center gap-2 text-sm text-tertiary font-medium">
+            <Package className="h-4 w-4" />
+            <span>
+              Precio mayorista aplicado — {retailQty} unidades · {formatPrice(unitPrice)} c/u
+              {savings > 0 && (
+                <span className="ml-2 font-semibold">AHORRAS {savings}%</span>
+              )}
+            </span>
+          </div>
+        </div>
+      )}
+
       {isWholesale && (
-        <div className="flex items-center gap-2 text-sm text-on-surface-variant">
-          <Package className="w-4 h-4 text-secondary" />
-          <span>
-            {units} unidades · {formatPrice(unitPrice)} c/u
-            {savings > 0 && (
-              <span className="ml-2 font-semibold text-green-600 dark:text-green-400">
-                AHORRAS {savings}%
-              </span>
-            )}
-          </span>
+        <div className="rounded-lg border border-secondary/30 bg-secondary/10 px-4 py-3 text-sm text-on-surface">
+          <div className="flex items-center gap-2 text-sm text-on-surface-variant">
+            <Package className="h-4 w-4 text-secondary" />
+            <span>
+              {boxes} {boxes === 1 ? "caja" : "cajas"} · {units} unidades · {formatPrice(unitPrice)} c/u
+              {savings > 0 && (
+                <span className="ml-2 font-semibold text-tertiary">
+                  AHORRAS {savings}%
+                </span>
+              )}
+            </span>
+          </div>
+          <p className="mt-2 text-xs text-on-surface-variant">
+            En mayoreo, cada incremento agrega una caja completa de 12 unidades.
+          </p>
         </div>
       )}
 

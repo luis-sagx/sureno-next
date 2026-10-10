@@ -52,8 +52,8 @@
   --theme-on-primary: #303033;
   --theme-secondary: #e9c176;
   --theme-on-secondary: #412d00;
-  --theme-tertiary: #ffb77d;
-  --theme-on-tertiary: #4d2600;
+  --theme-tertiary: #8ab4d8;
+  --theme-on-tertiary: #0a1e30;
 
   --theme-surface: #131110;
   --theme-surface-container: #1b1815;
@@ -83,28 +83,28 @@
 
 /* ============================================================
    Light Theme (.light class on <html>)
-   From DESIGN.md — Heritage Light: Golden Amber + Deep Navy
+   Heritage Light: Golden Amber + Deep Navy
    ============================================================ */
 .light {
-  --theme-primary: #7b580e;
+  --theme-primary: #6f4b16;
   --theme-on-primary: #ffffff;
-  --theme-secondary: #565e74;
+  --theme-secondary: #b8842f;
   --theme-on-secondary: #ffffff;
-  --theme-tertiary: #735c00;
+  --theme-tertiary: #1e3a5f;
   --theme-on-tertiary: #ffffff;
 
-  --theme-surface: #f8f9fa;
-  --theme-surface-container: #edeeef;
-  --theme-surface-container-high: #e7e8e9;
-  --theme-surface-container-highest: #e1e3e4;
+  --theme-surface: #ffffff;
+  --theme-surface-container: #f5f3ef;
+  --theme-surface-container-high: #ede9e2;
+  --theme-surface-container-highest: #e3ddd3;
 
-  --theme-on-surface: #191c1d;
-  --theme-on-surface-variant: #4e4538;
+  --theme-on-surface: #23180d;
+  --theme-on-surface-variant: #5a4535;
 
-  --theme-background: #f8f9fa;
+  --theme-background: #fafaf8;
 
-  --theme-outline: #807666;
-  --theme-outline-variant: #d2c5b3;
+  --theme-outline: #8a6b40;
+  --theme-outline-variant: #d4c4aa;
 
   --theme-error: #ba1a1a;
   --theme-on-error: #ffffff;

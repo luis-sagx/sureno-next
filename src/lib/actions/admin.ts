@@ -4,7 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { serializeDecimal } from "@/lib/serialize";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import type { Prisma as PrismaClient } from "@prisma/client";
+import { Prisma } from "../../generated/prisma/client";
+import type { Prisma as PrismaClient } from "../../generated/prisma/client";
 
 // ─── Schemas ───────────────────────────────────────────────
 
@@ -22,6 +23,19 @@ const UpdateProductSchema = z.object({
   stockStatus: z.enum(["HIGH", "MEDIUM", "LOW", "OUT"]).optional(),
   description: z.string().optional(),
   badge: z.string().optional(),
+});
+
+const CreateProductSchema = z.object({
+  name: z.string().min(1),
+  description: z.string().default(""),
+  retailPrice: z.number().positive(),
+  wholesaleBoxPrice: z.number().positive(),
+  volumeMl: z.number().positive(),
+  abv: z.number().min(0).max(100),
+  type: z.string().default("SPIRIT"),
+  categorySlug: z.string().min(1),
+  stockStatus: z.enum(["HIGH", "MEDIUM", "LOW", "OUT"]).default("HIGH"),
+  imageUrl: z.string().nullable().optional(),
 });
 
 // ─── Order Stats ───────────────────────────────────────────
@@ -205,6 +219,98 @@ export async function updateProduct(
       error instanceof Error ? error.message : "Error al actualizar producto";
     return { success: false, error: message };
   }
+}
+
+export async function createProduct(data: {
+  name: string;
+  description?: string;
+  retailPrice: number;
+  wholesaleBoxPrice: number;
+  volumeMl: number;
+  abv: number;
+  type?: string;
+  categorySlug: string;
+  stockStatus?: string;
+  imageUrl?: string | null;
+}): Promise<{ success: boolean; error?: string }> {
+  try {
+    const parsed = CreateProductSchema.safeParse(data);
+    if (!parsed.success) {
+      return { success: false, error: "Datos de producto no válidos" };
+    }
+
+    const { name, description, retailPrice, wholesaleBoxPrice, volumeMl, abv, type, categorySlug, stockStatus, imageUrl } = parsed.data;
+
+    const category = await prisma.category.findUnique({ where: { slug: categorySlug } });
+    if (!category) return { success: false, error: "Categoría no encontrada" };
+
+    const slug = name
+      .normalize("NFD")
+      .replace(/\p{Diacritic}/gu, "")
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, "")
+      .trim()
+      .replace(/\s+/g, "-");
+
+    const wholesaleUnitPrice = parseFloat((wholesaleBoxPrice / 12).toFixed(2));
+
+    const product = await prisma.product.create({
+      data: {
+        name,
+        slug,
+        description,
+        retailPrice: new Prisma.Decimal(retailPrice),
+        volumeMl,
+        abv: new Prisma.Decimal(abv),
+        type,
+        stockStatus,
+        categoryId: category.id,
+        imageUrl: imageUrl ?? null,
+      },
+    });
+
+    const variant = await prisma.variant.create({
+      data: {
+        productId: product.id,
+        label: `${volumeMl}ml`,
+        price: new Prisma.Decimal(retailPrice),
+        stock: 100,
+        minOrder: 1,
+        retailImageUrl: imageUrl ?? null,
+      },
+    });
+
+    await prisma.wholesaleTier.createMany({
+      data: [
+        { variantId: variant.id, minQty: 1, maxQty: 11, pricePerUnit: new Prisma.Decimal(retailPrice), label: "1-11 unidades" },
+        { variantId: variant.id, minQty: 12, maxQty: null, pricePerUnit: new Prisma.Decimal(wholesaleUnitPrice), label: "12+ unidades — PRECIO MAYORISTA" },
+      ],
+    });
+
+    revalidatePath("/admin/inventory");
+    return { success: true };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Error al crear producto";
+    return { success: false, error: message };
+  }
+}
+
+export async function deleteProduct(productId: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    if (!productId) return { success: false, error: "ID requerido" };
+    await prisma.product.delete({ where: { id: productId } });
+    revalidatePath("/admin/inventory");
+    return { success: true };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Error al eliminar producto";
+    return { success: false, error: message };
+  }
+}
+
+// ─── Categories for admin ──────────────────────────────────────────────────
+
+export async function getCategories() {
+  return prisma.category.findMany({ orderBy: { name: "asc" } });
 }
 
 // ─── Users ──────────────────────────────────────────────────

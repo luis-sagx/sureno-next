@@ -80,7 +80,7 @@ export function OrderSummary({ className }: OrderSummaryProps) {
           <div className="flex justify-between">
             <span className="text-on-surface-variant">
               Subtotal Mayoreo{" "}
-              <span className="text-xs text-green-600 dark:text-green-400 font-medium">
+              <span className="text-xs text-tertiary font-medium">
                 (AHORRAS{" "}
                 {formatPrice(
                   items

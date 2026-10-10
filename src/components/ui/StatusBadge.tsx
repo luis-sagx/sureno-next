@@ -24,7 +24,7 @@ const statusConfig: Record<
   DELIVERED: {
     label: "Entregado",
     className:
-      "bg-green-100 text-green-900 dark:bg-green-900/30 dark:text-green-300",
+      "bg-secondary/15 text-secondary dark:bg-secondary/20 dark:text-secondary",
   },
   CANCELLED: {
     label: "Cancelado",

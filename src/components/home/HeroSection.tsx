@@ -1,74 +1,37 @@
 "use client";
 
-import {
-  motion,
-  useMotionValueEvent,
-  useReducedMotion,
-  useScroll,
-  useTransform,
-} from "motion/react";
-import dynamic from "next/dynamic";
+import { useMotionValueEvent, useReducedMotion, useScroll } from "motion/react";
 import Link from "next/link";
-import { useRef, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState } from "react";
 
-const HeroScene = dynamic(
-  () => import("@/components/three/HeroScene").then((m) => m.HeroScene),
-  { ssr: false }
+const FRAMES = Array.from(
+  { length: 76 },
+  (_, i) => `/frames_nobg/f${String(1 + i * 2).padStart(4, "0")}.webp`
 );
+const MID_FRAME = FRAMES[Math.floor(FRAMES.length / 2)];
 
-const emptySubscribe = () => () => {};
-
-function supportsWebGL(): boolean {
-  try {
-    const canvas = document.createElement("canvas");
-    return Boolean(
-      canvas.getContext("webgl2") || canvas.getContext("webgl")
-    );
-  } catch {
-    return false;
-  }
-}
-
-function HeroCopy() {
-  return (
-    <div className="max-w-2xl space-y-8">
-      <h1 className="text-display italic text-on-surface">
-        Establecido con Excelencia
-      </h1>
-      <p className="text-lg md:text-xl text-on-surface-variant leading-relaxed">
-        Distribución mayorista y retail de vinos, ron, vodka y destilados
-        premium para el sector HORECA y clientes exigentes.
-      </p>
-      <div className="flex flex-col sm:flex-row gap-4 pt-4">
-        <Link
-          href="/catalog?view=wholesale"
-          className="inline-flex items-center justify-center font-label font-semibold uppercase tracking-wider transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary h-13 px-8 text-base bg-secondary text-on-secondary hover:bg-secondary/90 shadow-sm hover:shadow-md rounded-md"
-        >
-          CATÁLOGO MAYORISTA
-        </Link>
-        <Link
-          href="/catalog"
-          className="inline-flex items-center justify-center font-label font-semibold uppercase tracking-wider transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary h-13 px-8 text-base border-2 border-secondary text-secondary bg-transparent hover:bg-secondary/10 rounded-md"
-        >
-          EXPLORAR DESTILADOS
-        </Link>
-      </div>
-    </div>
-  );
-}
+type Panel = "intro" | "mayoreo" | "minorista";
 
 export function HeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
-  const progressRef = useRef(0);
+  const imgRef = useRef<HTMLImageElement>(null);
   const reduceMotion = useReducedMotion();
+  const [firstReady, setFirstReady] = useState(false);
+  const [panel, setPanel] = useState<Panel>("intro");
 
-  // Detect WebGL client-side without triggering set-state-in-effect.
-  // supportsWebGL() accesses document.createElement which is only available in the browser.
-  const webgl = useSyncExternalStore(
-    emptySubscribe,
-    () => supportsWebGL(),
-    () => false
-  );
+  useEffect(() => {
+    let cancelled = false;
+    const imgs = FRAMES.map((src, i) => {
+      const im = new Image();
+      im.src = src;
+      if (i === 0) im.onload = () => !cancelled && setFirstReady(true);
+      return im;
+    });
+    return () => {
+      cancelled = true;
+      imgs.forEach((im) => (im.onload = null));
+    };
+  }, []);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -76,86 +39,174 @@ export function HeroSection() {
   });
 
   useMotionValueEvent(scrollYProgress, "change", (v) => {
-    progressRef.current = v;
+    if (!reduceMotion && imgRef.current) {
+      const idx = Math.min(FRAMES.length - 1, Math.max(0, Math.round(v * (FRAMES.length - 1))));
+      const src = FRAMES[idx];
+      if (imgRef.current.getAttribute("src") !== src) imgRef.current.src = src;
+    }
+    // Switch left panel at scroll 1/3 and 2/3
+    if (v < 1 / 3) setPanel("intro");
+    else if (v < 2 / 3) setPanel("mayoreo");
+    else setPanel("minorista");
   });
 
-  // Act 1 copy fades out in the first half; act 2 fades in after
-  const copyOpacity = useTransform(scrollYProgress, [0, 0.35], [1, 0]);
-  const copyY = useTransform(scrollYProgress, [0, 0.35], [0, -60]);
-  const act2Opacity = useTransform(scrollYProgress, [0.45, 0.7], [0, 1]);
-  const act2Y = useTransform(scrollYProgress, [0.45, 0.7], [40, 0]);
-  const glowX = useTransform(scrollYProgress, [0, 1], ["-10%", "30%"]);
-
-  const static3dFallback = reduceMotion || webgl === false;
-
-  if (static3dFallback) {
-    return (
-      <section className="relative w-full overflow-hidden bg-surface">
-        <div className="absolute inset-0 bg-gradient-to-br from-secondary/10 via-transparent to-surface" />
-        <div className="relative mx-auto max-w-[1280px] px-4 py-24 md:py-32 lg:py-40">
-          <HeroCopy />
-        </div>
-      </section>
-    );
-  }
-
   return (
-    <section ref={sectionRef} className="relative h-[220vh] bg-surface">
-      <div className="sticky top-0 h-screen overflow-hidden">
-        {/* Drifting gold glow */}
-        <motion.div
-          aria-hidden
-          style={{ x: glowX }}
-          className="absolute top-1/4 right-0 h-[60vh] w-[60vh] rounded-full bg-secondary/10 blur-[120px]"
-        />
+    <section ref={sectionRef} className="relative bg-surface">
+      {/* ── Desktop: both columns sticky, section is 3 viewports tall ── */}
+      <div className="hidden lg:block lg:min-h-[300vh]">
+        <div className="sticky top-0 h-screen overflow-hidden">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,_color-mix(in_oklab,var(--theme-secondary)_18%,transparent),transparent_45%)]" />
 
-        {/* 3D bottle */}
-        <div className="absolute inset-y-0 right-0 w-full md:w-3/5 opacity-40 md:opacity-100">
-          {webgl && <HeroScene scrollProgress={progressRef} />}
-        </div>
+          <div className="relative z-10 h-full mx-auto max-w-[1280px] px-4 grid grid-cols-2 gap-12 items-center">
+            {/* LEFT — three panels stacked in the same grid cell, crossfading */}
+            <div className="grid">
+              {/* Intro */}
+              <div
+                className="col-start-1 row-start-1 flex flex-col gap-6 transition-opacity duration-500"
+                style={{ opacity: panel === "intro" ? 1 : 0, pointerEvents: panel === "intro" ? "auto" : "none" }}
+              >
+                <p className="text-sm font-label uppercase tracking-[0.2em] text-secondary">
+                  Quito · tradición licorera desde 1998
+                </p>
+                <h1 className="text-display italic text-on-surface text-balance">
+                  Un mismo origen para mayoreo y minorista.
+                </h1>
+                <p className="max-w-[60ch] text-lg leading-relaxed text-on-surface-variant">
+                  Sureño produce y comercializa licores en Ecuador con foco en calidad,
+                  abastecimiento confiable y una experiencia de compra clara tanto para negocios
+                  como para clientes finales.
+                </p>
+                <div className="flex gap-4 pt-2">
+                  <Link
+                    href="/mayoreo"
+                    className="inline-flex items-center justify-center rounded-md bg-secondary px-8 py-3 font-label text-base font-semibold uppercase tracking-wider text-on-secondary transition hover:bg-secondary/90"
+                  >
+                    Mayoreo
+                  </Link>
+                  <Link
+                    href="/minorista"
+                    className="inline-flex items-center justify-center rounded-md border-2 border-tertiary px-8 py-3 font-label text-base font-semibold uppercase tracking-wider text-tertiary transition hover:bg-tertiary/10"
+                  >
+                    Minorista
+                  </Link>
+                </div>
+              </div>
 
-        {/* Act 1 — brand statement */}
-        <motion.div
-          style={{ opacity: copyOpacity, y: copyY }}
-          className="relative z-10 mx-auto flex h-full max-w-[1280px] items-center px-4"
-        >
-          <HeroCopy />
-        </motion.div>
+              {/* Mayoreo */}
+              <article
+                className="col-start-1 row-start-1 self-center rounded-lg border border-outline-variant/60 bg-surface-container p-8 transition-opacity duration-500"
+                style={{ opacity: panel === "mayoreo" ? 1 : 0, pointerEvents: panel === "mayoreo" ? "auto" : "none" }}
+              >
+                <p className="text-sm font-label uppercase tracking-[0.2em] text-secondary">Mayoreo</p>
+                <h2 className="mt-3 font-headline text-4xl text-on-surface">Cajas de 12 unidades</h2>
+                <p className="mt-3 text-base leading-relaxed text-on-surface-variant">
+                  Pensado para tiendas, distribuidores, bares y puntos de venta que necesitan
+                  reposición, volumen y lectura rápida del costo por caja.
+                </p>
+              </article>
 
-        {/* Act 2 — wholesale value prop */}
-        <motion.div
-          style={{ opacity: act2Opacity, y: act2Y }}
-          className="absolute inset-0 z-10 mx-auto flex max-w-[1280px] items-center px-4 pointer-events-none"
-        >
-          <div className="max-w-xl space-y-4">
-            <p className="font-label text-sm uppercase tracking-[0.3em] text-secondary">
-              Mayoreo por cajas de 12
-            </p>
-            <h2 className="font-headline text-4xl md:text-5xl italic text-on-surface leading-tight">
-              De nuestra bodega a tu negocio
-            </h2>
-            <p className="text-lg text-on-surface-variant">
-              Precio preferencial por caja, entrega en 24–48 horas y pago
-              contra entrega para clientes mayoristas.
-            </p>
+              {/* Minorista */}
+              <article
+                className="col-start-1 row-start-1 self-center rounded-lg border border-outline-variant/60 bg-surface-container p-8 transition-opacity duration-500"
+                style={{ opacity: panel === "minorista" ? 1 : 0, pointerEvents: panel === "minorista" ? "auto" : "none" }}
+              >
+                <p className="text-sm font-label uppercase tracking-[0.2em] text-secondary">Minorista</p>
+                <h2 className="mt-3 font-headline text-4xl text-on-surface">Compra por unidad</h2>
+                <p className="mt-3 text-base leading-relaxed text-on-surface-variant">
+                  Ideal para revisar detalles, explorar descripciones largas y elegir cada botella
+                  según ocasión, regalo o consumo personal.
+                </p>
+              </article>
+            </div>
+
+            {/* RIGHT — bottle animation */}
+            <div className="relative flex items-center justify-center">
+              <div
+                aria-hidden
+                className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_center,_color-mix(in_oklab,var(--theme-secondary)_22%,transparent),transparent_60%)] blur-2xl"
+              />
+              <img
+                ref={imgRef}
+                src={reduceMotion ? MID_FRAME : FRAMES[0]}
+                alt=""
+                aria-hidden
+                className={`max-h-[78vh] w-auto object-contain drop-shadow-2xl transition-opacity duration-500 ${
+                  firstReady ? "opacity-100" : "opacity-0"
+                }`}
+              />
+            </div>
           </div>
-        </motion.div>
 
-        {/* Scroll hint */}
-        <motion.div
-          aria-hidden
-          style={{ opacity: copyOpacity }}
-          className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2 text-on-surface-variant"
-        >
-          <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ repeat: Infinity, duration: 1.8, ease: "easeInOut" }}
-            className="flex flex-col items-center gap-2 text-xs uppercase tracking-widest"
-          >
-            <span>Desliza</span>
-            <span className="block h-8 w-px bg-outline-variant" />
-          </motion.div>
-        </motion.div>
+          {/* Scroll progress dots */}
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2" aria-hidden>
+            {(["intro", "mayoreo", "minorista"] as Panel[]).map((p) => (
+              <div
+                key={p}
+                className={`h-1.5 rounded-full transition-all duration-500 ${
+                  panel === p ? "w-6 bg-secondary" : "w-1.5 bg-secondary/30"
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Mobile: stacked layout, static bottle image ── */}
+      <div className="lg:hidden">
+        <div className="relative overflow-hidden">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,_color-mix(in_oklab,var(--theme-secondary)_18%,transparent),transparent_45%)]" />
+          <div className="relative z-10 mx-auto max-w-[1280px] px-4 py-20 flex flex-col gap-6">
+            <p className="text-sm font-label uppercase tracking-[0.2em] text-secondary">
+              Quito · tradición licorera desde 1998
+            </p>
+            <h1 className="text-display italic text-on-surface text-balance">
+              Un mismo origen para mayoreo y minorista.
+            </h1>
+            <p className="text-lg leading-relaxed text-on-surface-variant">
+              Sureño produce y comercializa licores en Ecuador con foco en calidad,
+              abastecimiento confiable y una experiencia de compra clara tanto para negocios
+              como para clientes finales.
+            </p>
+            <img
+              src={MID_FRAME}
+              alt=""
+              aria-hidden
+              className="mx-auto max-h-[42vh] w-auto object-contain"
+            />
+            <div className="flex flex-col gap-4 sm:flex-row">
+              <Link
+                href="/mayoreo"
+                className="inline-flex items-center justify-center rounded-md bg-secondary px-8 py-3 font-label text-base font-semibold uppercase tracking-wider text-on-secondary transition hover:bg-secondary/90"
+              >
+                Mayoreo
+              </Link>
+              <Link
+                href="/minorista"
+                className="inline-flex items-center justify-center rounded-md border-2 border-tertiary px-8 py-3 font-label text-base font-semibold uppercase tracking-wider text-tertiary transition hover:bg-tertiary/10"
+              >
+                Minorista
+              </Link>
+            </div>
+          </div>
+        </div>
+        <div className="mx-auto max-w-[1280px] px-4 py-12 space-y-6">
+          <article className="rounded-lg border border-outline-variant/60 bg-surface-container p-6">
+            <p className="text-sm font-label uppercase tracking-[0.2em] text-secondary">Mayoreo</p>
+            <h2 className="mt-3 font-headline text-3xl text-on-surface">Cajas de 12 unidades</h2>
+            <p className="mt-3 text-base leading-relaxed text-on-surface-variant">
+              Pensado para tiendas, distribuidores, bares y puntos de venta que necesitan
+              reposición, volumen y lectura rápida del costo por caja.
+            </p>
+          </article>
+          <article className="rounded-lg border border-outline-variant/60 bg-surface-container p-6">
+            <p className="text-sm font-label uppercase tracking-[0.2em] text-secondary">Minorista</p>
+            <h2 className="mt-3 font-headline text-3xl text-on-surface">Compra por unidad</h2>
+            <p className="mt-3 text-base leading-relaxed text-on-surface-variant">
+              Ideal para revisar detalles, explorar descripciones largas y elegir cada botella
+              según ocasión, regalo o consumo personal.
+            </p>
+          </article>
+        </div>
       </div>
     </section>
   );

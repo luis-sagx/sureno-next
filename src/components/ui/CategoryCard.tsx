@@ -20,7 +20,7 @@ export function CategoryCard({
     <button
       onClick={onClick}
       className={cn(
-        "flex flex-col items-center justify-center gap-2 p-4 rounded-lg transition-all duration-200",
+        "flex h-full w-full min-h-32 flex-col items-center justify-center gap-3 rounded-lg p-4 text-balance transition-all duration-200",
         "bg-surface-container hover:bg-surface-container-high",
         "border-2 border-transparent",
         selected && "border-secondary bg-surface-container-high",
@@ -35,7 +35,7 @@ export function CategoryCard({
       />
       <span
         className={cn(
-          "text-xs font-medium text-center",
+          "text-sm font-medium text-center leading-snug",
           selected ? "text-on-surface" : "text-on-surface-variant"
         )}
       >
