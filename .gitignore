@@ -1,20 +1,38 @@
-.env
+# Env — solo se versiona la plantilla
+.env*
+!.env.example
+
+# Archivos locales de herramientas/agentes
 .atl
 .idea
 .vscode
+.agents
+.claude
+opencode**
+DESIGN**
+docs/
+openspec/
+
+# Dependencias y lockfiles (el proyecto usa pnpm)
 node_modules
+package-lock.json
+yarn.lock
+
+# Artefactos de build y test
+.next
 src/generated/prisma
 dist
 coverage
+*.tsbuildinfo
+playwright-report/
+test-results/
 logs
 *.log
 *.tmp
+
+# Generado por Next.js (se regenera con dev/build; no editar a mano)
+next-env.d.ts
+
+# Otros
 .DS_Store
-.agents
-.atl
-.claude
-.next
-docs/
-openspec/
-DESIGN**
-opencode**
+*.pem
