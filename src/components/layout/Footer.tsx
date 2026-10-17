@@ -52,6 +52,14 @@ export function Footer() {
                   Términos de Servicio
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="/privacidad"
+                  className="text-sm text-on-surface-variant hover:text-on-surface transition-colors"
+                >
+                  Política de Privacidad
+                </Link>
+              </li>
             </ul>
           </div>
 
