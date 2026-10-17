@@ -1,0 +1,12 @@
+# Configuración de pnpm (pnpm 11 lee los settings desde aquí; el campo "pnpm" de package.json ya no se usa).
+allowBuilds:
+  # Descarga los binarios de los engines de Prisma
+  '@prisma/engines': true
+  # Instala el binario nativo de esbuild (usado por tsx y vitest)
+  esbuild: true
+  # Preinstall del CLI de Prisma
+  prisma: true
+  # Procesamiento nativo de imágenes usado por la optimización de imágenes de Next.js
+  sharp: true
+  # Instala el binario nativo del resolver usado por eslint-config-next
+  unrs-resolver: true

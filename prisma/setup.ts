@@ -194,7 +194,7 @@ async function main() {
     console.log("📋 Creando tablas...");
     await client.query(SQL);
     console.log("✅ Tablas creadas exitosamente.");
-    console.log("👉 Ahora corré: npm run db:seed");
+    console.log("👉 Ahora corré: pnpm run db:seed");
   } catch (err) {
     console.error("❌ Error:", err);
   } finally {

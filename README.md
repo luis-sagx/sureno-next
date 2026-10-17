@@ -21,6 +21,7 @@ Plataforma de e-commerce para distribución premium de licores. Ofrece venta ind
 ### Requisitos
 
 - Node.js 24+
+- pnpm 11+ (el repo fija la versión en `packageManager`; podés activarlo con `corepack enable`)
 - Cuenta de Supabase (proyecto con PostgreSQL)
 
 ### Instalación
@@ -28,7 +29,7 @@ Plataforma de e-commerce para distribución premium de licores. Ofrece venta ind
 ```bash
 git clone <repo-url>
 cd sureno
-npm install
+pnpm install
 ```
 
 ### Variables de Entorno
@@ -51,19 +52,19 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 
 ```bash
 # Generar el cliente de Prisma
-npx prisma generate
+pnpm exec prisma generate
 
 # Aplicar migraciones
-npx prisma migrate dev --name init
+pnpm exec prisma migrate dev --name init
 
 # Sembrar datos de prueba
-npm run db:seed
+pnpm run db:seed
 ```
 
 ### Desarrollo
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 Abrir [http://localhost:3000](http://localhost:3000) en el navegador.
@@ -119,18 +120,18 @@ e2e/                        # Tests end-to-end (Playwright)
 
 | Comando | Descripción |
 |---|---|
-| `npm run dev` | Servidor de desarrollo |
-| `npm run build` | Build de producción |
-| `npm run start` | Iniciar servidor de producción |
-| `npm run test` | Ejecutar tests unitarios/integración (watch) |
-| `npm run test:run` | Ejecutar tests unitarios/integración (single run) |
-| `npm run test:e2e` | Ejecutar tests end-to-end con Playwright |
-| `npm run lint` | Ejecutar ESLint |
-| `npm run db:generate` | Generar cliente Prisma |
-| `npm run db:push` | Sincronizar schema con la base de datos |
-| `npm run db:migrate` | Crear y aplicar migraciones |
-| `npm run db:seed` | Insertar datos de prueba |
-| `npm run db:studio` | Abrir Prisma Studio |
+| `pnpm run dev` | Servidor de desarrollo |
+| `pnpm run build` | Build de producción |
+| `pnpm run start` | Iniciar servidor de producción |
+| `pnpm run test` | Ejecutar tests unitarios/integración (watch) |
+| `pnpm run test:run` | Ejecutar tests unitarios/integración (single run) |
+| `pnpm run test:e2e` | Ejecutar tests end-to-end con Playwright |
+| `pnpm run lint` | Ejecutar ESLint |
+| `pnpm run db:generate` | Generar cliente Prisma |
+| `pnpm run db:push` | Sincronizar schema con la base de datos |
+| `pnpm run db:migrate` | Crear y aplicar migraciones |
+| `pnpm run db:seed` | Insertar datos de prueba |
+| `pnpm run db:studio` | Abrir Prisma Studio |
 
 ## Licencia
 

@@ -1,6 +1,6 @@
 /**
  * Adds Licorería Sureño product catalog to the database.
- * Run with: npm run db:add-products
+ * Run with: pnpm run db:add-products
  */
 
 import "dotenv/config";
