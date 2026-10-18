@@ -39,6 +39,8 @@ describe("middleware.ts — updateSession", () => {
     vi.clearAllMocks();
     process.env.NEXT_PUBLIC_SUPABASE_URL = "https://test.supabase.co";
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "anon-key";
+    // The middleware gate allows only ADMIN_EMAIL through /admin.
+    process.env.ADMIN_EMAIL = "admin@test.com";
 
     mockRequest = {
       cookies: {

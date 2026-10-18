@@ -1,8 +1,10 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { Spring } from "@/components/animation/springs";
+import { SPRING } from "@/lib/springs/presets";
 import { useCartStore } from "@/store/cart";
 import { ShoppingCart } from "lucide-react";
+import { useSyncExternalStore } from "react";
 
 const emptySubscribe = () => () => {};
 
@@ -19,14 +21,21 @@ export function CartIcon() {
   return (
     <button
       onClick={toggleCart}
-      className="relative w-9 h-9 flex items-center justify-center rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors"
+      className="relative flex h-9 w-9 items-center justify-center rounded text-on-surface-variant transition-colors duration-[var(--theme-duration-fast)] ease-entrance hover:bg-surface-container hover:text-on-surface"
       aria-label="Carrito"
     >
-      <ShoppingCart className="w-5 h-5" />
+      <ShoppingCart className="h-5 w-5" />
       {mounted && totalItems > 0 && (
-        <span className="absolute -top-0.5 -right-0.5 min-w-[1rem] h-4 flex items-center justify-center rounded-full bg-secondary text-on-secondary text-[10px] font-bold px-0.5">
+        <Spring
+          key={totalItems}
+          mode="once"
+          from={{ scale: 0.4 }}
+          to={{ scale: 1 }}
+          config={SPRING.snappy}
+          className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-secondary px-0.5 text-[10px] font-bold text-on-secondary ring-2 ring-background tnum"
+        >
           {totalItems}
-        </span>
+        </Spring>
       )}
     </button>
   );

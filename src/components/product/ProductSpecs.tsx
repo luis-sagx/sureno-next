@@ -1,5 +1,4 @@
 import { cn } from "@/lib/utils";
-import { MapPin, Beaker, Gauge, Tag } from "lucide-react";
 
 interface ProductSpecsProps {
   origin?: string | null;
@@ -9,12 +8,10 @@ interface ProductSpecsProps {
   className?: string;
 }
 
-const specItems = [
-  { key: "volume", icon: Beaker, label: "Volumen" },
-  { key: "abv", icon: Gauge, label: "Graduación" },
-  { key: "category", icon: Tag, label: "Categoría" },
-] as const;
-
+/**
+ * Spec sheet as a hairline definition grid: caps label over a serif value.
+ * Unknown values stay honest with a dash instead of disappearing.
+ */
 export function ProductSpecs({
   origin,
   volumeMl,
@@ -22,34 +19,33 @@ export function ProductSpecs({
   category,
   className,
 }: ProductSpecsProps) {
-  const values: Record<string, string> = {
-    origin: origin || "—",
-    volume: volumeMl ? `${volumeMl}ml` : "—",
-    abv: abv ? `Alc. ${abv}%` : "—",
-    category: category || "—",
-  };
+  const specs = [
+    { label: "Volumen", value: volumeMl ? `${volumeMl} ml` : "—" },
+    { label: "Graduación", value: abv ? `Alc. ${abv}%` : "—" },
+    { label: "Categoría", value: category || "—" },
+    ...(origin ? [{ label: "Origen", value: origin }] : []),
+  ];
 
   return (
-    <div
+    <dl
       className={cn(
-        "grid grid-cols-2 md:grid-cols-4 gap-4",
+        "grid grid-cols-2 border-t border-line md:grid-cols-4",
         className
       )}
     >
-      {specItems.map(({ key, icon: Icon, label }) => (
+      {specs.map((spec) => (
         <div
-          key={key}
-          className="flex flex-col items-center text-center p-4 rounded-lg bg-surface-container"
+          key={spec.label}
+          className="flex flex-col gap-2 border-b border-line py-4 pr-6"
         >
-          <Icon className="w-5 h-5 text-secondary mb-2" />
-          <span className="text-xs text-on-surface-variant uppercase tracking-wider mb-1">
-            {label}
-          </span>
-          <span className="font-headline text-sm text-on-surface">
-            {values[key]}
-          </span>
+          <dt className="font-label text-[0.625rem] font-semibold uppercase tracking-[0.2em] text-on-surface-variant">
+            {spec.label}
+          </dt>
+          <dd className="font-headline text-lg leading-none text-on-surface tnum">
+            {spec.value}
+          </dd>
         </div>
       ))}
-    </div>
+    </dl>
   );
 }

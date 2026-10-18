@@ -29,7 +29,7 @@ export function StoreMap() {
       center={STORE_POSITION}
       zoom={15}
       scrollWheelZoom={false}
-      style={{ height: "400px", width: "100%", borderRadius: "0.75rem" }}
+      style={{ height: "400px", width: "100%" }}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
 import { EB_Garamond, Hanken_Grotesk } from "next/font/google";
+import { ReducedMotion } from "@/components/animation/ReducedMotion";
 import "./globals.css";
 
 const garamond = EB_Garamond({
@@ -48,6 +49,7 @@ export default function RootLayout({
           enableSystem={false}
           disableTransitionOnChange
         >
+          <ReducedMotion />
           {children}
         </ThemeProvider>
       </body>

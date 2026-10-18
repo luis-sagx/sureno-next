@@ -4,30 +4,50 @@ test.describe("Catalog Page", () => {
   test("navigates to catalog and shows product listing", async ({ page }) => {
     await page.goto("/catalog");
     await expect(
-      page.getByRole("heading", { name: /catálogo de productos/i })
+      page.getByRole("heading", { name: "Catálogo de productos" })
     ).toBeVisible();
   });
 
-  test("view param controls pricing mode via URL", async ({ page }) => {
-    // Catalog uses URL params for pricing mode (no PricingToggle on this page)
-    await page.goto("/catalog?view=retail");
-    await expect(page).toHaveURL(/view=retail/);
-
-    // Navigate to wholesale view via URL param
-    await page.goto("/catalog?view=wholesale");
-    await expect(page).toHaveURL(/view=wholesale/);
+  test("filter rail shows categories and price range", async ({ page }) => {
+    await page.goto("/catalog");
+    await expect(page.getByRole("heading", { name: "Filtros" })).toBeVisible();
+    await expect(page.getByText("Categoría", { exact: true })).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: "Aguardientes" })
+    ).toBeVisible();
+    await expect(page.getByText("Rango de precio")).toBeVisible();
+    await expect(
+      page.getByRole("spinbutton", { name: "Precio mínimo" })
+    ).toBeVisible();
   });
 
-  test("filter sidebar is visible", async ({ page }) => {
+  test("category tile filters the shelf through the URL", async ({ page }) => {
     await page.goto("/catalog");
-    await expect(page.getByText("Filtrar por Categoría")).toBeVisible();
+    const tile = page.getByRole("button", { name: "Aguardientes" });
+    await tile.click();
+    await expect(page).toHaveURL(/category=aguardientes/);
+    await expect(tile).toHaveAttribute("aria-pressed", "true");
+    await expect(
+      page.getByRole("heading", { name: "Aguardientes" })
+    ).toBeVisible();
+  });
+
+  test("pricing mode travels in the URL", async ({ page }) => {
+    await page.goto("/catalog?view=retail");
+    const toggle = page.getByRole("group", { name: "Tipo de precio" });
+    await toggle.getByRole("link", { name: "Mayoreo" }).click();
+    await expect(page).toHaveURL(/view=wholesale/);
+    await toggle.getByRole("link", { name: "Individual" }).click();
+    await expect(page).not.toHaveURL(/view=wholesale/);
   });
 
   test("product cards are visible when products exist", async ({ page }) => {
     await page.goto("/catalog");
-    // Product cards have product names rendered as h3
-    // At minimum, the grid container should be present
-    const productGrid = page.locator(".grid");
-    await expect(productGrid.first()).toBeVisible();
+    await expect(
+      page.getByRole("heading", { level: 3 }).first()
+    ).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: "Agregar al carrito" }).first()
+    ).toBeVisible();
   });
 });

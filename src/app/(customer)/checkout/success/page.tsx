@@ -1,6 +1,8 @@
 import { ClearCartOnSuccess } from "@/components/checkout/ClearCartOnSuccess";
-import { Button } from "@/components/ui/Button";
-import { CheckCircle } from "lucide-react";
+import { buttonClass } from "@/components/ui/button-class";
+import { Eyebrow } from "@/components/ui/Eyebrow";
+import { TextReveal } from "@/components/animation/text/TextReveal";
+import { Check } from "lucide-react";
 import Link from "next/link";
 
 interface SuccessPageProps {
@@ -13,44 +15,55 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
   const isContraentrega = params.metodo === "CONTRAENTREGA";
 
   return (
-    <div className="mx-auto max-w-[1280px] px-4 py-20">
-      <ClearCartOnSuccess />
-      <div className="max-w-md mx-auto text-center space-y-6">
-        {/* Icon */}
-        <div className="flex justify-center">
-          <div className="w-20 h-20 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-            <CheckCircle className="w-10 h-10 text-green-600 dark:text-green-400" />
-          </div>
-        </div>
+    <div className="relative">
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-0 h-96 bg-[radial-gradient(110%_80%_at_50%_-24%,var(--theme-stage-top),transparent_62%)]"
+      />
 
-        {/* Heading */}
-        <h1 className="font-headline text-3xl text-on-surface">
-          ¡Pedido Recibido!
-        </h1>
+      <div className="relative mx-auto flex max-w-xl flex-col items-center px-4 py-24 text-center">
+        <ClearCartOnSuccess />
 
-        {/* Order number */}
-        <div className="bg-surface-container rounded-lg p-4 border border-outline-variant">
-          <p className="text-sm text-on-surface-variant mb-1">
-            Número de Pedido
-          </p>
-          <p className="font-mono text-xl text-on-surface font-semibold tabular-nums">
+        <span className="relative flex h-20 w-20 items-center justify-center rounded-full border border-line-strong text-secondary">
+          <span
+            aria-hidden="true"
+            className="absolute inset-[-6px] rounded-full border border-line"
+          />
+          <Check className="h-7 w-7" aria-hidden="true" />
+        </span>
+
+        <Eyebrow className="mt-8">Pedido confirmado</Eyebrow>
+
+        <TextReveal
+          tag="h1"
+          variant="lines"
+          align="center"
+          className="mt-4 type-title text-on-surface"
+        >
+          ¡Pedido recibido!
+        </TextReveal>
+
+        <div className="mt-8 flex w-full flex-col items-center gap-2 border-y border-line py-6">
+          <span className="font-label text-[0.625rem] font-semibold uppercase tracking-[0.22em] text-on-surface-variant">
+            Número de pedido
+          </span>
+          <span className="font-headline text-3xl tracking-tight text-on-surface tnum">
             {orderNumber}
-          </p>
+          </span>
         </div>
 
-        {/* Confirmation message */}
-        <p className="text-on-surface-variant">
+        <p className="mt-8 max-w-prose text-base leading-relaxed text-on-surface-variant">
           {isContraentrega
             ? "Pagarás en efectivo al momento de recibir tu pedido. Nuestro equipo te contactará para coordinar la entrega."
             : "Tu pago fue procesado de forma segura con Stripe. Recibirás un email de confirmación con los detalles de tu pedido."}
         </p>
 
-        {/* Action */}
-        <div className="pt-4">
-          <Link href="/catalog">
-            <Button variant="primary" size="lg">
-              Seguir Comprando
-            </Button>
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+          <Link href="/catalog" className={buttonClass("primary", "lg")}>
+            Seguir comprando
+          </Link>
+          <Link href="/support" className={buttonClass("secondary", "lg")}>
+            Contacto y soporte
           </Link>
         </div>
       </div>

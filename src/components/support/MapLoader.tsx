@@ -7,7 +7,7 @@ const StoreMap = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="h-[400px] rounded-xl bg-surface-container animate-pulse" />
+      <div className="h-[400px] animate-pulse bg-surface-container" />
     ),
   }
 );

@@ -1,3 +1,9 @@
+import { Inview } from '@/components/animation/springs'
+import { TextReveal } from '@/components/animation/text/TextReveal'
+import { Divider } from '@/components/ui/Divider'
+import { Eyebrow } from '@/components/ui/Eyebrow'
+import { SectionHeading } from '@/components/ui/SectionHeading'
+import { imageSettle, revealUp, SPRING, staggerDelay } from '@/lib/springs/presets'
 import Image from 'next/image'
 
 const products = [
@@ -12,194 +18,267 @@ const products = [
   { src: '/img-minorista/wisky-red-diez.webp', label: 'Whisky Red 10' },
 ]
 
-const bgImage = { backgroundImage: "url('/bg.webp')" }
+const purpose = [
+  {
+    title: 'Misión',
+    src: '/mision.png',
+    alt: 'Misión Sureño',
+    text: 'Producir y comercializar licores con los más altos estándares de calidad para satisfacer a nuestros clientes y consumidores, acompañándolos en sus momentos más importantes con un equipo humano, técnico y sostenible.',
+  },
+  {
+    title: 'Visión',
+    src: '/vision.png',
+    alt: 'Visión Sureño',
+    text: 'Ampliar nuestra participación en el mercado nacional e incursionar en el mercado internacional, con mejora continua, innovación del portafolio y la más alta responsabilidad social para nuestros trabajadores, proveedores y comunidad.',
+  },
+]
+
+const shipping = [
+  {
+    title: 'Cobertura',
+    text: 'Realizamos entregas en todo Quito y sus valles. Para provincias fuera de Pichincha, coordinamos el envío con transportistas de confianza a nivel nacional.',
+  },
+  {
+    title: 'Tiempos de entrega',
+    text: 'Pedidos dentro de Quito: 24-48 horas. Pedidos al resto del país: 3-5 días hábiles. Los pedidos mayoristas pueden requerir 1-2 días adicionales de preparación.',
+  },
+  {
+    title: 'Pedidos mayoristas',
+    text: 'Para pedidos de caja completa (12 unidades) accedés al precio mayorista automáticamente. El transporte de cajas completas tiene costo preferencial o puede ser coordinado con retiro en planta.',
+  },
+]
 
 export default function AboutPage() {
   return (
     <div>
-      {/* Hero — bg fixed da el efecto parallax al hacer scroll */}
-      <section
-        className="relative h-80 flex items-center justify-center bg-cover bg-fixed bg-center"
-        style={bgImage}
-      >
-        <div className="absolute inset-0 bg-linear-to-b from-black/70 via-black/55 to-black/75" />
-        <div className="relative z-10 flex flex-col items-center gap-6 px-4 text-center">
-          <p className="max-w-2xl font-headline text-2xl italic text-white/90 drop-shadow-lg leading-relaxed">
-            &ldquo;En cada botella destilamos tradición, pasión y el sabor de lo
-            auténtico, para que cada momento se convierta en una experiencia
-            única.&rdquo;
-          </p>
+      {/* Masthead — the story opens the page, the brand mark sits on a hairline stage */}
+      <section className="border-b border-line bg-surface">
+        <div className="mx-auto grid max-w-[1280px] items-center gap-16 px-4 py-20 md:py-28 lg:grid-cols-[minmax(0,1fr)_300px]">
+          <div className="flex flex-col items-start gap-7">
+            <Eyebrow rule>Quiénes somos</Eyebrow>
+
+            <TextReveal tag="h1" className="type-display text-on-surface">
+              Una historia nacida en el sur de Quito.
+            </TextReveal>
+
+            <Inview
+              from={revealUp.from}
+              to={revealUp.to}
+              mode="once"
+              config={SPRING.entrance}
+              delayIn={120}
+            >
+              <p className="max-w-prose text-base leading-relaxed text-on-surface-variant">
+                El 22 de mayo de 1998 nace la idea de formar una pequeña
+                industria licorera en el sur de la ciudad de Quito llamada{' '}
+                <strong className="font-semibold text-on-surface">
+                  SUREÑO
+                </strong>
+                , desarrollándose al principio artesanalmente. Con el transcurso
+                del tiempo evolucionó como microempresa, cumpliendo siempre con
+                las normas INEN y procesos controlados por el ARCSA.
+              </p>
+            </Inview>
+
+            <Divider align="left" className="max-w-xs" />
+
+            <Inview
+              from={revealUp.from}
+              to={revealUp.to}
+              mode="once"
+              config={SPRING.entrance}
+              delayIn={200}
+            >
+              <p className="max-w-prose text-base leading-relaxed text-on-surface-variant">
+                Maximizamos la satisfacción de nuestros clientes y de todos los
+                que conformamos la familia Sureño, superándonos cada día para
+                estar a la altura de sus exigencias.
+              </p>
+            </Inview>
+          </div>
+
+          <Inview
+            from={imageSettle.from}
+            to={imageSettle.to}
+            mode="once"
+            config={SPRING.entrance}
+            className="relative mx-auto flex h-64 w-64 items-center justify-center md:h-72 md:w-72"
+          >
+            <span
+              aria-hidden="true"
+              className="absolute inset-0 rounded-full bg-[radial-gradient(circle,_color-mix(in_oklab,var(--theme-secondary)_16%,transparent),transparent_65%)] blur-2xl"
+            />
+            <span
+              aria-hidden="true"
+              className="craft-line absolute inset-0 rounded-full"
+            />
+            <span
+              aria-hidden="true"
+              className="craft-line absolute inset-7 rounded-full opacity-60"
+            />
+            <Image
+              src="/logo-isotipo.png"
+              alt="Isotipo de Sureño"
+              width={200}
+              height={200}
+              className="relative h-36 w-36 object-contain opacity-95 md:h-40 md:w-40"
+            />
+          </Inview>
         </div>
       </section>
 
-      {/* Historia */}
-      <section className="mx-auto max-w-7xl px-4 py-20 grid gap-12 md:grid-cols-[60fr_40fr] items-center">
-        <div className="space-y-5">
-          <p className="text-sm font-label uppercase tracking-[0.2em] text-secondary">
-            Quiénes somos
-          </p>
-          <h1 className="font-headline text-4xl md:text-5xl text-on-surface leading-tight">
-            Una historia nacida en el sur de Quito.
-          </h1>
-          <p className="text-base leading-relaxed text-on-surface-variant">
-            El 22 de mayo de 1998 nace la idea de formar una pequeña industria
-            licorera en el sur de la ciudad de Quito llamada{' '}
-            <strong className="text-on-surface">SUREÑO</strong>, desarrollándose
-            al principio artesanalmente. Con el transcurso del tiempo evolucionó
-            como microempresa, cumpliendo siempre con las normas INEN y procesos
-            controlados por el ARCSA.
-          </p>
-          <p className="text-base leading-relaxed text-on-surface-variant">
-            Maximizamos la satisfacción de nuestros clientes y de todos los que
-            conformamos la familia Sureño, superándonos cada día para estar a la
-            altura de sus exigencias.
-          </p>
-        </div>
+      {/* Quote band — the distillery photograph under a scrim */}
+      <section className="relative overflow-hidden border-b border-line">
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 bg-cover bg-center opacity-60 md:bg-fixed"
+          style={{ backgroundImage: "url('/bg.webp')" }}
+        />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/70 to-background/90"
+        />
 
-        <div className="flex items-center justify-center p-10">
-          <Image
-            src="/logo-isotipo.png"
-            alt="Sureño — Vinos & Licores"
-            width={260}
-            height={260}
-            className="opacity-90"
+        <div className="relative mx-auto flex max-w-3xl flex-col items-center gap-6 px-4 py-24 text-center md:py-28">
+          <Inview
+            from={revealUp.from}
+            to={revealUp.to}
+            mode="once"
+            config={SPRING.entrance}
+          >
+            <p className="font-headline text-2xl italic leading-snug text-on-surface md:text-3xl">
+              &ldquo;En cada botella destilamos tradición, pasión y el sabor de
+              lo auténtico, para que cada momento se convierta en una
+              experiencia única.&rdquo;
+            </p>
+          </Inview>
+          <Inview
+            from={revealUp.from}
+            to={revealUp.to}
+            mode="once"
+            config={SPRING.entrance}
+            delayIn={140}
+          >
+            <p className="font-label text-[0.6875rem] font-semibold uppercase tracking-[0.24em] text-secondary">
+              El sabor auténtico del sur de Quito, en cada botella
+            </p>
+          </Inview>
+        </div>
+      </section>
+
+      {/* Misión y visión — numbered editorial entries, images on hairline stages */}
+      <section className="border-b border-line bg-surface">
+        <div className="mx-auto max-w-[1280px] px-4 py-20 md:py-28">
+          <SectionHeading eyebrow="Propósito" title="Lo que nos mueve." />
+
+          <div className="mt-14 grid gap-12 lg:grid-cols-2 lg:gap-16">
+            {purpose.map((entry, index) => (
+              <Inview
+                key={entry.title}
+                from={revealUp.from}
+                to={revealUp.to}
+                mode="once"
+                config={SPRING.entrance}
+                delayIn={staggerDelay(index)}
+              >
+                <article className="flex flex-col gap-6">
+                  <div className="craft-line relative aspect-[16/9] overflow-hidden rounded">
+                    <Image
+                      src={entry.src}
+                      alt={entry.alt}
+                      fill
+                      sizes="(max-width: 1024px) 100vw, 50vw"
+                      className="object-cover"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-3 border-t border-line pt-6">
+                    <span className="index-numeral text-2xl text-secondary">
+                      {String(index + 1).padStart(2, '0')}
+                    </span>
+                    <h3 className="font-headline text-2xl text-on-surface">
+                      {entry.title}
+                    </h3>
+                    <p className="text-base leading-relaxed text-on-surface-variant">
+                      {entry.text}
+                    </p>
+                  </div>
+                </article>
+              </Inview>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Nuestros productos — the six house stills */}
+      <section className="border-b border-line bg-background">
+        <div className="mx-auto max-w-[1280px] px-4 py-20 md:py-28">
+          <SectionHeading
+            eyebrow="Lo que ofrecemos"
+            title="Nuestros productos"
           />
-        </div>
-      </section>
 
-      <section
-        className="relative h-48 flex items-center justify-center bg-cover bg-fixed bg-center"
-        style={bgImage}
-      >
-        <div className="absolute inset-0 bg-linear-to-b from-black/75 via-black/60 to-black/75" />
-        <div className="relative z-10 flex flex-col items-center gap-2 px-4 text-center">
-          <p className="font-headline text-2xl italic text-white/95 drop-shadow-lg md:text-3xl">
-            El sabor auténtico del sur de Quito, en cada botella.
-          </p>
-          <div className="h-0.5 w-12 rounded bg-secondary" />
-        </div>
-      </section>
-
-      <section className="my-20"></section>
-
-      {/* Misión */}
-      <section className="border-y border-outline-variant/50 bg-surface-container">
-        <div className="grid items-stretch md:grid-cols-2">
-          <article className="space-y-4 px-8 py-14 md:px-16 lg:px-24">
-            <h2 className="font-headline text-3xl text-on-surface">Misión</h2>
-            <div className="h-0.5 w-12 rounded bg-secondary" />
-            <p className="text-base leading-relaxed text-on-surface-variant">
-              Producir y comercializar licores con los más altos estándares de
-              calidad para satisfacer a nuestros clientes y consumidores,
-              acompañándolos en sus momentos más importantes con un equipo
-              humano, técnico y sostenible.
-            </p>
-          </article>
-          <div className="relative h-72 min-h-72 md:h-auto overflow-hidden">
-            <Image
-              src="/mision.png"
-              alt="Misión Sureño"
-              fill
-              sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover"
-            />
+          <div className="mt-14 grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-6">
+            {products.map((product, index) => (
+              <Inview
+                key={product.src}
+                from={revealUp.from}
+                to={revealUp.to}
+                mode="once"
+                config={SPRING.entrance}
+                delayIn={staggerDelay(index, 50, 300)}
+              >
+                <figure className="group flex flex-col items-center gap-4">
+                  <div className="craft-line relative aspect-[3/4] w-full overflow-hidden rounded">
+                    <Image
+                      src={product.src}
+                      alt={product.label}
+                      fill
+                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 17vw"
+                      className="object-contain p-4 transition-transform duration-[var(--theme-duration-slow)] ease-entrance group-hover:scale-[1.04]"
+                    />
+                  </div>
+                  <figcaption className="text-center font-label text-[0.6875rem] uppercase tracking-[0.18em] text-on-surface-variant">
+                    {product.label}
+                  </figcaption>
+                </figure>
+              </Inview>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Visión */}
-      <section className="border-b border-outline-variant/50 bg-surface">
-        <div className="grid items-stretch md:grid-cols-2">
-          <div className="relative h-72 min-h-72 md:h-auto overflow-hidden order-2 md:order-1">
-            <Image
-              src="/vision.png"
-              alt="Visión Sureño"
-              fill
-              sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover"
-            />
-          </div>
-          <article className="space-y-4 px-8 py-14 md:px-16 lg:px-24 order-1 md:order-2">
-            <h2 className="font-headline text-3xl text-on-surface">Visión</h2>
-            <div className="h-0.5 w-12 rounded bg-secondary" />
-            <p className="text-base leading-relaxed text-on-surface-variant">
-              Ampliar nuestra participación en el mercado nacional e incursionar
-              en el mercado internacional, con mejora continua, innovación del
-              portafolio y la más alta responsabilidad social para nuestros
-              trabajadores, proveedores y comunidad.
-            </p>
-          </article>
-        </div>
-      </section>
+      {/* Información de envío — hanging from a hairline, no filled boxes */}
+      <section id="shipping" className="bg-surface">
+        <div className="mx-auto max-w-[1280px] px-4 py-20 md:py-28">
+          <SectionHeading
+            eyebrow="Logística"
+            title="Información de envío"
+            description="Cómo llega tu pedido, dentro y fuera de Quito."
+          />
 
-      {/* Nuestros Productos */}
-      <section className="mx-auto max-w-7xl px-4 py-20 space-y-10">
-        <div className="space-y-2">
-          <p className="text-sm font-label uppercase tracking-[0.2em] text-secondary">
-            Lo que ofrecemos
-          </p>
-          <h2 className="font-headline text-4xl text-on-surface">
-            Nuestros Productos
-          </h2>
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-          {products.map((p) => (
-            <div key={p.src} className="group flex flex-col items-center gap-3">
-              <div className="relative w-full aspect-[3/4] overflow-hidden rounded-xl border border-outline-variant/50 bg-surface-container transition-shadow group-hover:shadow-lg">
-                <Image
-                  src={p.src}
-                  alt={p.label}
-                  fill
-                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 17vw"
-                  className="object-contain p-3 transition-transform duration-300 group-hover:scale-105"
-                />
-              </div>
-              <span className="text-xs text-center font-label text-on-surface-variant">
-                {p.label}
-              </span>
-            </div>
-          ))}
-        </div>
-      </section>
-      {/* Shipping Info */}
-      <section
-        id="shipping"
-        className="mx-auto max-w-7xl px-4 py-20 space-y-10"
-      >
-        <div className="space-y-2">
-          <p className="text-sm font-label uppercase tracking-[0.2em] text-secondary">
-            Logística
-          </p>
-          <h2 className="font-headline text-4xl text-on-surface">
-            Información de Envío
-          </h2>
-        </div>
-
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          <div className="rounded-xl border border-outline-variant bg-surface-container p-6 space-y-3">
-            <h3 className="font-headline text-lg text-on-surface">Cobertura</h3>
-            <p className="text-sm text-on-surface-variant leading-relaxed">
-              Realizamos entregas en todo Quito y sus valles. Para provincias
-              fuera de Pichincha, coordinamos el envío con transportistas
-              de confianza a nivel nacional.
-            </p>
-          </div>
-          <div className="rounded-xl border border-outline-variant bg-surface-container p-6 space-y-3">
-            <h3 className="font-headline text-lg text-on-surface">Tiempos de entrega</h3>
-            <p className="text-sm text-on-surface-variant leading-relaxed">
-              Pedidos dentro de Quito: <strong className="text-on-surface">24-48 horas</strong>.
-              Pedidos al resto del país: <strong className="text-on-surface">3-5 días hábiles</strong>.
-              Los pedidos mayoristas pueden requerir 1-2 días adicionales de preparación.
-            </p>
-          </div>
-          <div className="rounded-xl border border-outline-variant bg-surface-container p-6 space-y-3">
-            <h3 className="font-headline text-lg text-on-surface">Pedidos mayoristas</h3>
-            <p className="text-sm text-on-surface-variant leading-relaxed">
-              Para pedidos de caja completa (12 unidades) accedés al precio mayorista
-              automáticamente. El transporte de cajas completas tiene costo preferencial
-              o puede ser coordinado con retiro en planta.
-            </p>
+          <div className="mt-14 grid gap-10 md:grid-cols-3 md:gap-12">
+            {shipping.map((item, index) => (
+              <Inview
+                key={item.title}
+                from={revealUp.from}
+                to={revealUp.to}
+                mode="once"
+                config={SPRING.entrance}
+                delayIn={staggerDelay(index)}
+              >
+                <article className="flex flex-col gap-4 border-t border-line pt-8 transition-colors duration-[var(--theme-duration-normal)] ease-entrance hover:border-line-strong">
+                  <span className="index-numeral text-2xl text-secondary">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                  <h3 className="font-headline text-2xl leading-snug text-on-surface">
+                    {item.title}
+                  </h3>
+                  <p className="text-sm leading-relaxed text-on-surface-variant">
+                    {item.text}
+                  </p>
+                </article>
+              </Inview>
+            ))}
           </div>
         </div>
       </section>

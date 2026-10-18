@@ -1,5 +1,4 @@
-import { formatCurrency } from "@/lib/utils";
-import { cn } from "@/lib/utils";
+import { formatCurrency, cn } from "@/lib/utils";
 
 interface PriceDisplayProps {
   retailPrice: number;
@@ -9,6 +8,10 @@ interface PriceDisplayProps {
   className?: string;
 }
 
+/**
+ * Editorial price block: the figure set in the serif with tabular numerals
+ * (so rows of prices align), the wholesale line underneath in gold.
+ */
 export function PriceDisplay({
   retailPrice,
   wholesalePrice,
@@ -17,9 +20,9 @@ export function PriceDisplay({
   className,
 }: PriceDisplayProps) {
   const sizeStyles = {
-    sm: "text-base",
-    md: "text-xl",
-    lg: "text-2xl",
+    sm: "text-lg",
+    md: "text-2xl",
+    lg: "text-4xl",
   };
 
   const hasWholesale = wholesalePrice != null && wholesalePrice > 0;
@@ -28,7 +31,7 @@ export function PriceDisplay({
     <div className={cn("space-y-1", className)}>
       <span
         className={cn(
-          "font-headline font-semibold text-on-surface",
+          "block font-headline font-semibold leading-none tracking-tight text-on-surface tnum",
           sizeStyles[size]
         )}
       >
@@ -36,19 +39,20 @@ export function PriceDisplay({
       </span>
 
       {hasWholesale && (
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-on-surface-variant line-through">
-            {formatCurrency(retailPrice)}
+        <span className="block text-xs text-on-surface-variant">
+          Mayoreo:{" "}
+          <span className="font-medium text-secondary tnum">
+            {formatCurrency(wholesalePrice)}
           </span>
-          <span className="text-sm text-tertiary font-medium">
-            Mayoreo: {formatCurrency(wholesalePrice)}
-          </span>
-        </div>
+        </span>
       )}
 
       {hasWholesale && showSavings && (
-        <span className="text-xs text-tertiary font-medium block">
-          AHORRAS {formatCurrency(retailPrice - wholesalePrice)}
+        <span className="block font-label text-[0.6875rem] font-semibold uppercase tracking-[0.16em] text-secondary">
+          Ahorras{" "}
+          <span className="tnum">
+            {formatCurrency(retailPrice - wholesalePrice)}
+          </span>
         </span>
       )}
     </div>

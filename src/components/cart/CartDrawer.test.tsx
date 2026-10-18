@@ -74,7 +74,7 @@ describe("CartDrawer", () => {
     expect(screen.getByText("2")).toBeInTheDocument();
   });
 
-  it("shows type badge for retail items as 'Retail'", () => {
+  it("shows type badge for retail items as 'Individual'", () => {
     useCartStore.setState({
       isOpen: true,
       items: [
@@ -94,7 +94,7 @@ describe("CartDrawer", () => {
 
     render(<CartDrawer />);
 
-    expect(screen.getByText("Retail")).toBeInTheDocument();
+    expect(screen.getByText("Individual")).toBeInTheDocument();
   });
 
   it("shows type badge for wholesale items as 'Mayoreo'", () => {

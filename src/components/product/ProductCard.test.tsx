@@ -12,6 +12,7 @@ vi.mock("@/store/cart", () => {
 
 vi.mock("@/lib/pricing", () => {
   return {
+    CAJA_SIZE: 12,
     formatPrice: (price: number) => `$${price.toFixed(2)}`,
     getBestWholesalePrice: () => 45,
   };
@@ -33,6 +34,7 @@ const mockProduct: Product & {
   imageUrl: "https://example.com/product.jpg",
   badge: null,
   retailPrice: new Prisma.Decimal(50),
+  wholesalePrice: new Prisma.Decimal(0),
   categoryId: "cat-1",
   brandId: null,
   aroma: null,
@@ -49,6 +51,7 @@ const mockProduct: Product & {
       productId: "test-product-1",
       label: "750ml",
       price: new Prisma.Decimal(50),
+      cost: null,
       stock: 10,
       minOrder: 1,
       retailImageUrl: "https://example.com/variant-retail.jpg",

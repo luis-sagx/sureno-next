@@ -1,9 +1,46 @@
+import { Inview } from "@/components/animation/springs";
+import { TextReveal } from "@/components/animation/text/TextReveal";
+import { SectionHeading } from "@/components/ui/SectionHeading";
+import { Divider } from "@/components/ui/Divider";
+import { Eyebrow } from "@/components/ui/Eyebrow";
 import { MapLoader } from "@/components/support/MapLoader";
-import { MapPin, Phone, Mail, Clock } from "lucide-react";
+import { revealUp, SPRING, staggerDelay } from "@/lib/springs/presets";
+import { Clock, Mail, MapPin, Phone, Plus } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import type { ReactNode } from "react";
 
 export const metadata = {
   title: "Contactar Soporte — Licorería Sureño",
 };
+
+const contact: { icon: LucideIcon; label: string; value: ReactNode }[] = [
+  {
+    icon: MapPin,
+    label: "Dirección",
+    value: "Sur de Quito, Pichincha, Ecuador",
+  },
+  {
+    icon: Phone,
+    label: "Teléfono",
+    value: "+593 2 000-0000",
+  },
+  {
+    icon: Mail,
+    label: "Correo",
+    value: "contacto@licoreriasureno.com",
+  },
+  {
+    icon: Clock,
+    label: "Horario de atención",
+    value: (
+      <>
+        Lun – Vie: 8:00 – 18:00
+        <br />
+        Sáb: 9:00 – 14:00
+      </>
+    ),
+  },
+];
 
 const faqs = [
   {
@@ -40,98 +77,111 @@ const faqs = [
 
 export default function SupportPage() {
   return (
-    <div className="mx-auto max-w-5xl px-4 py-16 space-y-16">
+    <div className="mx-auto max-w-[1280px] px-4 py-20 md:py-24">
       {/* Header */}
-      <div className="space-y-3">
-        <p className="text-sm font-label uppercase tracking-[0.2em] text-secondary">
-          Asistencia
-        </p>
-        <h1 className="font-headline text-4xl text-on-surface">
-          Contactar Soporte
-        </h1>
-        <p className="text-base text-on-surface-variant max-w-xl">
-          Estamos para ayudarte. Encontrá nuestra ubicación, medios de contacto y
-          respuestas a las preguntas más frecuentes.
-        </p>
+      <div className="flex flex-col items-start gap-6">
+        <Eyebrow rule>Asistencia</Eyebrow>
+
+        <TextReveal tag="h1" className="type-display text-on-surface">
+          Contactar soporte
+        </TextReveal>
+
+        <Inview
+          from={revealUp.from}
+          to={revealUp.to}
+          mode="once"
+          config={SPRING.entrance}
+          delayIn={120}
+        >
+          <p className="max-w-prose text-lg leading-relaxed text-on-surface-variant">
+            Estamos para ayudarte. Encontrá nuestra ubicación, medios de
+            contacto y respuestas a las preguntas más frecuentes.
+          </p>
+        </Inview>
       </div>
 
-      {/* Contact info + Map */}
-      <div className="grid gap-8 lg:grid-cols-[1fr_2fr]">
-        <div className="space-y-6">
-          <h2 className="font-headline text-2xl text-on-surface">Dónde encontrarnos</h2>
+      {/* Contacto + mapa */}
+      <div className="mt-16 grid gap-14 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
+        <div className="flex flex-col gap-8">
+          <h2 className="font-headline text-2xl text-on-surface">
+            Dónde encontrarnos
+          </h2>
 
-          <div className="space-y-4">
-            <div className="flex items-start gap-3">
-              <MapPin className="w-5 h-5 text-secondary mt-0.5 shrink-0" />
-              <div>
-                <p className="text-sm font-medium text-on-surface">Dirección</p>
-                <p className="text-sm text-on-surface-variant">
-                  Sur de Quito, Pichincha, Ecuador
-                </p>
-              </div>
-            </div>
+          <dl className="flex flex-col border-b border-line">
+            {contact.map((item, index) => (
+              <Inview
+                key={item.label}
+                from={revealUp.from}
+                to={revealUp.to}
+                mode="once"
+                config={SPRING.entrance}
+                delayIn={staggerDelay(index, 60, 240)}
+                className="border-t border-line"
+              >
+                <div className="flex items-start gap-4 py-5">
+                  <span className="craft-line mt-0.5 flex size-9 shrink-0 items-center justify-center rounded">
+                    <item.icon
+                      className="h-4 w-4 text-secondary"
+                      aria-hidden="true"
+                    />
+                  </span>
+                  <div className="flex flex-col gap-1">
+                    <dt className="font-label text-[0.6875rem] font-semibold uppercase tracking-[0.2em] text-on-surface-variant">
+                      {item.label}
+                    </dt>
+                    <dd className="text-sm leading-relaxed text-on-surface">
+                      {item.value}
+                    </dd>
+                  </div>
+                </div>
+              </Inview>
+            ))}
+          </dl>
 
-            <div className="flex items-start gap-3">
-              <Phone className="w-5 h-5 text-secondary mt-0.5 shrink-0" />
-              <div>
-                <p className="text-sm font-medium text-on-surface">Teléfono</p>
-                <p className="text-sm text-on-surface-variant">+593 2 000-0000</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-3">
-              <Mail className="w-5 h-5 text-secondary mt-0.5 shrink-0" />
-              <div>
-                <p className="text-sm font-medium text-on-surface">Correo</p>
-                <p className="text-sm text-on-surface-variant">
-                  contacto@licoreriasureno.com
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-3">
-              <Clock className="w-5 h-5 text-secondary mt-0.5 shrink-0" />
-              <div>
-                <p className="text-sm font-medium text-on-surface">Horario de atención</p>
-                <p className="text-sm text-on-surface-variant">
-                  Lun – Vie: 8:00 – 18:00
-                  <br />
-                  Sáb: 9:00 – 14:00
-                </p>
-              </div>
-            </div>
-          </div>
+          <Divider align="left" className="max-w-xs" />
         </div>
 
-        <div>
+        <div className="craft-line relative overflow-hidden rounded">
           <MapLoader />
         </div>
       </div>
 
       {/* FAQ */}
-      <section className="space-y-8">
-        <div className="space-y-2">
-          <p className="text-sm font-label uppercase tracking-[0.2em] text-secondary">
-            Preguntas frecuentes
-          </p>
-          <h2 className="font-headline text-3xl text-on-surface">FAQ</h2>
-        </div>
+      <section className="mt-24">
+        <SectionHeading
+          eyebrow="Preguntas frecuentes"
+          title="Respuestas rápidas"
+          description="Lo que más nos consultan antes de comprar."
+        />
 
-        <div className="divide-y divide-outline-variant">
-          {faqs.map((faq, i) => (
-            <details key={i} className="group py-5 cursor-pointer">
-              <summary className="flex items-center justify-between gap-4 list-none">
-                <span className="font-headline text-lg text-on-surface">
-                  {faq.question}
-                </span>
-                <span className="text-secondary text-xl font-bold select-none transition-transform group-open:rotate-45">
-                  +
-                </span>
-              </summary>
-              <p className="mt-3 text-sm text-on-surface-variant leading-relaxed">
-                {faq.answer}
-              </p>
-            </details>
+        <div className="mt-12 flex flex-col">
+          {faqs.map((faq, index) => (
+            <Inview
+              key={faq.question}
+              from={revealUp.from}
+              to={revealUp.to}
+              mode="once"
+              config={SPRING.entrance}
+              delayIn={staggerDelay(index, 50, 250)}
+            >
+              <details className="group border-t border-line last:border-b">
+                <summary className="flex cursor-pointer list-none items-center gap-5 py-6 [&::-webkit-details-marker]:hidden">
+                  <span className="index-numeral shrink-0 text-base text-secondary">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <span className="flex-1 font-headline text-lg leading-snug text-on-surface md:text-xl">
+                    {faq.question}
+                  </span>
+                  <Plus
+                    className="h-4 w-4 shrink-0 text-secondary transition-transform duration-[var(--theme-duration-normal)] ease-entrance group-open:rotate-45"
+                    aria-hidden="true"
+                  />
+                </summary>
+                <p className="max-w-prose pb-6 pl-10 text-sm leading-relaxed text-on-surface-variant">
+                  {faq.answer}
+                </p>
+              </details>
+            </Inview>
           ))}
         </div>
       </section>

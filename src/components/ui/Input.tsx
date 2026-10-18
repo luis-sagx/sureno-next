@@ -6,16 +6,20 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   error?: string;
 }
 
+/**
+ * Hairline field: quiet container fill, a single border that warms to gold on
+ * focus, label set in the small caps of the label face.
+ */
 const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ className, label, error, id, ...props }, ref) => {
     const inputId = id || label?.toLowerCase().replace(/\s+/g, "-");
 
     return (
-      <div className="space-y-1">
+      <div className="space-y-2">
         {label && (
           <label
             htmlFor={inputId}
-            className="block text-sm font-medium text-on-surface-variant"
+            className="block font-label text-[0.6875rem] font-semibold uppercase tracking-[0.18em] text-on-surface-variant"
           >
             {label}
           </label>
@@ -24,11 +28,13 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           ref={ref}
           id={inputId}
           className={cn(
-            "w-full h-11 px-4 rounded-md bg-surface-container-highest border border-outline-variant",
-            "text-on-surface placeholder:text-on-surface-variant/50",
-            "focus:outline-none focus:ring-2 focus:ring-secondary",
-            "disabled:opacity-50 disabled:cursor-not-allowed",
-            error && "border-error focus:ring-error",
+            "h-11 w-full rounded border border-line bg-surface-container px-4",
+            "text-sm text-on-surface placeholder:text-on-surface-variant/50",
+            "transition-colors duration-[var(--theme-duration-fast)] ease-entrance",
+            "hover:border-line-strong",
+            "focus:border-secondary focus:outline-none",
+            "disabled:cursor-not-allowed disabled:opacity-50",
+            error && "border-error focus:border-error",
             className
           )}
           {...props}
