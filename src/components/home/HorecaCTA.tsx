@@ -6,20 +6,20 @@ import { revealUp, SPRING } from "@/lib/springs/presets";
 import Link from "next/link";
 
 /**
- * Horeca closing band — the distillery photograph under a deep scrim with a
- * centred editorial invitation.
+ * Horeca closing band — the distillery photograph with a centred editorial
+ * invitation.
  */
 export function HorecaCTA() {
   return (
     <section className="relative overflow-hidden border-t border-line">
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-cover bg-center opacity-100 dark:opacity-80"
+        className="absolute inset-0 bg-cover bg-center opacity-100 brightness-125 contrast-100 saturate-110 dark:brightness-100 dark:contrast-100 dark:saturate-100 dark:opacity-80"
         style={{ backgroundImage: "url('/bg.webp')" }}
       />
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-gradient-to-b from-background/20 via-background/10 to-background/35 dark:from-background/75 dark:via-background/55 dark:to-background/80"
+        className="absolute inset-0 bg-gradient-to-b from-[#f8f1e6]/40 via-[#f8f1e6]/50 to-[#f8f1e6]/40 dark:bg-gradient-to-b dark:from-background/75 dark:via-background/55 dark:to-background/80"
       />
 
       <div className="relative mx-auto max-w-[1280px] px-4 py-24 md:py-32">

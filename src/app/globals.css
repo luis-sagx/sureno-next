@@ -1,5 +1,8 @@
 @import "tailwindcss" source("../");
 
+/* Keep Tailwind's dark utilities aligned with next-themes' class-based mode. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* ============================================================
    Tailwind v4 Theme — all utility classes are generated from
    --color-*, --font-*, --radius-* defined here.
