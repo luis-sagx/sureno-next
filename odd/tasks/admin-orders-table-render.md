@@ -45,7 +45,7 @@ The user explicitly requested the orders-page fix after the failure was diagnose
   - Build: `pnpm build` passed, including Next compilation and TypeScript.
   - Full lint: `pnpm lint` still fails on five existing errors: two in `src/app/admin/inventory/page.tsx`, two in `src/app/admin/users/UserDirectoryClient.tsx`, and one in `src/components/admin/UserDetailDrawer.tsx`. The changed files pass targeted lint.
   - Tests: not run and not added under the active higher-priority instruction; TDD RED/GREEN evidence remains unavailable.
-  - Commit: pending.
+  - Work-unit commit: `64321e0` (`fix(admin): render orders table on client`).
 
 ## Progress and verification
 
@@ -53,9 +53,9 @@ The user explicitly requested the orders-page fix after the failure was diagnose
 - `/admin` redirects to `/admin/orders` by design. The 500 occurs when the orders table props cross the Server/Client boundary.
 - RED/GREEN test evidence: pending; tests were not authorized by the active instruction.
 - Engram save #33 succeeded; read-back verification is pending because the sandbox denied access to the Engram instance lock during export.
-- Commit: pending.
+- Work-unit commit: `64321e0` (`fix(admin): render orders table on client`).
 - RDD assessment: unavailable (`gentle-ai` command not found).
 
 ## Next step
 
-Commit the verified AOT-01 work unit and record its commit identity; retry Engram read-back if approved.
+Implementation is committed. Engram read-back verification remains pending because the sandbox denied access to the Engram instance lock during export.
