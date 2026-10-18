@@ -212,7 +212,7 @@ export function ProductCard({
         )}
 
         {viewMode === 'wholesale' && (
-          <span className="flex flex-col gap-1">
+          <span className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
             {bestWholesale != null && bestWholesale < retailPrice ? (
               <>
                 <span className="text-sm text-on-surface-variant line-through tnum">
@@ -226,11 +226,8 @@ export function ProductCard({
                 >
                   {formatPrice(bestWholesale * CAJA_SIZE)}
                 </span>
-                <span className="text-xs text-on-surface-variant tnum">
+                <span className="basis-full text-xs text-on-surface-variant tnum">
                   caja de {CAJA_SIZE} · {formatPrice(bestWholesale)} c/u
-                </span>
-                <span className="font-label text-[0.625rem] font-semibold uppercase tracking-[0.16em] text-secondary tnum">
-                  Ahorras {formatPrice((retailPrice - bestWholesale) * CAJA_SIZE)}
                 </span>
               </>
             ) : (
@@ -243,7 +240,7 @@ export function ProductCard({
                 >
                   {formatPrice(retailPrice * CAJA_SIZE)}
                 </span>
-                <span className="text-xs text-on-surface-variant tnum">
+                <span className="basis-full text-xs text-on-surface-variant tnum">
                   caja de {CAJA_SIZE} · {formatPrice(retailPrice)} c/u
                 </span>
               </>

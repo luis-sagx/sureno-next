@@ -14,12 +14,12 @@ export function HorecaCTA() {
     <section className="relative overflow-hidden border-t border-line">
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-cover bg-center opacity-80"
+        className="absolute inset-0 bg-cover bg-center opacity-100 dark:opacity-80"
         style={{ backgroundImage: "url('/bg.webp')" }}
       />
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-gradient-to-b from-background/75 via-background/55 to-background/80"
+        className="absolute inset-0 bg-gradient-to-b from-background/20 via-background/10 to-background/35 dark:from-background/75 dark:via-background/55 dark:to-background/80"
       />
 
       <div className="relative mx-auto max-w-[1280px] px-4 py-24 md:py-32">

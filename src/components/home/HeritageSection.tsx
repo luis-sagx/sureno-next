@@ -17,7 +17,7 @@ export function HeritageSection() {
     <section className="relative overflow-hidden border-t border-line bg-surface">
       <span
         aria-hidden="true"
-        className="pointer-events-none absolute -top-10 right-0 hidden select-none font-headline text-[15rem] italic leading-none text-on-surface/5 md:block"
+        className="pointer-events-none absolute -top-10 right-0 hidden select-none font-headline text-[15rem] italic leading-none text-on-surface/10 md:block"
       >
         1998
       </span>

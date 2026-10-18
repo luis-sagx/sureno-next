@@ -132,12 +132,12 @@ export default function AboutPage() {
       <section className="relative overflow-hidden border-b border-line">
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-cover bg-center opacity-80 dark:opacity-60 md:bg-fixed"
+          className="absolute inset-0 bg-cover bg-center opacity-100 dark:opacity-60 md:bg-fixed"
           style={{ backgroundImage: "url('/bg.webp')" }}
         />
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/45 to-background/78 dark:from-background/80 dark:via-background/70 dark:to-background/90"
+          className="absolute inset-0 bg-gradient-to-b from-background/20 via-background/10 to-background/35 dark:from-background/80 dark:via-background/70 dark:to-background/90"
         />
 
         <div className="relative mx-auto flex max-w-3xl flex-col items-center gap-6 px-4 py-24 text-center md:py-28">
