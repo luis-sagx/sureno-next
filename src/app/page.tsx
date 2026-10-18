@@ -1,7 +1,6 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { CategoryGrid } from "@/components/home/CategoryGrid";
-import { FeaturedProducts } from "@/components/home/FeaturedProducts";
 import { HeritageSection } from "@/components/home/HeritageSection";
 import { HeroSection } from "@/components/home/HeroSection";
 import { HorecaCTA } from "@/components/home/HorecaCTA";
@@ -15,7 +14,6 @@ export default function HomePage() {
       <Header />
       <main className="flex-1">
         <HeroSection />
-        <FeaturedProducts />
         <CategoryGrid />
         <HeritageSection />
         <TrustSection />

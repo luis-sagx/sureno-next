@@ -44,66 +44,8 @@ export default async function MinoristaPage() {
 
   return (
     <div>
-      {/* Masthead — retail, explained as three hairline notes */}
-      <section className="border-b border-line bg-surface">
-        <div className="mx-auto grid max-w-[1280px] items-end gap-14 px-4 py-20 md:py-28 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="flex flex-col items-start gap-6">
-            <Eyebrow rule>Minorista</Eyebrow>
-
-            <TextReveal tag="h1" className="type-display text-on-surface">
-              Compra por unidad con detalle claro en cada botella.
-            </TextReveal>
-
-            <Inview
-              from={revealUp.from}
-              to={revealUp.to}
-              mode="once"
-              config={SPRING.entrance}
-              delayIn={120}
-            >
-              <p className="max-w-[60ch] text-lg leading-relaxed text-on-surface-variant">
-                Explora el portafolio completo de Sureño, revisa cada
-                descripción y elige la presentación que mejor se ajuste a tu
-                consumo, regalo o celebración.
-              </p>
-            </Inview>
-          </div>
-
-          <div className="grid gap-8 sm:grid-cols-3">
-            {notes.map((note, index) => (
-              <Inview
-                key={note.title}
-                from={revealUp.from}
-                to={revealUp.to}
-                mode="once"
-                config={SPRING.entrance}
-                delayIn={staggerDelay(index)}
-              >
-                <div className="flex flex-col items-start gap-3 border-t border-line pt-6">
-                  <div className="flex w-full items-center justify-between">
-                    <span className="index-numeral text-xl text-secondary">
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                    <note.icon
-                      className="h-4 w-4 text-secondary/70"
-                      aria-hidden="true"
-                    />
-                  </div>
-                  <p className="text-sm font-medium leading-relaxed text-on-surface">
-                    {note.title}
-                  </p>
-                  <p className="text-xs leading-relaxed text-on-surface-variant">
-                    {note.text}
-                  </p>
-                </div>
-              </Inview>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Catálogo minorista */}
-      <section className="mx-auto max-w-[1280px] px-4 py-20 md:py-24">
+      <section className="mx-auto max-w-[1280px] px-4 py-16">
         <SectionHeading
           eyebrow="Catálogo"
           title="Presentaciones disponibles"

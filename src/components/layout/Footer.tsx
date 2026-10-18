@@ -30,7 +30,7 @@ export function Footer() {
       <div className="mx-auto max-w-[1280px] px-4 py-16">
         <div className="grid gap-12 lg:grid-cols-[1.5fr_1fr_1fr_1fr]">
           {/* Brand */}
-          <div className="flex flex-col items-start gap-5">
+          <div className="flex flex-col items-start gap-4">
             <Image
               src="/logo-text.webp"
               alt="Licorería Sureño"
@@ -38,10 +38,6 @@ export function Footer() {
               height={48}
               className="h-24 w-auto"
             />
-            <p className="max-w-xs text-sm leading-relaxed text-on-surface-variant">
-              Casa licorera nacida en el sur de Quito en 1998. Mayoreo y
-              minorista bajo un mismo origen.
-            </p>
             <span aria-hidden="true" className="h-px w-16 bg-line-strong" />
             <Eyebrow>Quito, Ecuador</Eyebrow>
           </div>
@@ -67,7 +63,9 @@ export function Footer() {
           <div className="flex flex-col gap-5">
             <Eyebrow>Soporte</Eyebrow>
             <ul className="space-y-3">
-              <li className="text-sm text-on-surface-variant">Quito, Ecuador</li>
+              <li className="text-sm text-on-surface-variant">
+                Quito, Ecuador
+              </li>
               <li>
                 <Link
                   href="/support"
