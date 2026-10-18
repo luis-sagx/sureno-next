@@ -1,7 +1,10 @@
 'use client'
 
+import { AuthPanel } from '@/components/auth/AuthPanel'
+import { Button } from '@/components/ui/Button'
+import { Input } from '@/components/ui/Input'
+import { Select } from '@/components/ui/Select'
 import { createClient } from '@/lib/supabase/client'
-import Image from 'next/image'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { Suspense, useState, type FormEvent } from 'react'
@@ -64,197 +67,129 @@ function RegisterForm() {
 
   if (emailSent) {
     return (
-      <div className="bg-surface rounded-lg shadow-lg border border-outline-variant border-t-2 border-t-tertiary p-8 space-y-6">
-        <div className="text-center">
-          <Image
-            src="/logo-text.webp"
-            alt="Licorería Sureño"
-            width={180}
-            height={50}
-            className="h-28 w-auto mx-auto"
-            priority
-          />
-        </div>
-
-        <h2 className="font-headline text-2xl text-on-surface text-center">
-          Revisa tu correo
-        </h2>
-
-        <div className="bg-secondary/10 border border-secondary/30 text-secondary rounded-md px-4 py-3 text-sm">
-          Te enviamos un enlace de confirmación a{' '}
-          <span className="font-semibold">{email}</span>. Ábrelo para activar tu
-          cuenta y luego inicia sesión.
-        </div>
-
-        <p className="text-center text-sm text-on-surface-variant">
-          ¿Ya confirmaste tu correo?{' '}
-          <Link
-            href="/auth/login"
-            className="text-tertiary hover:underline font-medium"
-          >
-            Inicia sesión
-          </Link>
+      <AuthPanel
+        eyebrow="Casi listo"
+        title="Revisa tu correo"
+        description={`Te enviamos un enlace de confirmación a ${email}. Ábrelo para activar tu cuenta y luego inicia sesión.`}
+        footer={
+          <>
+            ¿Ya confirmaste tu correo?{' '}
+            <Link
+              href="/auth/login"
+              className="font-semibold text-secondary underline-offset-4 hover:underline"
+            >
+              Inicia sesión
+            </Link>
+          </>
+        }
+      >
+        <p className="border-l border-secondary/60 pl-4 text-sm leading-relaxed text-on-surface-variant">
+          El enlace caduca por seguridad. Si no llega en unos minutos, revisa
+          la carpeta de spam.
         </p>
-      </div>
+      </AuthPanel>
     )
   }
 
   return (
-    <div className="bg-surface rounded-lg shadow-lg border border-outline-variant border-t-2 border-t-tertiary p-8 space-y-6">
-      {/* Back link */}
-      <Link
-        href="/"
-        className="inline-flex items-center gap-1.5 text-sm text-tertiary hover:text-tertiary/80 font-medium transition-colors"
-      >
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-          <path fillRule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
-        </svg>
-        Volver a la tienda
-      </Link>
-
-      {/* Logo */}
-      <div className="text-center">
-        <Image
-          src="/logo-text.webp"
-          alt="Licorería Sureño"
-          width={180}
-          height={50}
-          className="h-28 w-auto mx-auto"
-          priority
-        />
-      </div>
-
-      <h2 className="font-headline text-2xl text-on-surface text-center">
-        Crear Cuenta
-      </h2>
-
+    <AuthPanel
+      eyebrow="Tu cuenta"
+      title="Crear Cuenta"
+      description="Crea tu cuenta para comprar por unidad o al mayoreo, y seguir tus pedidos desde la misma ficha."
+      footer={
+        <>
+          ¿Ya tienes cuenta?{' '}
+          <Link
+            href="/auth/login"
+            className="font-semibold text-secondary underline-offset-4 hover:underline"
+          >
+            Iniciar Sesión
+          </Link>
+        </>
+      }
+    >
       {error && (
-        <div className="bg-error/10 border border-error text-error rounded-md px-4 py-3 text-sm">
+        <p
+          role="alert"
+          className="border-l border-error pl-4 text-sm leading-relaxed text-error"
+        >
           {error}
-        </div>
+        </p>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label
-            htmlFor="name"
-            className="block text-sm font-medium text-on-surface-variant mb-1"
-          >
-            Nombre completo
-          </label>
-          <input
-            id="name"
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-            autoComplete="name"
-            placeholder="Tu nombre completo"
-            className="w-full h-11 px-4 rounded-md bg-surface-container-highest border border-outline-variant text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-tertiary"
-          />
-        </div>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+        <Input
+          label="Nombre completo"
+          id="name"
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+          autoComplete="name"
+          placeholder="Tu nombre completo"
+        />
 
-        <div>
-          <label
-            htmlFor="email"
-            className="block text-sm font-medium text-on-surface-variant mb-1"
-          >
-            Email
-          </label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            autoComplete="email"
-            placeholder="tu@email.com"
-            className="w-full h-11 px-4 rounded-md bg-surface-container-highest border border-outline-variant text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-tertiary"
-          />
-        </div>
+        <Input
+          label="Email"
+          id="email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          autoComplete="email"
+          placeholder="tu@email.com"
+        />
 
-        <div>
-          <label
-            htmlFor="password"
-            className="block text-sm font-medium text-on-surface-variant mb-1"
-          >
-            Contraseña
-          </label>
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            autoComplete="new-password"
-            placeholder="Mínimo 6 caracteres"
-            className="w-full h-11 px-4 rounded-md bg-surface-container-highest border border-outline-variant text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-tertiary"
-          />
-        </div>
+        <Input
+          label="Contraseña"
+          id="password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          autoComplete="new-password"
+          placeholder="Mínimo 6 caracteres"
+        />
 
-        <div>
-          <label
-            htmlFor="accountType"
-            className="block text-sm font-medium text-on-surface-variant mb-1"
-          >
-            Tipo de cuenta
-          </label>
-          <select
-            id="accountType"
-            value={accountType}
-            onChange={(e) => setAccountType(e.target.value)}
-            className="w-full h-11 px-4 rounded-md bg-surface-container-highest border border-outline-variant text-on-surface focus:outline-none focus:ring-2 focus:ring-tertiary"
-          >
-            <option value="INDIVIDUAL">Individual</option>
-            <option value="EMPRESA">Empresa</option>
-          </select>
-        </div>
+        <Select
+          label="Tipo de cuenta"
+          id="accountType"
+          value={accountType}
+          onChange={(e) => setAccountType(e.target.value)}
+        >
+          <option value="INDIVIDUAL">Individual</option>
+          <option value="EMPRESA">Empresa</option>
+        </Select>
 
         {accountType === 'EMPRESA' && (
-          <div>
-            <label
-              htmlFor="company"
-              className="block text-sm font-medium text-on-surface-variant mb-1"
-            >
-              Nombre de empresa
-            </label>
-            <input
-              id="company"
-              type="text"
-              value={company}
-              onChange={(e) => setCompany(e.target.value)}
-              required
-              placeholder="Razón social"
-              className="w-full h-11 px-4 rounded-md bg-surface-container-highest border border-outline-variant text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-tertiary"
-            />
-          </div>
+          <Input
+            label="Nombre de empresa"
+            id="company"
+            type="text"
+            value={company}
+            onChange={(e) => setCompany(e.target.value)}
+            required
+            placeholder="Razón social"
+          />
         )}
 
-        <button
+        <Button
           type="submit"
+          variant="primary"
+          size="lg"
+          className="w-full"
           disabled={loading}
-          className="w-full h-11 px-6 rounded-md bg-secondary text-on-secondary font-semibold uppercase tracking-wider hover:bg-secondary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {loading ? 'Creando cuenta...' : 'Crear Cuenta'}
-        </button>
+          {loading ? 'Creando cuenta…' : 'Crear cuenta'}
+        </Button>
       </form>
-
-      <p className="text-center text-sm text-on-surface-variant">
-        ¿Ya tienes cuenta?{' '}
-        <Link
-          href="/auth/login"
-          className="text-tertiary hover:underline font-medium"
-        >
-          Iniciar Sesión
-        </Link>
-      </p>
-    </div>
+    </AuthPanel>
   )
 }
 
 export default function RegisterPage() {
   return (
-    <Suspense fallback={<div className="bg-surface rounded-lg shadow-lg border border-outline-variant p-8 h-96 animate-pulse" />}>
+    <Suspense fallback={<div className="craft h-96 animate-pulse rounded" />}>
       <RegisterForm />
     </Suspense>
   )

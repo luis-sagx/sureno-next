@@ -6,22 +6,26 @@ interface BadgeProps {
   className?: string;
 }
 
+/**
+ * Status tag. The pill radius is reserved exclusively for these (per the
+ * design brief) — functional surfaces never round this far.
+ */
 const badgeConfig = {
   save: {
     label: (discount?: string) => `AHORRA ${discount ?? ""}`,
-    className: "bg-amber-100 text-amber-900 dark:bg-amber-900/30 dark:text-amber-300",
+    className: "border-secondary/50 bg-secondary/10 text-secondary",
   },
   bestseller: {
     label: () => "MÁS VENDIDO",
-    className: "bg-secondary/20 text-secondary",
+    className: "border-secondary/50 bg-secondary/10 text-secondary",
   },
   limited: {
     label: () => "STOCK LIMITADO",
-    className: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
+    className: "border-error/40 bg-error/10 text-error",
   },
   premium: {
     label: () => "RESERVA PREMIUM",
-    className: "bg-primary/15 text-primary",
+    className: "border-tertiary/40 bg-tertiary/10 text-tertiary",
   },
 };
 
@@ -31,7 +35,7 @@ export function Badge({ variant, discount, className }: BadgeProps) {
   return (
     <span
       className={cn(
-        "inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold uppercase tracking-wide whitespace-nowrap",
+        "inline-flex items-center rounded-full border px-2.5 py-1 font-label text-[0.625rem] font-semibold uppercase tracking-[0.14em] whitespace-nowrap",
         config.className,
         className
       )}

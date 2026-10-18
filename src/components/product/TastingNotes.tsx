@@ -1,5 +1,4 @@
 import { cn } from "@/lib/utils";
-import { Sparkles, Wine, Trophy } from "lucide-react";
 
 interface TastingNotesProps {
   aroma?: string | null;
@@ -9,11 +8,16 @@ interface TastingNotesProps {
 }
 
 const noteItems = [
-  { key: "aroma", icon: Sparkles, label: "Aroma" },
-  { key: "palate", icon: Wine, label: "En Boca" },
-  { key: "finish", icon: Trophy, label: "Final" },
+  { key: "aroma", label: "Aroma", index: "01" },
+  { key: "palate", label: "En boca", index: "02" },
+  { key: "finish", label: "Final", index: "03" },
 ] as const;
 
+/**
+ * Tasting notes as three editorial columns — numeral, label and the note —
+ * divided by hairlines rather than wrapped in cards. Renders nothing until
+ * the house actually has notes to show.
+ */
 export function TastingNotes({
   aroma,
   palate,
@@ -26,32 +30,31 @@ export function TastingNotes({
     finish,
   };
 
-  const hasAnyNote = Object.values(notes).some(Boolean);
-  if (!hasAnyNote) return null;
+  const available = noteItems.filter((item) => Boolean(notes[item.key]));
+  if (available.length === 0) return null;
 
   return (
-    <div className={cn("space-y-4", className)}>
-      <h3 className="font-headline text-lg text-on-surface mb-4">
-        Notas de Cata
-      </h3>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {noteItems.map(({ key, icon: Icon, label }) => (
-          <div
-            key={key}
-            className="p-5 rounded-lg bg-surface-container space-y-2"
-          >
-            <div className="flex items-center gap-2">
-              <Icon className="w-5 h-5 text-secondary" />
-              <span className="font-headline text-sm text-on-surface uppercase tracking-wider">
-                {label}
-              </span>
-            </div>
-            <p className="text-sm text-on-surface-variant leading-relaxed">
-              {notes[key] || "Información no disponible"}
-            </p>
-          </div>
-        ))}
-      </div>
+    <div className={cn("grid grid-cols-1 gap-x-10 gap-y-8 md:grid-cols-3", className)}>
+      {available.map((item, index) => (
+        <article
+          key={item.key}
+          className={cn(
+            "flex flex-col gap-3 pt-5",
+            "border-t border-line",
+            index === 0 && "border-t-line-strong"
+          )}
+        >
+          <span className="index-numeral text-sm text-secondary">
+            {item.index}
+          </span>
+          <h3 className="font-label text-[0.6875rem] font-semibold uppercase tracking-[0.22em] text-on-surface">
+            {item.label}
+          </h3>
+          <p className="text-base leading-relaxed text-on-surface-variant">
+            {notes[item.key]}
+          </p>
+        </article>
+      ))}
     </div>
   );
 }

@@ -32,9 +32,9 @@ interface PurchasePanelProps {
 }
 
 const stockConfig: Record<string, { label: string; dot: string; text: string }> = {
-  HIGH: { label: "Stock Alto", dot: "bg-secondary", text: "text-secondary" },
-  MEDIUM: { label: "Stock Medio", dot: "bg-amber-500", text: "text-amber-600 dark:text-amber-400" },
-  LOW: { label: "Stock Bajo", dot: "bg-red-500", text: "text-red-600 dark:text-red-400" },
+  HIGH: { label: "Stock alto", dot: "bg-secondary", text: "text-secondary" },
+  MEDIUM: { label: "Stock medio", dot: "bg-amber-500", text: "text-amber-600 dark:text-amber-400" },
+  LOW: { label: "Stock bajo", dot: "bg-red-500", text: "text-red-600 dark:text-red-400" },
   OUT: { label: "Agotado", dot: "bg-red-500", text: "text-red-600 dark:text-red-400 line-through" },
 };
 
@@ -44,6 +44,10 @@ function bestTierPrice(tiers: TierInfo[], units: number): number | null {
   return Math.min(...applicable.map((t) => t.pricePerUnit));
 }
 
+/**
+ * The purchase block: mode switch, quantity, the applied-price note (a gold
+ * hairline, never a filled box), the running total and the single CTA.
+ */
 export function PurchasePanel({
   variantId,
   productId,
@@ -101,12 +105,12 @@ export function PurchasePanel({
   };
 
   return (
-    <div className={cn("space-y-4", className)}>
-      {hasTiers && <PricingToggle value={mode} onChange={setMode} />}
+    <div className={cn("flex flex-col gap-6", className)}>
+      {hasTiers && <PricingToggle className="self-start" value={mode} onChange={setMode} />}
 
-      <div className="flex items-center gap-4">
-        <span className="text-sm text-on-surface-variant">
-          {isWholesale ? "Cajas (12 unidades c/u):" : "Cantidad:"}
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <span className="font-label text-[0.625rem] font-semibold uppercase tracking-[0.2em] text-on-surface-variant">
+          {isWholesale ? "Cajas (12 unidades c/u)" : "Cantidad"}
         </span>
         {isWholesale ? (
           <QuantitySelector value={boxes} onChange={setBoxes} min={1} max={40} />
@@ -120,42 +124,34 @@ export function PurchasePanel({
         )}
       </div>
 
-      {autoWholesale && (
-        <div className="rounded-lg border border-tertiary/30 bg-tertiary/10 px-4 py-3 text-sm text-on-surface">
-          <div className="flex items-center gap-2 text-sm text-tertiary font-medium">
-            <Package className="h-4 w-4" />
-            <span>
-              Precio mayorista aplicado — {retailQty} unidades · {formatPrice(unitPrice)} c/u
-              {savings > 0 && (
-                <span className="ml-2 font-semibold">AHORRAS {savings}%</span>
-              )}
+      {(autoWholesale || isWholesale) && (
+        <div className="flex gap-3 border-l border-secondary/60 pl-4">
+          <Package className="mt-0.5 h-4 w-4 shrink-0 text-secondary" aria-hidden="true" />
+          <div className="flex flex-col gap-1 text-sm">
+            <span className="text-on-surface tnum">
+              {isWholesale
+                ? `${boxes} ${boxes === 1 ? "caja" : "cajas"} · ${units} unidades · ${formatPrice(unitPrice)} c/u`
+                : `Precio mayorista aplicado · ${retailQty} unidades · ${formatPrice(unitPrice)} c/u`}
             </span>
+            {savings > 0 && (
+              <span className="font-label text-[0.625rem] font-semibold uppercase tracking-[0.16em] text-secondary tnum">
+                Ahorras {savings}%
+              </span>
+            )}
+            {isWholesale && (
+              <span className="text-xs text-on-surface-variant">
+                Cada incremento agrega una caja completa de {CAJA_SIZE} unidades.
+              </span>
+            )}
           </div>
         </div>
       )}
 
-      {isWholesale && (
-        <div className="rounded-lg border border-secondary/30 bg-secondary/10 px-4 py-3 text-sm text-on-surface">
-          <div className="flex items-center gap-2 text-sm text-on-surface-variant">
-            <Package className="h-4 w-4 text-secondary" />
-            <span>
-              {boxes} {boxes === 1 ? "caja" : "cajas"} · {units} unidades · {formatPrice(unitPrice)} c/u
-              {savings > 0 && (
-                <span className="ml-2 font-semibold text-tertiary">
-                  AHORRAS {savings}%
-                </span>
-              )}
-            </span>
-          </div>
-          <p className="mt-2 text-xs text-on-surface-variant">
-            En mayoreo, cada incremento agrega una caja completa de 12 unidades.
-          </p>
-        </div>
-      )}
-
-      <div className="flex items-baseline justify-between border-t border-outline-variant pt-3">
-        <span className="text-sm text-on-surface-variant">Total</span>
-        <span className="font-headline text-2xl text-on-surface tabular-nums">
+      <div className="flex items-baseline justify-between gap-4 border-t border-line pt-5">
+        <span className="font-label text-[0.625rem] font-semibold uppercase tracking-[0.2em] text-on-surface-variant">
+          Total
+        </span>
+        <span className="font-headline text-3xl leading-none text-on-surface tnum">
           {formatPrice(unitPrice * units)}
         </span>
       </div>
@@ -167,13 +163,23 @@ export function PurchasePanel({
         onClick={handleAdd}
         disabled={isOut}
       >
-        <ShoppingCart className="w-5 h-5 mr-2" />
-        Agregar al Carrito
+        <ShoppingCart className="h-5 w-5" aria-hidden="true" />
+        Agregar al carrito
       </Button>
 
       <div className="flex items-center justify-center gap-2">
-        <span className={cn("inline-block w-2 h-2 rounded-full", stock.dot)} />
-        <span className={cn("text-sm font-medium", stock.text)}>{stock.label}</span>
+        <span
+          aria-hidden="true"
+          className={cn("inline-block h-1.5 w-1.5 rotate-45", stock.dot)}
+        />
+        <span
+          className={cn(
+            "font-label text-[0.625rem] font-semibold uppercase tracking-[0.2em]",
+            stock.text
+          )}
+        >
+          {stock.label}
+        </span>
       </div>
     </div>
   );

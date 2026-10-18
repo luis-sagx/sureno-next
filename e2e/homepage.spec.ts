@@ -1,39 +1,59 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Homepage", () => {
-  test("renders hero section with CTAs", async ({ page }) => {
+  test("renders the hero with its CTAs", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByText("Establecido con Excelencia")).toBeVisible();
+    const hero = page.getByRole("heading", {
+      name: /un mismo origen para mayoreo y minorista/i,
+    });
+    await expect(hero.first()).toBeVisible();
     await expect(
-      page.getByRole("link", { name: /catálogo mayorista/i })
+      page.getByRole("link", { name: "Mayoreo", exact: true }).first()
     ).toBeVisible();
     await expect(
-      page.getByRole("link", { name: /explorar destilados/i })
+      page.getByRole("link", { name: "Minorista", exact: true }).first()
     ).toBeVisible();
   });
 
-  test("shows category grid", async ({ page }) => {
+  test("shows the featured products shelf", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByText("Explora Nuestro Catálogo")).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Productos destacados" })
+    ).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: /^mayoreo$/i }).first()
+    ).toBeVisible();
   });
 
-  test("shows trust section", async ({ page }) => {
+  test("shows the category collection", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByText("Confiabilidad")).toBeVisible();
-    await expect(page.getByText("Precio Competitivo")).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Explora nuestra colección" })
+    ).toBeVisible();
+  });
+
+  test("shows the trust triptych", async ({ page }) => {
+    await page.goto("/");
+    await expect(
+      page.getByRole("heading", { name: "Control y calidad" })
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Compra clara" })
+    ).toBeVisible();
   });
 
   test("header navigation links work", async ({ page }) => {
     await page.goto("/");
-    await page.locator("header").getByRole("link", { name: /mayoreo/i }).click();
-    await page.waitForURL(/catalog/);
+    await page.locator("header").getByRole("link", { name: /^mayoreo$/i }).click();
+    await expect(page).toHaveURL(/\/mayoreo/);
   });
 
   test("footer is present", async ({ page }) => {
     await page.goto("/");
-    await expect(page.locator("footer").getByText("Licorería Sureño")).toBeVisible();
+    const footer = page.locator("footer");
+    await expect(footer.getByText("Licorería Sureño").first()).toBeVisible();
     await expect(
-      page.getByText(/todos los derechos reservados/i)
+      footer.getByText(/todos los derechos reservados/i)
     ).toBeVisible();
   });
 });

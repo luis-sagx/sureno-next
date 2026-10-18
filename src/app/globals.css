@@ -1,4 +1,7 @@
-@import "tailwindcss";
+@import "tailwindcss" source("../");
+
+/* Keep Tailwind's dark utilities aligned with next-themes' class-based mode. */
+@custom-variant dark (&:where(.dark, .dark *));
 
 /* ============================================================
    Tailwind v4 Theme — all utility classes are generated from
@@ -31,6 +34,11 @@
   --color-error: var(--theme-error);
   --color-on-error: var(--theme-on-error);
 
+  /* Material — hairlines, stage light, scrim */
+  --color-line: var(--theme-line);
+  --color-line-strong: var(--theme-line-strong);
+  --color-scrim: var(--theme-scrim);
+
   /* ── Typography ─────────────────────────────────────── */
   --font-headline: var(--theme-font-headline);
   --font-body: var(--theme-font-body);
@@ -41,17 +49,27 @@
   --radius: var(--theme-radius);
   --radius-md: var(--theme-radius-md);
   --radius-lg: var(--theme-radius-lg);
+
+  /* ── Motion ─────────────────────────────────────────── */
+  --ease-entrance: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-glide: cubic-bezier(0.22, 0.61, 0.36, 1);
+
+  /* ── Elevation ──────────────────────────────────────── */
+  --shadow-soft: var(--theme-shadow-soft);
+  --shadow-lift: var(--theme-shadow-lift);
 }
 
 /* ============================================================
    Dark Theme (default — :root, no class)
-   From DESIGN-dark.md — Matte Black + Dull Gold + Amber
+   From DESIGN-dark.md — Matte Black + Navy Blue + Heritage Gold
    ============================================================ */
 :root {
-  --theme-primary: #c7c6c9;
-  --theme-on-primary: #303033;
-  --theme-secondary: #e9c176;
-  --theme-on-secondary: #412d00;
+  color-scheme: dark;
+
+  --theme-primary: #e9c176;
+  --theme-on-primary: #412d00;
+  --theme-secondary: #a9bfd4;
+  --theme-on-secondary: #15283b;
   --theme-tertiary: #8ab4d8;
   --theme-on-tertiary: #0a1e30;
 
@@ -79,6 +97,18 @@
   --theme-radius: 0.25rem;
   --theme-radius-md: 0.375rem;
   --theme-radius-lg: 0.5rem;
+
+  /* Material: ghost gold hairlines, stage light, film grain */
+  --theme-line: color-mix(in oklab, var(--theme-secondary) 20%, transparent);
+  --theme-line-strong: color-mix(in oklab, var(--theme-secondary) 46%, transparent);
+  --theme-inner-light: color-mix(in oklab, #ffffff 6%, transparent);
+  --theme-stage-top: color-mix(in oklab, #ffffff 3.5%, transparent);
+  --theme-shadow-soft: 0 24px 60px -38px rgb(0 0 0 / 0.8);
+  --theme-shadow-lift: 0 42px 84px -44px rgb(0 0 0 / 0.9);
+  --theme-scrim: color-mix(in oklab, var(--theme-background) 74%, transparent);
+
+  --theme-duration-fast: 160ms;
+  --theme-duration-normal: 320ms;
 }
 
 /* ============================================================
@@ -86,11 +116,13 @@
    Heritage Light: Golden Amber + Deep Navy
    ============================================================ */
 .light {
-  --theme-primary: #6f4b16;
+  color-scheme: light;
+
+  --theme-primary: #b8842f;
   --theme-on-primary: #ffffff;
-  --theme-secondary: #b8842f;
+  --theme-secondary: #17324d;
   --theme-on-secondary: #ffffff;
-  --theme-tertiary: #1e3a5f;
+  --theme-tertiary: #a96e16;
   --theme-on-tertiary: #ffffff;
 
   --theme-surface: #ffffff;
@@ -117,44 +149,151 @@
   --theme-radius: 0.25rem;
   --theme-radius-md: 0.375rem;
   --theme-radius-lg: 0.5rem;
+
+  /* Material: warm hairlines over paper */
+  --theme-line: color-mix(in oklab, var(--theme-secondary) 32%, transparent);
+  --theme-line-strong: color-mix(in oklab, var(--theme-secondary) 62%, transparent);
+  --theme-inner-light: color-mix(in oklab, #ffffff 85%, transparent);
+  --theme-stage-top: color-mix(in oklab, #ffffff 80%, transparent);
+  --theme-shadow-soft: 0 24px 50px -34px rgb(35 24 13 / 0.28);
+  --theme-shadow-lift: 0 42px 74px -38px rgb(35 24 13 / 0.36);
+  --theme-scrim: color-mix(in oklab, var(--theme-background) 78%, transparent);
+
+  --theme-duration-fast: 160ms;
+  --theme-duration-normal: 320ms;
 }
 
 /* ============================================================
    Base Styles
    ============================================================ */
 
-body {
-  background-color: var(--color-background);
-  color: var(--color-on-surface);
-  font-family: var(--font-body);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@layer base {
+  body {
+    background-color: var(--color-background);
+    color: var(--color-on-surface);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* A whisper of film grain over the whole canvas — the difference between
+     "flat dark mode" and a printed surface. Static, pointer-transparent. */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='128' height='128' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 128px 128px;
+  }
+
+  ::selection {
+    background-color: var(--theme-secondary);
+    color: var(--theme-on-secondary);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--theme-line-strong);
+    outline-offset: 2px;
+  }
+
+  @media (min-width: 768px) {
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--theme-surface);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--theme-surface-container-highest);
+      border-radius: 8px;
+    }
+  }
+}
+
+/* ============================================================
+   Craft — the material vocabulary
+   Hairline frames, stage light, gold rules. Style-only utilities
+   that repeat across components.
+   ============================================================ */
+
+@layer components {
+  /* The primary crafted surface: ghost gold hairline, a stage-light gradient
+     falling from the top edge, and an inner highlight along the top border. */
+  .craft {
+    position: relative;
+    border: 1px solid var(--theme-line);
+    background-color: var(--theme-surface-container);
+    background-image: linear-gradient(
+      180deg,
+      var(--theme-stage-top),
+      transparent 58%
+    );
+    box-shadow:
+      inset 0 1px 0 0 var(--theme-inner-light),
+      var(--theme-shadow-soft);
+    transition:
+      border-color var(--theme-duration-normal) var(--ease-entrance),
+      box-shadow var(--theme-duration-normal) var(--ease-entrance),
+      background-color var(--theme-duration-normal) var(--ease-entrance);
+  }
+
+  .craft:hover,
+  .craft[data-active="true"] {
+    border-color: var(--theme-line-strong);
+  }
+
+  /* Hairline only — for image stages and rails where no fill should show. */
+  .craft-line {
+    border: 1px solid var(--theme-line);
+  }
+
+  /* Short gold rule, the system's recurring divider device. */
+  .gold-rule {
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      var(--theme-line-strong),
+      transparent
+    );
+  }
+
+  /* Editorial numbering — old-style figures in the serif, for section indexes. */
+  .index-numeral {
+    font-family: var(--font-headline);
+    font-variant-numeric: oldstyle-nums;
+    letter-spacing: 0.02em;
+  }
 }
 
 /* ── Display scale & polish ─────────────────────────────── */
-.text-display {
+/* Keep leading at 1.1 or looser: the TextEngine clips reveal boxes to the
+   line-height, and tighter leading shaves descenders.
+   Named `type-*`, not `text-*`: `cn()` (tailwind-merge) classifies unknown
+   `text-<word>` classes as text-colors and drops them next to `text-on-surface`. */
+.type-display {
   font-family: var(--font-headline);
   font-size: clamp(2.75rem, 1.2rem + 6.5vw, 5.5rem);
-  line-height: 1.05;
+  font-weight: 500;
+  line-height: 1.1;
   letter-spacing: -0.015em;
+  text-wrap: balance;
 }
 
-::selection {
-  background-color: var(--theme-secondary);
-  color: var(--theme-on-secondary);
+.type-title {
+  font-family: var(--font-headline);
+  font-size: clamp(1.75rem, 1.25rem + 2vw, 3rem);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
 }
 
-@media (min-width: 768px) {
-  ::-webkit-scrollbar {
-    width: 10px;
-  }
-  ::-webkit-scrollbar-track {
-    background: var(--theme-surface);
-  }
-  ::-webkit-scrollbar-thumb {
-    background: var(--theme-surface-container-highest);
-    border-radius: 8px;
-  }
+/* Prices and technical figures stay stable while animating. */
+.tnum {
+  font-variant-numeric: tabular-nums;
 }
 
 /* ── Respect reduced motion globally ────────────────────── */

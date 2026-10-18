@@ -1,17 +1,23 @@
 import { Input } from "@/components/ui/Input";
+import { cn } from "@/lib/utils";
 
 interface ShippingFormProps {
   className?: string;
 }
 
+/**
+ * Step 01 — shipping. A hairline-opened fieldset with the shared editorial
+ * numeral; the fields themselves carry the house styling.
+ */
 export function ShippingForm({ className }: ShippingFormProps) {
   return (
-    <div className={className}>
-      <fieldset className="space-y-4">
-        <legend className="font-headline text-lg text-on-surface mb-4">
-          Información de Envío
-        </legend>
+    <fieldset className={cn("border-t border-line pt-8", className)}>
+      <legend className="mb-6 font-headline text-xl text-on-surface">
+        <span className="index-numeral mr-3 text-sm text-secondary">01</span>
+        Información de envío
+      </legend>
 
+      <div className="space-y-4">
         <Input
           label="Nombre Completo"
           name="fullName"
@@ -53,7 +59,7 @@ export function ShippingForm({ className }: ShippingFormProps) {
             required
           />
         </div>
-      </fieldset>
-    </div>
+      </div>
+    </fieldset>
   );
 }

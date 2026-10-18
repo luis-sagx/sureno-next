@@ -12,6 +12,10 @@ interface QuantitySelectorProps {
   className?: string;
 }
 
+/**
+ * Wholesale-grade stepper: one hairline frame, three cells, large touch
+ * targets — no nested boxes.
+ */
 export function QuantitySelector({
   value,
   onChange,
@@ -31,10 +35,17 @@ export function QuantitySelector({
   const decDisabled = value <= min;
   const incDisabled = value >= max;
 
+  const buttonStyles = cn(
+    "flex h-11 w-11 items-center justify-center text-on-surface-variant",
+    "transition-colors duration-[var(--theme-duration-fast)] ease-entrance",
+    "hover:bg-surface-container-high hover:text-secondary",
+    "disabled:pointer-events-none disabled:opacity-35"
+  );
+
   return (
     <div
       className={cn(
-        "inline-flex items-center rounded-md overflow-hidden",
+        "inline-flex items-stretch divide-x divide-line overflow-hidden rounded border border-line bg-surface-container",
         className
       )}
     >
@@ -42,28 +53,25 @@ export function QuantitySelector({
         type="button"
         onClick={decrement}
         disabled={decDisabled}
-        className={cn(
-          "w-10 h-10 flex items-center justify-center border border-outline-variant bg-surface-container text-secondary hover:bg-surface-container-high hover:text-on-surface transition-colors",
-          "disabled:opacity-40 disabled:cursor-not-allowed"
-        )}
+        className={buttonStyles}
         aria-label="Reducir cantidad"
       >
-        <Minus className="w-4 h-4" />
+        <Minus className="h-4 w-4" />
       </button>
-      <span className="w-12 h-10 flex items-center justify-center border-y border-outline-variant bg-surface-container-high text-on-surface font-semibold text-sm tabular-nums">
+      <span
+        aria-live="polite"
+        className="grid h-11 min-w-14 place-items-center px-3 font-semibold text-sm text-on-surface tnum"
+      >
         {value}
       </span>
       <button
         type="button"
         onClick={increment}
         disabled={incDisabled}
-        className={cn(
-          "w-10 h-10 flex items-center justify-center border border-outline-variant bg-surface-container text-secondary hover:bg-surface-container-high hover:text-on-surface transition-colors",
-          "disabled:opacity-40 disabled:cursor-not-allowed"
-        )}
+        className={buttonStyles}
         aria-label="Aumentar cantidad"
       >
-        <Plus className="w-4 h-4" />
+        <Plus className="h-4 w-4" />
       </button>
     </div>
   );

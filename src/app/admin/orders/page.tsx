@@ -1,15 +1,14 @@
 export const dynamic = 'force-dynamic'
 
 import { Button } from '@/components/ui/Button'
-import { DataTable } from '@/components/ui/DataTable'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Input } from '@/components/ui/Input'
 import { StatsCard } from '@/components/ui/StatsCard'
-import { StatusBadge } from '@/components/ui/StatusBadge'
+import { OrdersTable } from '@/components/admin/OrdersTable'
 import { getOrderList, getOrderStats } from '@/lib/actions/admin'
 import { formatPrice } from '@/lib/pricing'
 import { serializeDecimal } from '@/lib/serialize'
-import { cn } from '@/lib/utils'
+import Link from 'next/link'
 import {
   ClipboardList,
   DollarSign,
@@ -20,7 +19,6 @@ import {
   ShoppingCart,
   TrendingUp,
 } from 'lucide-react'
-import Link from 'next/link'
 
 interface OrdersPageProps {
   searchParams: Promise<{
@@ -70,87 +68,17 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
         orderData.orders.length
       : 0
 
-  const columns = [
-    {
-      key: 'orderNumber',
-      header: 'ID Orden',
-      render: (order: any) => (
-        <span className="font-mono text-xs text-secondary font-semibold">
-          {order.orderNumber}
-        </span>
-      ),
-    },
-    {
-      key: 'createdAt',
-      header: 'Fecha',
-      render: (order: any) => (
-        <span className="text-sm text-on-surface-variant tabular-nums">
-          {new Date(order.createdAt).toLocaleDateString('es-MX', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-          })}
-        </span>
-      ),
-    },
-    {
-      key: 'customer',
-      header: 'Cliente',
-      render: (order: any) => (
-        <div>
-          <p className="text-sm text-on-surface font-medium">
-            {order.user?.name || order.fullName}
-          </p>
-          {order.company && (
-            <p className="text-xs text-on-surface-variant">{order.company}</p>
-          )}
-        </div>
-      ),
-    },
-    {
-      key: 'type',
-      header: 'Tipo',
-      render: (order: any) => (
-        <span
-          className={cn(
-            'inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold uppercase',
-            order.type === 'RETAIL'
-              ? 'bg-secondary/20 text-secondary'
-              : 'bg-amber-100 text-amber-900 dark:bg-amber-900/30 dark:text-amber-300',
-          )}
-        >
-          {order.type === 'RETAIL' ? 'Minorista' : 'Mayorista'}
-        </span>
-      ),
-    },
-    {
-      key: 'total',
-      header: 'Total',
-      render: (order: any) => (
-        <span className="text-sm text-on-surface font-medium tabular-nums">
-          {formatPrice(order.total)}
-        </span>
-      ),
-    },
-    {
-      key: 'status',
-      header: 'Estado',
-      render: (order: any) => <StatusBadge status={order.status} />,
-    },
-    {
-      key: 'actions',
-      header: 'Acciones',
-      render: (order: any) => (
-        <Link href={`/admin/orders/${order.id}`}>
-          <Button variant="ghost" size="sm">
-            Ver más
-          </Button>
-        </Link>
-      ),
-    },
-  ]
+  const tableOrders = orderData.orders.map((order) => ({
+    id: order.id,
+    orderNumber: order.orderNumber,
+    createdAt: order.createdAt.toISOString(),
+    user: order.user ? { name: order.user.name } : null,
+    fullName: order.fullName,
+    company: order.company,
+    type: order.type,
+    total: Number(order.total),
+    status: order.status,
+  }))
 
   return (
     <div className="space-y-6">
@@ -251,11 +179,11 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
         </Button>
 
         {status !== 'Todos' && (
-          <a href="/admin/orders" className="inline-flex items-center h-11">
+          <Link href="/admin/orders" className="inline-flex items-center h-11">
             <span className="text-sm text-secondary hover:text-secondary/80">
               Limpiar filtros
             </span>
-          </a>
+          </Link>
         )}
       </form>
 
@@ -267,17 +195,10 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
           description="No se encontraron órdenes con los filtros actuales."
         />
       ) : (
-        <DataTable
-          columns={columns}
-          data={orderData.orders as any}
+        <OrdersTable
+          orders={tableOrders}
           page={orderData.page}
           totalPages={orderData.totalPages}
-          onPageChange={(newPage) => {
-            // Client-side pagination via URL
-            const url = new URL(window.location.href)
-            url.searchParams.set('page', String(newPage))
-            window.location.href = url.toString()
-          }}
         />
       )}
     </div>

@@ -1,14 +1,15 @@
 'use client'
 
+import { Hover } from '@/components/animation/springs'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
-import { PriceDisplay } from '@/components/ui/PriceDisplay'
 import { QuantitySelector } from '@/components/ui/QuantitySelector'
+import { SPRING } from '@/lib/springs/presets'
 import { CAJA_SIZE, formatPrice, getBestWholesalePrice } from '@/lib/pricing'
 import { cn } from '@/lib/utils'
 import { useCartStore } from '@/store/cart'
 import type { Product, Variant, WholesaleTier } from '../../generated/prisma/client'
-import { Eye, ShoppingCart } from 'lucide-react'
+import { ArrowRight, ShoppingCart } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
 
@@ -21,6 +22,7 @@ type ProductWithVariants = Product & {
 interface ProductCardProps {
   product: ProductWithVariants
   viewMode?: 'retail' | 'wholesale'
+  density?: 'default' | 'compact'
   className?: string
 }
 
@@ -34,9 +36,16 @@ const badgeVariantMap: Record<
   PREMIUM_RESERVE: 'premium',
 }
 
+/**
+ * Shelf card: a crafted frame with a photography stage on top — stage light,
+ * sheen sweep on hover, badge anchored to the corner — and an editorial body
+ * underneath (category eyebrow, serif name, tabular price, hairline rule).
+ * The commerce controls sit in one row so nothing overflows at four columns.
+ */
 export function ProductCard({
   product,
   viewMode = 'retail',
+  density = 'default',
   className,
 }: ProductCardProps) {
   const [quantity, setQuantity] = useState(viewMode === 'wholesale' ? CAJA_SIZE : 1)
@@ -61,6 +70,11 @@ export function ProductCard({
         firstVariant?.wholesaleImageUrl ||
         product.imageUrl ||
         null
+
+  const detailHref =
+    viewMode === 'wholesale'
+      ? `/product/${product.slug}?mode=wholesale`
+      : `/product/${product.slug}`
 
   const handleAddToCart = () => {
     if (!firstVariant) return
@@ -87,114 +101,195 @@ export function ProductCard({
   }
 
   return (
-    <div
-      className={cn(
-        'group relative flex flex-col rounded-lg bg-surface-container hover:bg-surface-container-high transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/20 hover:border-tertiary/50 border border-transparent overflow-hidden',
-        className,
-      )}
+    <Hover
+      tag="article"
+      from={{ y: 0 }}
+      to={{ y: -6 }}
+      config={SPRING.snappy}
+      className={cn('craft group flex h-full flex-col overflow-hidden rounded', className)}
     >
-      <div className="relative aspect-square bg-surface-container-highest flex items-center justify-center overflow-hidden transition-transform duration-500 group-hover:scale-[1.04]">
+      {/* ── Photography stage ─────────────────────────────── */}
+      <Link
+        href={detailHref}
+        aria-label={product.name}
+        className={cn(
+          'relative block overflow-hidden border-b border-line bg-surface-container-high/30',
+          density === 'compact' ? 'aspect-square' : 'aspect-[4/5]',
+        )}
+      >
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_85%_at_50%_8%,var(--theme-stage-top),transparent_62%)]"
+        />
+
         {variantImageUrl && !imageFailed ? (
           <img
             src={variantImageUrl}
             alt={product.name}
-            className="object-contain w-full h-full"
+            className={cn(
+              'relative h-full w-full object-contain transition-transform duration-[var(--theme-duration-normal)] ease-entrance group-hover:scale-[1.04]',
+              density === 'compact' ? 'p-6' : 'p-8',
+            )}
             onError={() => setImageFailed(true)}
           />
         ) : (
-          <span className="font-headline text-4xl text-on-surface-variant/20 italic select-none">
+          <span className="relative grid h-full w-full place-items-center font-headline text-6xl italic text-on-surface-variant/25 select-none">
             {product.name.charAt(0)}
           </span>
         )}
 
+        {/* Sheen sweep — a single pass of light across the glass on hover */}
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 -translate-x-[140%] rotate-[8deg] bg-[linear-gradient(90deg,transparent,var(--theme-inner-light),transparent)] transition-transform duration-[1100ms] ease-entrance group-hover:translate-x-[460%]"
+        />
+
         {product.badge && (
-          <div className="absolute top-2 right-2">
+          <span className="absolute left-3 top-3">
             <Badge
               variant={badgeVariantMap[product.badge] || 'bestseller'}
               discount={product.badge === 'SAVE_15' ? '15%' : undefined}
             />
-          </div>
+          </span>
         )}
-      </div>
+      </Link>
 
-      <div className="flex flex-col flex-1 p-4 space-y-3">
-        <span className="text-xs text-on-surface-variant uppercase tracking-wider">
+      {/* ── Editorial body ────────────────────────────────── */}
+      <div
+        className={cn(
+          'flex flex-1 flex-col',
+          density === 'compact' ? 'gap-2 p-4' : 'gap-3 p-5',
+        )}
+      >
+        <span className="font-label text-[0.625rem] font-semibold uppercase tracking-[0.2em] text-on-surface-variant">
           {product.category?.name || product.type}
         </span>
 
-        <Link href={viewMode === 'wholesale' ? `/product/${product.slug}?mode=wholesale` : `/product/${product.slug}`} className="group/title">
-          <h3 className="font-headline text-lg leading-tight text-on-surface line-clamp-2 transition-colors group-hover/title:text-tertiary">
+        <Link href={detailHref} className="group/title">
+          <h3
+            className={cn(
+              'font-headline leading-snug text-on-surface transition-colors duration-[var(--theme-duration-fast)] ease-entrance group-hover/title:text-secondary line-clamp-2',
+              density === 'compact' ? 'text-lg' : 'text-xl',
+            )}
+          >
             {product.name}
           </h3>
         </Link>
 
-        {viewMode === 'retail' && !appliesWholesaleInRetail ? (
-          <PriceDisplay retailPrice={retailPrice} size="md" />
-        ) : viewMode === 'retail' && appliesWholesaleInRetail ? (
-          <div className="space-y-1">
-            <span className="text-sm text-on-surface-variant line-through">
+        {viewMode === 'retail' && !appliesWholesaleInRetail && (
+          <span className="flex items-baseline gap-2">
+            <span
+              className={cn(
+                'font-headline font-semibold leading-none tracking-tight text-on-surface tnum',
+                density === 'compact' ? 'text-xl' : 'text-2xl',
+              )}
+            >
               {formatPrice(retailPrice)}
             </span>
-            <span className="font-headline font-semibold text-xl text-on-surface block">
+            <span className="font-label text-[0.625rem] font-semibold uppercase tracking-[0.16em] text-on-surface-variant">
+              c/u
+            </span>
+          </span>
+        )}
+
+        {viewMode === 'retail' && appliesWholesaleInRetail && (
+          <span className="flex flex-col gap-1">
+            <span className="text-sm text-on-surface-variant line-through tnum">
+              {formatPrice(retailPrice)}
+            </span>
+            <span
+              className={cn(
+                'font-headline font-semibold leading-none text-on-surface tnum',
+                density === 'compact' ? 'text-xl' : 'text-2xl',
+              )}
+            >
               {formatPrice(bestWholesale!)}
             </span>
-            <span className="text-xs text-tertiary font-medium block">
-              PRECIO MAYORISTA APLICADO
+            <span className="font-label text-[0.625rem] font-semibold uppercase tracking-[0.16em] text-secondary">
+              Precio mayorista aplicado
             </span>
-          </div>
-        ) : (
-          <div className="space-y-1">
+          </span>
+        )}
+
+        {viewMode === 'wholesale' && (
+          <span className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
             {bestWholesale != null && bestWholesale < retailPrice ? (
               <>
-                <span className="text-sm text-on-surface-variant line-through">
+                <span className="text-sm text-on-surface-variant line-through tnum">
                   {formatPrice(retailPrice * CAJA_SIZE)}
                 </span>
-                <span className="font-headline font-semibold text-xl text-on-surface block">
+                <span
+                  className={cn(
+                    'font-headline font-semibold leading-none text-on-surface tnum',
+                    density === 'compact' ? 'text-xl' : 'text-2xl',
+                  )}
+                >
                   {formatPrice(bestWholesale * CAJA_SIZE)}
                 </span>
-                <span className="text-xs text-on-surface-variant block">
-                  {formatPrice(bestWholesale)} c/u · caja de {CAJA_SIZE}
-                </span>
-                <span className="text-xs text-tertiary font-medium block">
-                  AHORRAS {formatPrice((retailPrice - bestWholesale) * CAJA_SIZE)}
+                <span className="basis-full text-xs text-on-surface-variant tnum">
+                  caja de {CAJA_SIZE} · {formatPrice(bestWholesale)} c/u
                 </span>
               </>
             ) : (
-              <span className="font-headline font-semibold text-xl text-on-surface block">
-                {formatPrice(retailPrice * CAJA_SIZE)}
-              </span>
+              <>
+                <span
+                  className={cn(
+                    'font-headline font-semibold leading-none text-on-surface tnum',
+                    density === 'compact' ? 'text-xl' : 'text-2xl',
+                  )}
+                >
+                  {formatPrice(retailPrice * CAJA_SIZE)}
+                </span>
+                <span className="basis-full text-xs text-on-surface-variant tnum">
+                  caja de {CAJA_SIZE} · {formatPrice(retailPrice)} c/u
+                </span>
+              </>
             )}
-          </div>
+          </span>
         )}
 
-        <div className="mt-auto flex items-center justify-between gap-3 pt-2">
+        <span
+          aria-hidden="true"
+          className="h-px w-10 bg-line-strong transition-all duration-[var(--theme-duration-normal)] ease-entrance group-hover:w-20 group-hover:bg-secondary"
+        />
+
+        <div
+          className={cn(
+            'mt-auto flex flex-col',
+            density === 'compact' ? 'gap-2 pt-0' : 'gap-3 pt-1',
+          )}
+        >
           <QuantitySelector
             value={quantity}
             onChange={setQuantity}
             min={viewMode === 'wholesale' ? CAJA_SIZE : 1}
             max={viewMode === 'wholesale' ? CAJA_SIZE * 20 : 99}
             step={viewMode === 'wholesale' ? CAJA_SIZE : 1}
+            className="self-start"
           />
-          <div className="flex items-center gap-2">
-            <Link
-              href={viewMode === 'wholesale' ? `/product/${product.slug}?mode=wholesale` : `/product/${product.slug}`}
-              className="inline-flex items-center gap-1.5 h-9 px-3 text-xs font-label font-semibold uppercase tracking-wider rounded border-2 border-tertiary text-tertiary bg-transparent hover:bg-tertiary/10 transition-all duration-200"
-            >
-              <Eye className="h-3.5 w-3.5" />
-              Ver más
-            </Link>
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={handleAddToCart}
-              aria-label="Agregar al carrito"
-            >
-              <ShoppingCart className="mr-1.5 h-4 w-4" />
-              Agregar
-            </Button>
-          </div>
+          <Button
+            variant="primary"
+            size="md"
+            onClick={handleAddToCart}
+            aria-label="Agregar al carrito"
+            className="w-full"
+          >
+            <ShoppingCart className="h-4 w-4" aria-hidden="true" />
+            Agregar
+          </Button>
         </div>
+
+        <Link
+          href={detailHref}
+          className="group/link inline-flex items-center gap-1.5 self-start font-label text-[0.625rem] font-semibold uppercase tracking-[0.2em] text-on-surface-variant transition-colors duration-[var(--theme-duration-fast)] ease-entrance hover:text-secondary"
+        >
+          Ver ficha completa
+          <ArrowRight
+            className="h-3 w-3 transition-transform duration-[var(--theme-duration-normal)] ease-entrance group-hover/link:translate-x-1"
+            aria-hidden="true"
+          />
+        </Link>
       </div>
-    </div>
+    </Hover>
   )
 }

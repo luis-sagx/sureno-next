@@ -6,6 +6,7 @@ import { ShippingForm } from "@/components/checkout/ShippingForm";
 import { Button } from "@/components/ui/Button";
 import { submitOrder, type SubmitOrderState } from "@/lib/actions/order";
 import { ShieldCheck } from "lucide-react";
+import Link from "next/link";
 import { useActionState } from "react";
 
 const initialState: SubmitOrderState = { error: null };
@@ -17,19 +18,16 @@ export function CheckoutForm() {
     <form action={formAction}>
       <CheckoutHiddenFields />
 
-      <div className="space-y-8">
-        <ShippingForm className="bg-surface-container rounded-lg p-6 border border-outline-variant" />
-
-        <div className="bg-surface-container rounded-lg p-6 border border-outline-variant">
-          <CheckoutFormWrapper />
-        </div>
+      <div className="flex flex-col gap-10">
+        <ShippingForm />
+        <CheckoutFormWrapper />
       </div>
 
-      <div className="mt-8 space-y-4">
+      <div className="mt-10 flex flex-col gap-5">
         {state.error && (
           <p
             role="alert"
-            className="rounded-md border border-error/40 bg-error/10 px-4 py-3 text-sm text-error"
+            className="border-l border-error pl-4 text-sm leading-relaxed text-error"
           >
             {state.error}
           </p>
@@ -42,18 +40,24 @@ export function CheckoutForm() {
           className="w-full"
           disabled={pending}
         >
-          {pending ? "PROCESANDO…" : "COMPLETAR PEDIDO"}
+          {pending ? "Procesando…" : "Completar pedido"}
         </Button>
 
-        <p className="text-xs text-on-surface-variant text-center leading-relaxed">
-          Al completar este pedido, aceptas los Términos de Servicio y las
-          regulaciones de distribución de alcohol de Sureño.
+        <p className="text-center text-xs leading-relaxed text-on-surface-variant">
+          Al completar este pedido, aceptas los{" "}
+          <Link
+            href="/terms"
+            className="text-secondary underline-offset-4 hover:underline"
+          >
+            Términos de Servicio
+          </Link>{" "}
+          y las regulaciones de distribución de alcohol de Sureño.
         </p>
 
-        <div className="flex items-center justify-center gap-2 text-xs text-on-surface-variant">
-          <ShieldCheck className="w-4 h-4 text-tertiary" />
-          <span>Checkout seguro — Tus datos están protegidos</span>
-        </div>
+        <span className="flex items-center justify-center gap-2 font-label text-[0.625rem] font-semibold uppercase tracking-[0.2em] text-on-surface-variant">
+          <ShieldCheck className="h-4 w-4 text-secondary" aria-hidden="true" />
+          Checkout seguro — tus datos están protegidos
+        </span>
       </div>
     </form>
   );

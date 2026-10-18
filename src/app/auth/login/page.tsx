@@ -1,7 +1,9 @@
 'use client'
 
+import { AuthPanel } from '@/components/auth/AuthPanel'
+import { Button } from '@/components/ui/Button'
+import { Input } from '@/components/ui/Input'
 import { createClient } from '@/lib/supabase/client'
-import Image from 'next/image'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { Suspense, useState, type FormEvent } from 'react'
@@ -51,110 +53,77 @@ function LoginForm() {
   }
 
   return (
-    <div className="bg-surface rounded-lg shadow-lg border border-outline-variant border-t-2 border-t-tertiary p-8 space-y-6">
-      {/* Back link */}
-      <Link
-        href="/"
-        className="inline-flex items-center gap-1.5 text-sm text-tertiary hover:text-tertiary/80 font-medium transition-colors"
-      >
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-          <path fillRule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
-        </svg>
-        Volver a la tienda
-      </Link>
-
-      {/* Logo */}
-      <div className="text-center">
-        <Image
-          src="/logo-text.webp"
-          alt="Licorería Sureño"
-          width={180}
-          height={50}
-          className="h-28 w-auto mx-auto"
-          priority
-        />
-      </div>
-
-      <h2 className="font-headline text-2xl text-on-surface text-center">
-        Iniciar Sesión
-      </h2>
-
+    <AuthPanel
+      eyebrow="Tu cuenta"
+      title="Iniciar Sesión"
+      description="Accede para seguir tus pedidos y comprar al mayoreo con tarjeta de cliente."
+      footer={
+        <>
+          ¿No tienes cuenta?{' '}
+          <Link
+            href="/auth/register"
+            className="font-semibold text-secondary underline-offset-4 hover:underline"
+          >
+            Regístrate
+          </Link>
+        </>
+      }
+    >
       {message && (
-        <div className="bg-secondary/10 border border-secondary/30 text-secondary rounded-md px-4 py-3 text-sm">
+        <p className="border-l border-line-strong pl-4 text-sm leading-relaxed text-on-surface-variant">
           {message}
-        </div>
+        </p>
       )}
 
       {error && (
-        <div className="bg-error/10 border border-error text-error rounded-md px-4 py-3 text-sm">
+        <p
+          role="alert"
+          className="border-l border-error pl-4 text-sm leading-relaxed text-error"
+        >
           {error}
-        </div>
+        </p>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label
-            htmlFor="email"
-            className="block text-sm font-medium text-on-surface-variant mb-1"
-          >
-            Email
-          </label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            autoComplete="email"
-            placeholder="tu@email.com"
-            className="w-full h-11 px-4 rounded-md bg-surface-container-highest border border-outline-variant text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-tertiary"
-          />
-        </div>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+        <Input
+          label="Email"
+          id="email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          autoComplete="email"
+          placeholder="tu@email.com"
+        />
 
-        <div>
-          <label
-            htmlFor="password"
-            className="block text-sm font-medium text-on-surface-variant mb-1"
-          >
-            Contraseña
-          </label>
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            autoComplete="current-password"
-            placeholder="••••••••"
-            className="w-full h-11 px-4 rounded-md bg-surface-container-highest border border-outline-variant text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-tertiary"
-          />
-        </div>
+        <Input
+          label="Contraseña"
+          id="password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          autoComplete="current-password"
+          placeholder="••••••••"
+        />
 
-        <button
+        <Button
           type="submit"
+          variant="primary"
+          size="lg"
+          className="w-full"
           disabled={loading}
-          className="w-full h-11 px-6 rounded-md bg-secondary text-on-secondary font-semibold uppercase tracking-wider hover:bg-secondary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
-        </button>
+          {loading ? 'Iniciando sesión…' : 'Iniciar sesión'}
+        </Button>
       </form>
-
-      <p className="text-center text-sm text-on-surface-variant">
-        ¿No tienes cuenta?{' '}
-        <Link
-          href="/auth/register"
-          className="text-tertiary hover:underline font-medium"
-        >
-          Regístrate
-        </Link>
-      </p>
-    </div>
+    </AuthPanel>
   )
 }
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="bg-surface rounded-lg shadow-lg border border-outline-variant p-8 h-96 animate-pulse" />}>
+    <Suspense fallback={<div className="craft h-96 animate-pulse rounded" />}>
       <LoginForm />
     </Suspense>
   )
