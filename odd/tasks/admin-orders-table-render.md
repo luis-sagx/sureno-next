@@ -52,10 +52,10 @@ The user explicitly requested the orders-page fix after the failure was diagnose
 - Root cause confirmed from the runtime error and source: `src/app/admin/orders/page.tsx` passes function-valued columns and a callback to `src/components/ui/DataTable.tsx`, which starts with `use client`.
 - `/admin` redirects to `/admin/orders` by design. The 500 occurs when the orders table props cross the Server/Client boundary.
 - RED/GREEN test evidence: pending; tests were not authorized by the active instruction.
-- Engram save #33 succeeded; read-back verification is pending because the sandbox denied access to the Engram instance lock during export.
+- Engram save #35 was exported and read back in full; the local feature document and mirror match.
 - Work-unit commit: `64321e0` (`fix(admin): render orders table on client`).
 - RDD assessment: unavailable (`gentle-ai` command not found).
 
 ## Next step
 
-Implementation is committed. Engram read-back verification remains pending because the sandbox denied access to the Engram instance lock during export.
+Implementation and Engram read-back verification are complete.
