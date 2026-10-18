@@ -24,14 +24,20 @@ const iconMap: Record<string, LucideIcon> = {
 };
 
 /**
- * Asymmetric category bento: the first category takes a double cell and the
- * rest settle around it. Every tile is an editorial card — index numeral,
- * icon, serif label and a gold rule that draws itself on hover.
+ * Product photography gives each category equal weight in a balanced grid.
  */
 export async function CategoryGrid() {
   const categories = serializeDecimal(
     await prisma.category.findMany({
+      where: { slug: { not: "ofertas-relampago" } },
       orderBy: { name: "asc" },
+      include: {
+        products: {
+          where: { imageUrl: { not: null } },
+          select: { imageUrl: true },
+          take: 1,
+        },
+      },
     })
   );
 
@@ -44,10 +50,10 @@ export async function CategoryGrid() {
           description="Vinos, destilados y licores para cada ocasión — por unidad o por caja de 12."
         />
 
-        <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:auto-rows-[11.5rem]">
+        <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:auto-rows-[15rem]">
           {categories.map((category, index) => {
             const Icon = iconMap[category.icon] || Package;
-            const featured = index === 0;
+            const imageUrl = category.products[0]?.imageUrl;
 
             return (
               <Inview
@@ -57,30 +63,36 @@ export async function CategoryGrid() {
                 mode="once"
                 config={SPRING.entrance}
                 delayIn={staggerDelay(index)}
-                className={cn("h-full", featured && "sm:col-span-2 lg:row-span-2")}
+                className="h-full"
               >
                 <Link
                   href={`/catalog?category=${category.slug}`}
                   className={cn(
-                    "group relative flex h-full flex-col justify-between overflow-hidden rounded border border-line p-6",
-                    "bg-surface-container transition-colors duration-[var(--theme-duration-normal)] ease-entrance hover:border-line-strong",
-                    !featured && "min-h-40"
+                    "group relative flex h-full min-h-56 flex-col justify-between overflow-hidden rounded border border-line p-6",
+                    "bg-surface-container transition-colors duration-[var(--theme-duration-normal)] ease-entrance hover:border-line-strong"
                   )}
                 >
-                  {/* Stage light falling from the top edge */}
+                  {imageUrl ? (
+                    <img
+                      src={imageUrl}
+                      alt=""
+                      aria-hidden="true"
+                      loading="lazy"
+                      className="absolute inset-0 h-full w-full object-cover opacity-55 transition-transform duration-700 ease-entrance group-hover:scale-105"
+                    />
+                  ) : null}
                   <span
                     aria-hidden="true"
-                    className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,var(--theme-stage-top),transparent_62%)]"
+                    className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/95 via-background/60 to-background/30"
                   />
 
                   <span className="relative flex items-start justify-between">
                     <Icon
                       className={cn(
-                        "text-secondary transition-transform duration-[var(--theme-duration-normal)] ease-entrance group-hover:-translate-y-0.5",
-                        featured ? "h-9 w-9" : "h-5 w-5"
+                        "h-5 w-5 text-secondary transition-transform duration-[var(--theme-duration-normal)] ease-entrance group-hover:-translate-y-0.5"
                       )}
                     />
-                    <span className="index-numeral text-lg leading-none text-on-surface-variant/50">
+                    <span className="index-numeral text-lg leading-none text-on-surface-variant">
                       {String(index + 1).padStart(2, "0")}
                     </span>
                   </span>
@@ -89,7 +101,7 @@ export async function CategoryGrid() {
                     <h3
                       className={cn(
                         "font-headline leading-[1.15] text-on-surface",
-                        featured ? "text-3xl md:text-4xl" : "text-xl"
+                        "text-2xl md:text-3xl"
                       )}
                     >
                       {category.name}

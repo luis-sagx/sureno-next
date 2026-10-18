@@ -15,7 +15,7 @@ const variantStyles: Record<ButtonVariant, string> = {
   /* Gold plate — the commerce action. A whisper of inner light along the top
      edge keeps it reading as metal, not a flat rectangle. */
   primary:
-    "bg-secondary text-on-secondary shadow-[inset_0_1px_0_var(--theme-inner-light)] hover:brightness-[1.06] active:brightness-[0.95]",
+    "bg-primary text-on-primary shadow-[inset_0_1px_0_var(--theme-inner-light)] hover:brightness-[1.06] active:brightness-[0.95]",
   /* Neutral hairline — the quiet companion action. */
   secondary:
     "border border-line-strong bg-transparent text-on-surface hover:border-secondary hover:text-secondary",

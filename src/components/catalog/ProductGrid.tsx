@@ -23,6 +23,7 @@ type ProductWithRelations = Product & {
 interface ProductGridProps {
   products: ProductWithRelations[];
   viewMode: "retail" | "wholesale";
+  cardDensity?: "default" | "compact";
   /** Where "ver todo" leads when filters come up empty. */
   resetHref?: string;
 }
@@ -34,6 +35,7 @@ interface ProductGridProps {
 export function ProductGrid({
   products,
   viewMode,
+  cardDensity = "default",
   resetHref = "/catalog",
 }: ProductGridProps) {
   const router = useRouter();
@@ -76,7 +78,7 @@ export function ProductGrid({
           delayIn={staggerDelay(index, 60, 360)}
           className="h-full"
         >
-          <ProductCard product={product} viewMode={viewMode} />
+          <ProductCard product={product} viewMode={viewMode} density={cardDensity} />
         </Inview>
       ))}
     </div>

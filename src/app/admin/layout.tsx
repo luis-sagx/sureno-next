@@ -1,5 +1,5 @@
 import { AdminSidebar } from "@/components/layout/AdminSidebar";
-import { Bell, Search, Settings } from "lucide-react";
+import { Bell, Search } from "lucide-react";
 
 export default function AdminLayout({
   children,
@@ -31,12 +31,6 @@ export default function AdminLayout({
               aria-label="Notificaciones"
             >
               <Bell className="w-5 h-5" />
-            </button>
-            <button
-              className="w-9 h-9 flex items-center justify-center rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors"
-              aria-label="Configuración"
-            >
-              <Settings className="w-5 h-5" />
             </button>
           </div>
         </header>

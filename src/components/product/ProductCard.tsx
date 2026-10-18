@@ -22,6 +22,7 @@ type ProductWithVariants = Product & {
 interface ProductCardProps {
   product: ProductWithVariants
   viewMode?: 'retail' | 'wholesale'
+  density?: 'default' | 'compact'
   className?: string
 }
 
@@ -44,6 +45,7 @@ const badgeVariantMap: Record<
 export function ProductCard({
   product,
   viewMode = 'retail',
+  density = 'default',
   className,
 }: ProductCardProps) {
   const [quantity, setQuantity] = useState(viewMode === 'wholesale' ? CAJA_SIZE : 1)
@@ -110,7 +112,10 @@ export function ProductCard({
       <Link
         href={detailHref}
         aria-label={product.name}
-        className="relative block aspect-[4/5] overflow-hidden border-b border-line bg-surface-container-high/30"
+        className={cn(
+          'relative block overflow-hidden border-b border-line bg-surface-container-high/30',
+          density === 'compact' ? 'aspect-square' : 'aspect-[4/5]',
+        )}
       >
         <span
           aria-hidden="true"
@@ -121,7 +126,10 @@ export function ProductCard({
           <img
             src={variantImageUrl}
             alt={product.name}
-            className="relative h-full w-full object-contain p-8 transition-transform duration-[var(--theme-duration-normal)] ease-entrance group-hover:scale-[1.04]"
+            className={cn(
+              'relative h-full w-full object-contain transition-transform duration-[var(--theme-duration-normal)] ease-entrance group-hover:scale-[1.04]',
+              density === 'compact' ? 'p-6' : 'p-8',
+            )}
             onError={() => setImageFailed(true)}
           />
         ) : (
@@ -147,20 +155,35 @@ export function ProductCard({
       </Link>
 
       {/* ── Editorial body ────────────────────────────────── */}
-      <div className="flex flex-1 flex-col gap-3 p-5">
+      <div
+        className={cn(
+          'flex flex-1 flex-col',
+          density === 'compact' ? 'gap-2 p-4' : 'gap-3 p-5',
+        )}
+      >
         <span className="font-label text-[0.625rem] font-semibold uppercase tracking-[0.2em] text-on-surface-variant">
           {product.category?.name || product.type}
         </span>
 
         <Link href={detailHref} className="group/title">
-          <h3 className="font-headline text-xl leading-snug text-on-surface transition-colors duration-[var(--theme-duration-fast)] ease-entrance group-hover/title:text-secondary line-clamp-2">
+          <h3
+            className={cn(
+              'font-headline leading-snug text-on-surface transition-colors duration-[var(--theme-duration-fast)] ease-entrance group-hover/title:text-secondary line-clamp-2',
+              density === 'compact' ? 'text-lg' : 'text-xl',
+            )}
+          >
             {product.name}
           </h3>
         </Link>
 
         {viewMode === 'retail' && !appliesWholesaleInRetail && (
           <span className="flex items-baseline gap-2">
-            <span className="font-headline text-2xl font-semibold leading-none tracking-tight text-on-surface tnum">
+            <span
+              className={cn(
+                'font-headline font-semibold leading-none tracking-tight text-on-surface tnum',
+                density === 'compact' ? 'text-xl' : 'text-2xl',
+              )}
+            >
               {formatPrice(retailPrice)}
             </span>
             <span className="font-label text-[0.625rem] font-semibold uppercase tracking-[0.16em] text-on-surface-variant">
@@ -174,7 +197,12 @@ export function ProductCard({
             <span className="text-sm text-on-surface-variant line-through tnum">
               {formatPrice(retailPrice)}
             </span>
-            <span className="font-headline text-2xl font-semibold leading-none text-on-surface tnum">
+            <span
+              className={cn(
+                'font-headline font-semibold leading-none text-on-surface tnum',
+                density === 'compact' ? 'text-xl' : 'text-2xl',
+              )}
+            >
               {formatPrice(bestWholesale!)}
             </span>
             <span className="font-label text-[0.625rem] font-semibold uppercase tracking-[0.16em] text-secondary">
@@ -190,7 +218,12 @@ export function ProductCard({
                 <span className="text-sm text-on-surface-variant line-through tnum">
                   {formatPrice(retailPrice * CAJA_SIZE)}
                 </span>
-                <span className="font-headline text-2xl font-semibold leading-none text-on-surface tnum">
+                <span
+                  className={cn(
+                    'font-headline font-semibold leading-none text-on-surface tnum',
+                    density === 'compact' ? 'text-xl' : 'text-2xl',
+                  )}
+                >
                   {formatPrice(bestWholesale * CAJA_SIZE)}
                 </span>
                 <span className="text-xs text-on-surface-variant tnum">
@@ -202,7 +235,12 @@ export function ProductCard({
               </>
             ) : (
               <>
-                <span className="font-headline text-2xl font-semibold leading-none text-on-surface tnum">
+                <span
+                  className={cn(
+                    'font-headline font-semibold leading-none text-on-surface tnum',
+                    density === 'compact' ? 'text-xl' : 'text-2xl',
+                  )}
+                >
                   {formatPrice(retailPrice * CAJA_SIZE)}
                 </span>
                 <span className="text-xs text-on-surface-variant tnum">
@@ -218,7 +256,12 @@ export function ProductCard({
           className="h-px w-10 bg-line-strong transition-all duration-[var(--theme-duration-normal)] ease-entrance group-hover:w-20 group-hover:bg-secondary"
         />
 
-        <div className="mt-auto flex flex-col gap-3 pt-1">
+        <div
+          className={cn(
+            'mt-auto flex flex-col',
+            density === 'compact' ? 'gap-2 pt-0' : 'gap-3 pt-1',
+          )}
+        >
           <QuantitySelector
             value={quantity}
             onChange={setQuantity}

@@ -53,6 +53,7 @@ export default async function MayoreoPage() {
           <ProductGrid
             products={products}
             viewMode="wholesale"
+            cardDensity="compact"
             resetHref="/mayoreo"
           />
         </div>

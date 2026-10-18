@@ -1,3 +1,4 @@
+import { AboutProductsCarousel } from '@/components/about/AboutProductsCarousel'
 import { Inview } from '@/components/animation/springs'
 import { TextReveal } from '@/components/animation/text/TextReveal'
 import { Divider } from '@/components/ui/Divider'
@@ -131,12 +132,12 @@ export default function AboutPage() {
       <section className="relative overflow-hidden border-b border-line">
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-cover bg-center opacity-60 md:bg-fixed"
+          className="absolute inset-0 bg-cover bg-center opacity-80 dark:opacity-60 md:bg-fixed"
           style={{ backgroundImage: "url('/bg.webp')" }}
         />
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/70 to-background/90"
+          className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/45 to-background/78 dark:from-background/80 dark:via-background/70 dark:to-background/90"
         />
 
         <div className="relative mx-auto flex max-w-3xl flex-col items-center gap-6 px-4 py-24 text-center md:py-28">
@@ -217,32 +218,8 @@ export default function AboutPage() {
             title="Nuestros productos"
           />
 
-          <div className="mt-14 grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-6">
-            {products.map((product, index) => (
-              <Inview
-                key={product.src}
-                from={revealUp.from}
-                to={revealUp.to}
-                mode="once"
-                config={SPRING.entrance}
-                delayIn={staggerDelay(index, 50, 300)}
-              >
-                <figure className="group flex flex-col items-center gap-4">
-                  <div className="craft-line relative aspect-[3/4] w-full overflow-hidden rounded">
-                    <Image
-                      src={product.src}
-                      alt={product.label}
-                      fill
-                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 17vw"
-                      className="object-contain p-4 transition-transform duration-[var(--theme-duration-slow)] ease-entrance group-hover:scale-[1.04]"
-                    />
-                  </div>
-                  <figcaption className="text-center font-label text-[0.6875rem] uppercase tracking-[0.18em] text-on-surface-variant">
-                    {product.label}
-                  </figcaption>
-                </figure>
-              </Inview>
-            ))}
+          <div className="mt-14">
+            <AboutProductsCarousel products={products} />
           </div>
         </div>
       </section>

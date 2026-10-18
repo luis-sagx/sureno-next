@@ -149,6 +149,9 @@ function StagePanels({ panel }: { panel: PanelId }) {
 function HeroStage() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const bottleRef = useRef<HTMLImageElement>(null);
+  const frameCache = useRef<HTMLImageElement[]>([]);
+  const decodedFrames = useRef(new Set<number>());
+  const requestedFrame = useRef(0);
   const [panel, setPanel] = useState<PanelId>("intro");
   const [firstReady, setFirstReady] = useState(false);
   const width = useWindowWidth();
@@ -167,8 +170,12 @@ function HeroStage() {
           FRAMES.length - 1,
           Math.max(0, Math.round(progress * (FRAMES.length - 1)))
         );
-        const src = FRAMES[idx];
-        if (img.getAttribute("src") !== src) img.src = src;
+        requestedFrame.current = idx;
+        const frame = frameCache.current[idx];
+        const src = frame?.getAttribute("src");
+        if (decodedFrames.current.has(idx) && src && img.getAttribute("src") !== src) {
+          img.src = src;
+        }
       }
 
       const next: PanelId =
@@ -181,15 +188,31 @@ function HeroStage() {
   useEffect(() => {
     if (!isDesktop) return;
     let cancelled = false;
+    decodedFrames.current = new Set();
     const imgs = FRAMES.map((src, i) => {
       const im = new Image();
+      const markDecoded = () => {
+        if (cancelled || decodedFrames.current.has(i) || !im.naturalWidth) return;
+        decodedFrames.current.add(i);
+        if (i === 0) setFirstReady(true);
+        const src = im.getAttribute("src");
+        if (requestedFrame.current === i && src && bottleRef.current) {
+          bottleRef.current.src = src;
+        }
+      };
       im.src = src;
-      if (i === 0) im.onload = () => !cancelled && setFirstReady(true);
+      im.onload = markDecoded;
+      im.decode().then(markDecoded).catch(() => {
+        // Some browsers reject decode even when the loaded image remains usable.
+        if (im.complete) markDecoded();
+      });
       return im;
     });
+    frameCache.current = imgs;
     return () => {
       cancelled = true;
       imgs.forEach((im) => (im.onload = null));
+      frameCache.current = [];
     };
   }, [isDesktop]);
 

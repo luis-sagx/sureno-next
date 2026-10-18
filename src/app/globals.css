@@ -58,15 +58,15 @@
 
 /* ============================================================
    Dark Theme (default — :root, no class)
-   From DESIGN-dark.md — Matte Black + Dull Gold + Amber
+   From DESIGN-dark.md — Matte Black + Navy Blue + Heritage Gold
    ============================================================ */
 :root {
   color-scheme: dark;
 
-  --theme-primary: #c7c6c9;
-  --theme-on-primary: #303033;
-  --theme-secondary: #e9c176;
-  --theme-on-secondary: #412d00;
+  --theme-primary: #e9c176;
+  --theme-on-primary: #412d00;
+  --theme-secondary: #a9bfd4;
+  --theme-on-secondary: #15283b;
   --theme-tertiary: #8ab4d8;
   --theme-on-tertiary: #0a1e30;
 
@@ -115,11 +115,11 @@
 .light {
   color-scheme: light;
 
-  --theme-primary: #6f4b16;
+  --theme-primary: #b8842f;
   --theme-on-primary: #ffffff;
-  --theme-secondary: #b8842f;
+  --theme-secondary: #17324d;
   --theme-on-secondary: #ffffff;
-  --theme-tertiary: #1e3a5f;
+  --theme-tertiary: #a96e16;
   --theme-on-tertiary: #ffffff;
 
   --theme-surface: #ffffff;

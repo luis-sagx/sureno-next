@@ -56,6 +56,7 @@ export default async function MinoristaPage() {
           <ProductGrid
             products={products}
             viewMode="retail"
+            cardDensity="compact"
             resetHref="/minorista"
           />
         </div>
