@@ -47,7 +47,7 @@ export function Header() {
               alt="Licorería Sureño"
               width={140}
               height={40}
-              className="h-32 w-auto"
+              className="h-16 w-auto"
               priority
             />
           </Link>

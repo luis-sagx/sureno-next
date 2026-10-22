@@ -30,7 +30,7 @@ export function HorecaCTA() {
             mode="once"
             config={SPRING.entrance}
           >
-            <Eyebrow rule>Horeca</Eyebrow>
+            <Eyebrow rule>Mayoreo</Eyebrow>
           </Inview>
 
           <TextReveal
@@ -38,7 +38,7 @@ export function HorecaCTA() {
             align="center"
             className="type-title max-w-3xl text-on-surface"
           >
-            ¿Eres propietario de un bar o restaurante?
+            ¿Compras para tu negocio?
           </TextReveal>
 
           <Inview
@@ -49,9 +49,9 @@ export function HorecaCTA() {
             delayIn={140}
           >
             <p className="max-w-2xl text-lg leading-relaxed text-on-surface-variant">
-              Accede a precios exclusivos de mayoreo, facturación inmediata y
-              entregas programadas. Únete a los más de 1,500 establecimientos
-              que confían en Sureño para su abastecimiento premium.
+              Compra licores al por mayor para tu tienda, bar, restaurante o
+              distribuidora. Conoce nuestro catálogo y encuentra la opción que
+              necesitas para abastecerte.
             </p>
           </Inview>
 

@@ -27,7 +27,7 @@ const columns = [
 export function Footer() {
   return (
     <footer className="relative mt-auto overflow-hidden border-t border-line bg-surface">
-      <div className="mx-auto max-w-[1280px] px-4 py-16">
+      <div className="mx-auto max-w-[1280px] px-4 py-[3.2rem]">
         <div className="grid gap-12 lg:grid-cols-[1.5fr_1fr_1fr_1fr]">
           {/* Brand */}
           <div className="flex flex-col items-start gap-4">
@@ -79,7 +79,7 @@ export function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-14 flex flex-col items-center gap-3 border-t border-line pt-6 sm:flex-row sm:justify-between">
+        <div className="mt-[2.8rem] flex flex-col items-center gap-3 border-t border-line pt-[1.2rem] sm:flex-row sm:justify-between">
           <p className="text-xs text-on-surface-variant">
             © 2026 Licorería Sureño. Todos los derechos reservados.
           </p>

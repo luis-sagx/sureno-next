@@ -26,7 +26,7 @@ import { useEffect, useRef, useState } from "react";
 
 const FRAMES = Array.from(
   { length: 76 },
-  (_, i) => `/frames_nobg/f${String(1 + i * 2).padStart(4, "0")}.webp`
+  (_, i) => `/frames_nobg/f${String(1 + i * 2).padStart(4, "0")}.webp`,
 );
 const MID_FRAME = FRAMES[Math.floor(FRAMES.length / 2)];
 
@@ -34,26 +34,27 @@ const DESKTOP_MIN = 1024;
 
 type PanelId = "intro" | "mayoreo" | "minorista";
 
-const PANELS: { id: PanelId; eyebrow: string; title: string; body: string }[] = [
-  {
-    id: "mayoreo",
-    eyebrow: "Mayoreo",
-    title: "Cajas de 12 unidades",
-    body: "Pensado para tiendas, distribuidores, bares y puntos de venta que necesitan reposición, volumen y lectura rápida del costo por caja.",
-  },
-  {
-    id: "minorista",
-    eyebrow: "Minorista",
-    title: "Compra por unidad",
-    body: "Ideal para revisar detalles, explorar descripciones largas y elegir cada botella según ocasión, regalo o consumo personal.",
-  },
-];
+const PANELS: { id: PanelId; eyebrow: string; title: string; body: string }[] =
+  [
+    {
+      id: "mayoreo",
+      eyebrow: "Mayoreo",
+      title: "Cajas de 12 unidades",
+      body: "Pensado para tiendas, distribuidores, bares y puntos de venta que necesitan reposición, volumen y lectura rápida del costo por caja.",
+    },
+    {
+      id: "minorista",
+      eyebrow: "Minorista",
+      title: "Compra por unidad",
+      body: "Ideal para revisar detalles, explorar descripciones largas y elegir cada botella según ocasión, regalo o consumo personal.",
+    },
+  ];
 
 const PANEL_FROM = { opacity: 0, y: 26 };
 const PANEL_TO = { opacity: 1, y: 0 };
 
 const INTRO_COPY =
-  "Sureño produce y comercializa licores en Ecuador con foco en calidad, abastecimiento confiable y una experiencia de compra clara tanto para negocios como para clientes finales.";
+  "Licores elaborados en Ecuador. Compra por unidad o por caja de 12 para tu próxima celebración o para abastecer tu negocio.";
 
 function HeroActions() {
   return (
@@ -113,7 +114,7 @@ function StagePanels({ panel }: { panel: PanelId }) {
           stagger={130}
           className="type-display italic text-on-surface"
         >
-          Un mismo origen para mayoreo y minorista.
+          Licores para celebrar y para tu negocio.
         </TextReveal>
         <p className="max-w-[58ch] text-lg leading-relaxed text-on-surface-variant">
           {INTRO_COPY}
@@ -168,12 +169,16 @@ function HeroStage() {
       if (img) {
         const idx = Math.min(
           FRAMES.length - 1,
-          Math.max(0, Math.round(progress * (FRAMES.length - 1)))
+          Math.max(0, Math.round(progress * (FRAMES.length - 1))),
         );
         requestedFrame.current = idx;
         const frame = frameCache.current[idx];
         const src = frame?.getAttribute("src");
-        if (decodedFrames.current.has(idx) && src && img.getAttribute("src") !== src) {
+        if (
+          decodedFrames.current.has(idx) &&
+          src &&
+          img.getAttribute("src") !== src
+        ) {
           img.src = src;
         }
       }
@@ -192,7 +197,8 @@ function HeroStage() {
     const imgs = FRAMES.map((src, i) => {
       const im = new Image();
       const markDecoded = () => {
-        if (cancelled || decodedFrames.current.has(i) || !im.naturalWidth) return;
+        if (cancelled || decodedFrames.current.has(i) || !im.naturalWidth)
+          return;
         decodedFrames.current.add(i);
         if (i === 0) setFirstReady(true);
         const src = im.getAttribute("src");
@@ -202,10 +208,12 @@ function HeroStage() {
       };
       im.src = src;
       im.onload = markDecoded;
-      im.decode().then(markDecoded).catch(() => {
-        // Some browsers reject decode even when the loaded image remains usable.
-        if (im.complete) markDecoded();
-      });
+      im.decode()
+        .then(markDecoded)
+        .catch(() => {
+          // Some browsers reject decode even when the loaded image remains usable.
+          if (im.complete) markDecoded();
+        });
       return im;
     });
     frameCache.current = imgs;
@@ -249,7 +257,7 @@ function HeroStage() {
                 decoding="async"
                 className={cn(
                   "max-h-[76vh] w-auto object-contain drop-shadow-2xl transition-opacity duration-700",
-                  firstReady ? "opacity-100" : "opacity-0"
+                  firstReady ? "opacity-100" : "opacity-0",
                 )}
               />
             </animated.div>
@@ -266,9 +274,7 @@ function HeroStage() {
                   aria-hidden="true"
                   className={cn(
                     "size-[5px] rotate-45 transition-all duration-[var(--theme-duration-normal)] ease-entrance",
-                    panel === p
-                      ? "scale-125 bg-secondary"
-                      : "bg-line-strong"
+                    panel === p ? "scale-125 bg-secondary" : "bg-line-strong",
                   )}
                 />
               ))}
@@ -295,7 +301,7 @@ function HeroStatic() {
             stagger={130}
             className="type-display italic text-on-surface"
           >
-            Un mismo origen para mayoreo y minorista.
+            Licores para celebrar y para tu negocio.
           </TextReveal>
           <p className="max-w-[58ch] text-lg leading-relaxed text-on-surface-variant">
             {INTRO_COPY}
